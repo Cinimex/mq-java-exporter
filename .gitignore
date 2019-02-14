@@ -1,0 +1,9 @@
+.metadata/
+*.class
+**/target/
+*.jar
+!/lib/*.jar
+**/.idea
+**/.DS_Store
+
+

@@ -1,0 +1,21 @@
+# MQ connection information -------------------------------
+qmgrConnectionParams:
+  qmgrName: QM
+  qmgrHost: hostname
+  qmgrPort: 1414
+  qmgrChannel: SYSTEM.DEF.SVRCONN
+  user: mqm
+  password: mqm
+  mqscp: false
+
+# Prometheus connection information -------------------------------
+prometheusEndpointParams:
+  url: /metrics
+  port: 8080
+
+
+# Monitoring objects ----------------------------------
+
+queues:
+  - TEST.QUEUE.1
+  - TEST.QUEUE.2
