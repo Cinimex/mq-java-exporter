@@ -113,7 +113,7 @@ Metrics
 ###### CPU performance - running queue manager
 <table class="wrapped confluenceTable">
 <tbody>
- <tr>
+<tr>
 <td class="confluenceTd"><strong>Metric name</strong></td>
 <td class="confluenceTd"><strong>Short description</strong></td>
 <td class="confluenceTd"><strong>Requires object</strong></td>
@@ -140,6 +140,144 @@ Metrics
 <td class="confluenceTd">No</td>
 <td class="confluenceTd">No</td>
 <td class="confluenceTd">megabytes</td>
+</tr>
+</tbody>
+</table>
+
+#### Platform persistent data stores
+###### Disk usage - platform wide
+<table class="wrapped confluenceTable">
+<tbody>
+ <tr>
+<td class="confluenceTd"><strong>Metric name</strong></td>
+<td class="confluenceTd"><strong>Short description</strong></td>
+<td class="confluenceTd"><strong>Requires object</strong></td>
+<td class="confluenceTd"><strong>Is a counter</strong></td>
+<td class="confluenceTd"><strong>Datatype</strong></td>
+</tr>
+<tr>
+<td class="confluenceTd">mq_trace_file_system_bytes_in_use</td>
+<td class="confluenceTd">Shows the number of bytes of disk storage that are being used by the trace file system.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">megabytes</td>
+</tr>
+<tr>
+<td class="confluenceTd">mq_trace_file_system_free_space</td>
+<td class="confluenceTd">Shows the disk storage that is reserved for the trace file system that is free.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">percent</td>
+</tr>
+<tr>
+<td class="confluenceTd">mq_errors_file_system_bytes_in_use</td>
+<td class="confluenceTd">Shows the number of bytes of disk storage that is being used by error data.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">megabytes</td>
+</tr>
+<tr>
+<td class="confluenceTd">mq_errors_file_system_free_space</td>
+<td class="confluenceTd">Shows the disk storage that is reserved for error data that is free.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">percent</td>
+</tr>
+<tr>
+<td class="confluenceTd">mq_fdc_file_count</td>
+<td class="confluenceTd">Shows the current number of FDC files.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">units</td>
+</tr>
+</tbody>
+</table>
+
+###### Disk usage - running queue managers
+<table class="wrapped confluenceTable">
+<tbody>
+ <tr>
+<td class="confluenceTd"><strong>Metric name</strong></td>
+<td class="confluenceTd"><strong>Short description</strong></td>
+<td class="confluenceTd"><strong>Requires object</strong></td>
+<td class="confluenceTd"><strong>Is a counter</strong></td>
+<td class="confluenceTd"><strong>Datatype</strong></td>
+</tr>
+<tr>
+<td class="confluenceTd">queue_manager_file_system_bytes_in_use</td>
+<td class="confluenceTd">Shows the number of bytes of disk storage that is used by queue manager files for the queue managers that you are monitoring.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">megabytes</td>
+</tr>
+<tr>
+<td class="confluenceTd">queue_manager_file_system_free_space</td>
+<td class="confluenceTd">Shows the disk storage that is reserved for queue manager files that is free.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">percent</td>
+</tr>
+</tbody>
+</table>
+
+###### Disk usage - queue manager recovery log
+<table class="wrapped confluenceTable">
+<tbody>
+ <tr>
+<td class="confluenceTd"><strong>Metric name</strong></td>
+<td class="confluenceTd"><strong>Short description</strong></td>
+<td class="confluenceTd"><strong>Requires object</strong></td>
+<td class="confluenceTd"><strong>Is a counter</strong></td>
+<td class="confluenceTd"><strong>Datatype</strong></td>
+</tr>
+<tr>
+<td class="confluenceTd">log_bytes_in_use</td>
+<td class="confluenceTd">Shows the number of bytes of disk storage that is used for the recovery logs of the queue managers that you are monitoring.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">units</td>
+</tr>
+<tr>
+<td class="confluenceTd">log_bytes_max</td>
+<td class="confluenceTd">Shows the maximum bytes of disk storage that is configured to be used for queue manager recovery logs.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">units</td>
+</tr>
+<tr>
+<td class="confluenceTd">log_file_system_bytes_in_use</td>
+<td class="confluenceTd">Shows the total number of disk bytes in use for the log file system.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">units</td>
+</tr>
+<tr>
+<td class="confluenceTd">log_file_system_bytes_max</td>
+<td class="confluenceTd">Shows the number of disk bytes that are configured for the log file system.&nbsp;</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">units</td>
+</tr>
+<tr>
+<td class="confluenceTd">log_physical_bytes_written</td>
+<td class="confluenceTd">Shows the number of bytes being written to the recovery logs.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">Yes</td>
+<td class="confluenceTd">delta</td>
+</tr>
+<tr>
+<td class="confluenceTd">log_logical_bytes_written</td>
+<td class="confluenceTd">Shows the logical number of bytes written to the recovery logs.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">Yes</td>
+<td class="confluenceTd">delta</td>
+</tr>
+<tr>
+<td class="confluenceTd">log_write_latency</td>
+<td class="confluenceTd">Shows a measure of the latency when writing synchronously to the queue manager recovery log.</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">No</td>
+<td class="confluenceTd">microseconds</td>
 </tr>
 </tbody>
 </table>
