@@ -88,7 +88,7 @@ Metrics
 </tr>
 <tr>
 <td class="confluenceTd">cpu_load_fifteen_minute_average</td>
-<td class="confluenceTd">Shows the load average over fifteen minutes.&nbsp;</td>
+<td class="confluenceTd">Shows the load average over fifteen minutes. </td>
 <td class="confluenceTd">No</td>
 <td class="confluenceTd">No</td>
 <td class="confluenceTd">hundredths</td>
@@ -253,7 +253,7 @@ Metrics
 </tr>
 <tr>
 <td class="confluenceTd">log_file_system_bytes_max</td>
-<td class="confluenceTd">Shows the number of disk bytes that are configured for the log file system.&nbsp;</td>
+<td class="confluenceTd">Shows the number of disk bytes that are configured for the log file system. </td>
 <td class="confluenceTd">No</td>
 <td class="confluenceTd">No</td>
 <td class="confluenceTd">units</td>
@@ -499,7 +499,7 @@ Metrics
 ###### MQGET
 <table class="wrapped confluenceTable">
 <tbody>
-  <tr>
+<tr>
 <td class="confluenceTd"><strong>Metric name</strong></td>
 <td class="confluenceTd"><strong>Short description</strong></td>
 <td class="confluenceTd"><strong>Requires object</strong></td>
@@ -507,7 +507,6 @@ Metrics
 <td class="confluenceTd"><strong>Datatype</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">Interval total destructive get- count</td>
 <td class="confluenceTd">interval_total_destructive_get_count</td>
 <td class="confluenceTd">Number of messages that are removed from queues by MQGET.</td>
 <td class="confluenceTd">No</td>
@@ -515,7 +514,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Interval total destructive get - byte count</td>
 <td class="confluenceTd">interval_total_destructive_get_byte_count</td>
 <td class="confluenceTd">Bytes of data that is removed from queues by MQGET.</td>
 <td class="confluenceTd">No</td>
@@ -523,7 +521,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Non-persistent message destructive get - count</td>
 <td class="confluenceTd">non_persistent_message_destructive_get_count</td>
 <td class="confluenceTd">Number of non-persistent messages that are removed from queues by MQGET.</td>
 <td class="confluenceTd">No</td>
@@ -531,7 +528,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Persistent message destructive get - count</td>
 <td class="confluenceTd">persistent_message_destructive_get_count</td>
 <td class="confluenceTd">Number of persistent messages that are removed from queues by MQGET.</td>
 <td class="confluenceTd">No</td>
@@ -539,7 +535,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Failed MQGET - count</td>
 <td class="confluenceTd">failed_mqget_count</td>
 <td class="confluenceTd">Shows the number of failed calls to MQGET.</td>
 <td class="confluenceTd">No</td>
@@ -547,7 +542,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Got non-persistent messages - byte count</td>
 <td class="confluenceTd">got_non_persistent_messages_byte_count</td>
 <td class="confluenceTd">Shows a count of bytes of non-persistent messages that are returned to MQGET.</td>
 <td class="confluenceTd">No</td>
@@ -555,7 +549,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Got persistent messages - byte count</td>
 <td class="confluenceTd">got_persistent_messages_byte_count</td>
 <td class="confluenceTd">Shows a count of bytes of persistent messages that are returned to MQGET.</td>
 <td class="confluenceTd">No</td>
@@ -563,7 +556,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Non-persistent message browse - count</td>
 <td class="confluenceTd">non_persistent_message_browse_count</td>
 <td class="confluenceTd">Shows a count of non-persistent messages that have been browsed.</td>
 <td class="confluenceTd">No</td>
@@ -571,7 +563,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Persistent message browse - count</td>
 <td class="confluenceTd">persistent_message_browse_count</td>
 <td class="confluenceTd">Shows a count of persistent messages that have been browsed.</td>
 <td class="confluenceTd">No</td>
@@ -579,7 +570,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Failed browse count</td>
 <td class="confluenceTd">failed_browse_count</td>
 <td class="confluenceTd">Shows a count of failed message browses.</td>
 <td class="confluenceTd">No</td>
@@ -587,7 +577,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Non-persistent message browse - byte count</td>
 <td class="confluenceTd">non_persistent_message_browse_byte_count</td>
 <td class="confluenceTd">Shows the number of bytes of non-persistent messages that have been browsed.</td>
 <td class="confluenceTd">No</td>
@@ -595,7 +584,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Persistent message browse - byte count</td>
 <td class="confluenceTd">persistent_message_browse_byte_count</td>
 <td class="confluenceTd">Shows the number of bytes of persistent messages that have been browsed.</td>
 <td class="confluenceTd">No</td>
@@ -603,7 +591,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Expired message count</td>
 <td class="confluenceTd">expired_message_count</td>
 <td class="confluenceTd">Shows a count of expired messages.</td>
 <td class="confluenceTd">No</td>
@@ -611,7 +598,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Purged queue count</td>
 <td class="confluenceTd">purged_queue_count</td>
 <td class="confluenceTd">Shows a count of queues that have been purged.</td>
 <td class="confluenceTd">No</td>
@@ -619,7 +605,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">MQCB count</td>
 <td class="confluenceTd">mqcb_count</td>
 <td class="confluenceTd">Shows the number of calls to MQCB.</td>
 <td class="confluenceTd">No</td>
@@ -627,7 +612,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">Failed MQCB count</td>
 <td class="confluenceTd">failed_mqcb_count</td>
 <td class="confluenceTd">Shows the number of failed calls to MQCB.</td>
 <td class="confluenceTd">No</td>
@@ -635,7 +619,6 @@ Metrics
 <td class="confluenceTd">delta</td>
 </tr>
 <tr>
-<td class="confluenceTd">MQCTL count</td>
 <td class="confluenceTd">mqctl_count</td>
 <td class="confluenceTd">Shows the number of calls to MQCTL.</td>
 <td class="confluenceTd">No</td>
