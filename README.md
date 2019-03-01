@@ -1,33 +1,33 @@
 # mq-java-exporter
 
-IBM MQ exporter for Prometheus. 
+Prometheus exporter for API and system metrics exposed by IBM MQ, written in Java.
 
-Compatibility
--------------
+## Getting Started
 
-Support [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm) version 9.0.0.0 (and later).
+#### Compatibility
 
-Dependency
-----------
+Support [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm) version 9.0.x.x.
 
--	[Prometheus](https://prometheus.io)
+#### Prerequisites
+
+- [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
 -	[Maven](https://maven.apache.org/)
+
+#### Dependencies
+-	[Prometheus](https://prometheus.io)
 -	[IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 
-Download
---------
+#### Configuration
 
-At the moment build from sources is only available.
-
-
-Preparations
--------
+All settings have to be set in mq-java-exporter\src\main\resources\exporter_config.yaml.
+- MQ connection information. Describes MQ connection information.
+- Prometheus connection information. Describes Prometheus connection information.
+- Monitoring objects. Sets names of objects, that have to be monitored: queues, channels.
 
 1. Download current repository.
 2. Go to mq-java-exporter\src\main\resources. exporter_config.yaml file is located there. Fill it with actual data. 
 
-Build
--------
+#### Build
 
 1. Download current repository.
 2. Install [Maven](https://maven.apache.org/).
@@ -38,15 +38,14 @@ mvn package
 ```
 
 4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and webspheremq_exporter.jar should appear there. 
-5. To run exporter, dependency-jars directory (and all jars in it) and webspheremq_exporter.jar should be located in the same folder.
+5. To run exporter, dependency-jars directory (and all jars in it) and mq_exporter.jar should be located in the same folder.
 6. To run exporter execute the following command: 
 
 ```shell
- java -jar webspheremq_exporter.jar /opt/mq_exporter/exporter_config.yaml
+ java -jar mq_exporter.jar /opt/mq_exporter/exporter_config.yaml
 ```
 
-Metrics
--------
+## Metrics
 #### Platform central processing units
 ###### CPU performance - platform wide
 <table class="wrapped confluenceTable">
