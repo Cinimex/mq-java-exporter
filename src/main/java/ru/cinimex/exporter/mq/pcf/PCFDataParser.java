@@ -182,6 +182,10 @@ public class PCFDataParser {
                 case MQConstants.MQIAMO64_MONITOR_INTERVAL:
                     // Monitor interval, i.e. time since last publish, is in milliseconds
                     break;
+                case MQConstants.MQIACF_OBJECT_TYPE:
+                    break;
+                case MQConstants.MQCA_Q_NAME:
+                    break;
                 default:
                     switch (param.getType()) {
                         case (MQConstants.MQCFT_INTEGER): {
