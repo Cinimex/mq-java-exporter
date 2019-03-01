@@ -1,6 +1,6 @@
 # mq-java-exporter
 
-Prometheus exporter for API and system metrics exposed by IBM MQ, written in Java.
+Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and system metrics of it's host machine.
 
 ## Getting Started
 
@@ -9,7 +9,6 @@ Prometheus exporter for API and system metrics exposed by IBM MQ, written in Jav
 Support [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm) version 9.0.x.x.
 
 #### Prerequisites
-
 - [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
 -	[Maven](https://maven.apache.org/)
 
@@ -18,14 +17,12 @@ Support [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com
 -	[IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 
 #### Configuration
-
 All settings have to be set in mq-java-exporter\src\main\resources\exporter_config.yaml.
 - MQ connection information. Describes MQ connection information.
 - Prometheus connection information. Describes Prometheus connection information.
 - Monitoring objects. Sets names of objects, that have to be monitored: queues, channels.
 
-1. Download current repository.
-2. Go to mq-java-exporter\src\main\resources. exporter_config.yaml file is located there. Fill it with actual data. 
+1. Fill exporter_config.yaml with your enviroments configuration. 
 
 #### Build
 
@@ -1083,7 +1080,12 @@ mvn package
 </tbody>
 </table>
 
-License
--------
+## Issues and Contributions
+Feel free to express your thoughts about the exporter, unexpected behaviour and\or issues. New feature suggestions are welcome, use [issue tracker](https://github.com/Cinimex-Informatica/mq-java-exporter/issues). 
+Pull requests are always welcome.
 
-Code is licensed under the [Apache License 2.0](https://github.com/Cinimex-Informatica/mq-java-exporter/blob/master/LICENSE).
+## Warning
+The exporter is provided as-is with no guarantees. 
+
+## License
+The exporter and it's code is licensed under the [Apache License 2.0](https://github.com/Cinimex-Informatica/mq-java-exporter/blob/master/LICENSE).
