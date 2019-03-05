@@ -729,256 +729,222 @@ mvn package
 
 #### API per-queue usage statistics
 ###### MQOPEN and MQCLOSE
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqopen_count</td>
-<td class="confluenceTd">Shows the number of calls to MQOPEN.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_mqopen_mqopen_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQOPEN.</td>
+<td>MQOPEN count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqclose_count</td>
-<td class="confluenceTd">Shows the number of calls to MQCLOSE.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_mqclose_mqclose_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQCLOSE.</td>
+<td>MQCLOSE count</td>
 </tr>
 </tbody>
 </table>
 
 ###### MQINQ and MQSET
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
+</tr>
+<td>mqobject_mqinq_mqinq_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQINQ.</td>
+<td>MQINQ count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqinq_count</td>
-<td class="confluenceTd">Shows the number of calls to MQINQ.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
-</tr>
-<tr>
-<td class="confluenceTd">object_mqset_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSET.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_mqset_mqset_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSET.</td>
+<td>MQSET count</td>
 </tr>
 </tbody>
 </table>
 
 ###### MQPUT and MQPUT1
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqput_mqput1_count</td>
-<td class="confluenceTd">Shows the number of calls to MQPUT and MQPUT1.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_put_mqput_mqput1_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQPUT and MQPUT1.</td>
+<td>MQPUT/MQPUT1 count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqput_byte_count</td>
-<td class="confluenceTd">Shows the total bytes of data that is put by calls to MQPUT and MQPUT1.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_put_mqput_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows the total bytes of data that is put by calls to MQPUT and MQPUT1.</td>
+<td>MQPUT byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqput_non_persistent_message_count</td>
-<td class="confluenceTd">Shows the number of non-persistent messages that are put by MQPUT.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_put_mqput_non_persistent_message_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of non-persistent messages that are put by MQPUT.</td>
+<td>MQPUT non-persistent message count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqput_persistent_message_count</td>
-<td class="confluenceTd">Shows the number of persistent messages that are put by MQPUT.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_put_mqput_persistent_message_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of persistent messages that are put by MQPUT.</td>
+<td>MQPUT persistent message count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqput1_non_persistent_message_count</td>
-<td class="confluenceTd">Shows the number of non-persistent messages that are put by MQPUT1.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_put_mqput1_non_persistent_message_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of non-persistent messages that are put by MQPUT1.</td>
+<td>MQPUT1 non-persistent message count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqput1_persistent_message_count</td>
-<td class="confluenceTd">Shows the number of persistent messages that are put by MQPUT1.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_put_mqput1_persistent_message_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of persistent messages that are put by MQPUT1.</td>
+<td>MQPUT1 persistent message count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_non_persistent_byte_count</td>
-<td class="confluenceTd">Shows the number of bytes put in non-persistent messages.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_put_non_persistent_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows the number of bytes put in non-persistent messages.</td>
+<td>non-persistent byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_persistent_byte_count</td>
-<td class="confluenceTd">Shows the number of bytes put in persistent messages.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_put_persistent_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows the number of bytes put in persistent messages.</td>
+<td>persistent byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_queue_avoided_puts</td>
-<td class="confluenceTd">Shows the percentage of messages that avoided put - if a message is put to a queue when there is a waiting getter, the message may not need to be queued as it may be possible for it to be passed to the getter immediately.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>mqobject_put_queue_avoided_puts_percentage</td>
+<td>gauge</td>
+<td>Shows the percentage of messages that avoided put - if a message is put to a queue when there is a waiting getter, the message may not need to be queued as it may be possible for it to be passed to the getter immediately.</td>
+<td>queue avoided puts</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_queue_avoided_bytes</td>
-<td class="confluenceTd">Shows the percentage of bytes that avoided put - if a message is put to a queue when there is a waiting getter, the message may not need to be queued as it may be possible for it to be passed to the getter immediately.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>mqobject_put_queue_avoided_bytes_percentage</td>
+<td>gauge</td>
+<td>Shows the percentage of bytes that avoided put - if a message is put to a queue when there is a waiting getter, the message may not need to be queued as it may be possible for it to be passed to the getter immediately.</td>
+<td>queue avoided bytes</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_lock_contention</td>
-<td class="confluenceTd">Shows the percentage of attempts to lock the queue that resulted in waiting for another process to release the lock first.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>mqobject_put_lock_contention_percentage</td>
+<td>gauge</td>
+<td>Shows the percentage of attempts to lock the queue that resulted in waiting for another process to release the lock first.</td>
+<td>lock contention</td>
 </tr>
 </tbody>
 </table>
 
 ###### MQGET
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqget_count</td>
-<td class="confluenceTd">Shows the number of calls to MQGET.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_mqget_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQGET.</td>
+<td>MQGET count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqget_byte_count</td>
-<td class="confluenceTd">Shows the total bytes of data that is got by calls to MQGET.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_mqget_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows the total bytes of data that is got by calls to MQGET.</td>
+<td>MQGET byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_destructive_mqget_non_persistent_message_count</td>
-<td class="confluenceTd">Number of non-persistent messages that are removed from the queue by MQGET.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_destructive_mqget_non_persistent_message_count_totalmessages</td>
+<td>counter</td>
+<td>Number of non-persistent messages that are removed from the queue by MQGET.</td>
+<td>destructive MQGET non-persistent message count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_destructive_mqget_persistent_message_count</td>
-<td class="confluenceTd">Number of persistent messages that are removed from the queue by MQGET.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_destructive_mqget_persistent_message_count_totalmessages</td>
+<td>counter</td>
+<td>Number of persistent messages that are removed from the queue by MQGET.</td>
+<td>destructive MQGET persistent message count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_destructive_mqget_non_persistent_byte_count</td>
-<td class="confluenceTd">Shows a count of bytes of non-persistent messages that are returned to MQGET.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_destructive_mqget_non_persistent_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows a count of bytes of non-persistent messages that are returned to MQGET.</td>
+<td>destructive MQGET non-persistent byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_destructive_mqget_persistent_byte_count</td>
-<td class="confluenceTd">Shows a count of bytes of persistent messages that are returned to MQGET.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_destructive_mqget_persistent_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows a count of bytes of persistent messages that are returned to MQGET.</td>
+<td>destructive MQGET persistent byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqget_browse_non_persistent_message_count</td>
-<td class="confluenceTd">Shows a count of non-persistent messages that have been browsed.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_mqget_browse_non_persistent_message_count_totalmessages</td>
+<td>counter</td>
+<td>Shows a count of non-persistent messages that have been browsed.</td>
+<td>MQGET browse non-persistent message count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqget_browse_persistent_message_count</td>
-<td class="confluenceTd">Shows a count of persistent messages that have been browsed.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_mqget_browse_persistent_message_count_totalmessages</td>
+<td>counter</td>
+<td>Shows a count of persistent messages that have been browsed.</td>
+<td>MQGET browse persistent message count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqget_browse_non_persistent_byte_count</td>
-<td class="confluenceTd">Shows the number of bytes of non-persistent messages that have been browsed.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_mqget_browse_non_persistent_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows the number of bytes of non-persistent messages that have been browsed.</td>
+<td>MQGET browse non-persistent byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_mqget_browse_persistent_byte_count</td>
-<td class="confluenceTd">Shows the number of bytes of persistent messages that have been browsed.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_mqget_browse_persistent_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows the number of bytes of persistent messages that have been browsed.</td>
+<td>MQGET browse persistent byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_messages_expired</td>
-<td class="confluenceTd">Shows a count of expired messages.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_messages_expired_totalmessages</td>
+<td>counter</td>
+<td>Shows a count of expired messages.</td>
+<td>messages expired</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_queue_purged_count</td>
-<td class="confluenceTd">Shows a count of queues that have been purged.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mqobject_get_queue_purged_count_totalqueues</td>
+<td>counter</td>
+<td>Shows a count of queues that have been purged.</td>
+<td>queue purged count</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_average_queue_time</td>
-<td class="confluenceTd">Shows the average latency of messages that are retrieved from the queue.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">microseconds</td>
+<td>mqobject_get_average_queue_time_microseconds</td>
+<td>gauge</td>
+<td>Shows the average latency of messages that are retrieved from the queue.</td>
+<td>average queue time</td>
 </tr>
 <tr>
-<td class="confluenceTd">object_queue_depth</td>
-<td class="confluenceTd">Shows&nbsp;the number of messages on the&nbsp;queue.</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">units</td>
+<td>mqobject_get_queue_depth_messages</td>
+<td>gauge</td>
+<td>Shows the number of messages on the queue.</td>
+<td>Queue depth</td>
 </tr>
 </tbody>
 </table>
