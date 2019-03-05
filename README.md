@@ -45,235 +45,206 @@ mvn package
 ## Metrics
 #### Platform central processing units
 ###### CPU performance - platform wide
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
 <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">user_cpu_time_percentage</td>
-<td class="confluenceTd">Shows the percentage of CPU busy in user state.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>system_cpu_user_cpu_time_percentage</td>
+<td>gauge</td>
+<td>Shows the percentage of CPU busy in user state.</td>
+<td>User CPU time percentage</td>
 </tr>
 <tr>
-<td class="confluenceTd">system_cpu_time_percentage</td>
-<td class="confluenceTd">Shows the percentage of CPU busy in system state</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>system_cpu_cpu_time_percentage</td>
+<td>gauge</td>
+<td>Shows the percentage of CPU busy in system state</td>
+<td>System CPU time percentage</td>
 </tr>
 <tr>
-<td class="confluenceTd">cpu_load_one_minute_average</td>
-<td class="confluenceTd">Shows the load average over 1 minute.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">hundredths</td>
+<td>system_cpu_cpu_load_one_minute_average_hundredths</td>
+<td>gauge</td>
+<td>Shows the load average over 1 minute.</td>
+<td>CPU load - one minute average</td>
 </tr>
 <tr>
-<td class="confluenceTd">cpu_load_five_minute_average</td>
-<td class="confluenceTd">Shows the load average over 5 minutes.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">hundredths</td>
+<td>system_cpu_cpu_load_five_minute_average_hundredths</td>
+<td>gauge</td>
+<td>Shows the load average over 5 minutes.</td>
+<td>CPU load - five minute average</td>
 </tr>
 <tr>
-<td class="confluenceTd">cpu_load_fifteen_minute_average</td>
-<td class="confluenceTd">Shows the load average over fifteen minutes. </td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">hundredths</td>
+<td>system_cpu_cpu_load_fifteen_minute_average_hundredths</td>
+<td>gauge</td>
+<td>Shows the load average over fifteen minutes.&nbsp;</td>
+<td>CPU load - fifteen minute average</td>
 </tr>
 <tr>
-<td class="confluenceTd">ram_free_percentage</td>
-<td class="confluenceTd">Shows the percentage of free RAM memory.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>system_ram_ram_free_percentage</td>
+<td>gauge</td>
+<td>Shows the percentage of free RAM memory.</td>
+<td>RAM free percentage</td>
 </tr>
 <tr>
-<td class="confluenceTd">ram_total_bytes</td>
-<td class="confluenceTd">Shows the total bytes of RAM configured.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">megabytes</td>
+<td>system_ram_ram_total_megabytes</td>
+<td>gauge</td>
+<td>Shows the total bytes of RAM configured.</td>
+<td>RAM total bytes</td>
 </tr>
 </tbody>
 </table>
 
 ###### CPU performance - running queue manager
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
 <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">user_cpu_time_percentage_estimate_for_queue_manager</td>
-<td class="confluenceTd">Estimates the percentage of CPU use in user state for processes that are related to the queue managers that are being monitored.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>mq_cpu_user_cpu_time_estimate_percentage</td>
+<td>gauge</td>
+<td>Estimates the percentage of CPU use in user state for processes that are related to the queue managers that are being monitored.</td>
+<td>User CPU time - percentage estimate for queue manager</td>
 </tr>
 <tr>
-<td class="confluenceTd">system_cpu_time_percentage_estimate_for_queue_manager</td>
-<td class="confluenceTd">Estimates the percentage of CPU use in system state for processes that are related to the queue managers that are being monitored</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>mq_cpu_system_cpu_time_estimat_percentage</td>
+<td>gauge</td>
+<td>Estimates the percentage of CPU use in system state for processes that are related to the queue managers that are being monitored</td>
+<td>System CPU time - percentage estimate for queue manager</td>
 </tr>
 <tr>
-<td class="confluenceTd">ram_total_bytes_estimate_for_queue_manager</td>
-<td class="confluenceTd">Estimates the total bytes of RAM in use by the queue managers that are being monitored.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">megabytes</td>
+<td>mq_cpu_ram_total_estimate_megabytes</td>
+<td>gauge</td>
+<td>Estimates the total bytes of RAM in use by the queue managers that are being monitored.</td>
+<td>RAM total bytes - estimate for queue manager</td>
 </tr>
 </tbody>
 </table>
 
 #### Platform persistent data stores
 ###### Disk usage - platform wide
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">mq_trace_file_system_bytes_in_use</td>
-<td class="confluenceTd">Shows the number of bytes of disk storage that are being used by the trace file system.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">megabytes</td>
+<td>mq_disk_trace_file_system_in_use_megabytes</td>
+<td>gauge</td>
+<td>Shows the number of bytes of disk storage that are being used by the trace file system.</td>
+<td>MQ trace file system - bytes in use</td>
 </tr>
 <tr>
-<td class="confluenceTd">mq_trace_file_system_free_space</td>
-<td class="confluenceTd">Shows the disk storage that is reserved for the trace file system that is free.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>mq_disk_trace_file_system_free_space_percentage</td>
+<td>gauge</td>
+<td>Shows the disk storage that is reserved for the trace file system that is free.</td>
+<td>MQ trace file system - free space</td>
 </tr>
 <tr>
-<td class="confluenceTd">mq_errors_file_system_bytes_in_use</td>
-<td class="confluenceTd">Shows the number of bytes of disk storage that is being used by error data.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">megabytes</td>
+<td>mq_disk_errors_file_system_in_use_megabytes</td>
+<td>gauge</td>
+<td>Shows the number of bytes of disk storage that is being used by error data.</td>
+<td>MQ errors file system - bytes in use</td>
 </tr>
 <tr>
-<td class="confluenceTd">mq_errors_file_system_free_space</td>
-<td class="confluenceTd">Shows the disk storage that is reserved for error data that is free.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>mq_disk_errors_file_system_free_space_percentage</td>
+<td>gauge</td>
+<td>Shows the disk storage that is reserved for error data that is free.</td>
+<td>MQ errors file system - free space</td>
 </tr>
 <tr>
-<td class="confluenceTd">mq_fdc_file_count</td>
-<td class="confluenceTd">Shows the current number of FDC files.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">units</td>
+<td>mq_disk_fdc_file_count_files</td>
+<td>gauge</td>
+<td>Shows the current number of FDC files.</td>
+<td>MQ FDC file count</td>
 </tr>
 </tbody>
 </table>
 
 ###### Disk usage - running queue managers
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">queue_manager_file_system_bytes_in_use</td>
-<td class="confluenceTd">Shows the number of bytes of disk storage that is used by queue manager files for the queue managers that you are monitoring.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">megabytes</td>
+<td>mq_disk_file_system_in_use_megabytes</td>
+<td>gauge</td>
+<td>Shows the number of bytes of disk storage that is used by queue manager files for the queue managers that you are monitoring.</td>
+<td>Queue Manager file system - bytes in use</td>
 </tr>
 <tr>
-<td class="confluenceTd">queue_manager_file_system_free_space</td>
-<td class="confluenceTd">Shows the disk storage that is reserved for queue manager files that is free.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">percent</td>
+<td>mq_disk_file_system_free_space_percentage</td>
+<td>gauge</td>
+<td>Shows the disk storage that is reserved for queue manager files that is free.</td>
+<td>Queue Manager file system - free space</td>
 </tr>
 </tbody>
 </table>
 
 ###### Disk usage - queue manager recovery log
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">log_bytes_in_use</td>
-<td class="confluenceTd">Shows the number of bytes of disk storage that is used for the recovery logs of the queue managers that you are monitoring.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">units</td>
+<td>mq_rlog_log_bytes_in_use_bytes</td>
+<td>gauge</td>
+<td>Shows the number of bytes of disk storage that is used for the recovery logs of the queue managers that you are monitoring.</td>
+<td>Log - bytes in use</td>
 </tr>
 <tr>
-<td class="confluenceTd">log_bytes_max</td>
-<td class="confluenceTd">Shows the maximum bytes of disk storage that is configured to be used for queue manager recovery logs.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">units</td>
+<td>mq_rlog_log_bytes_max_bytes</td>
+<td>gauge</td>
+<td>Shows the maximum bytes of disk storage that is configured to be used for queue manager recovery logs.</td>
+<td>Log - bytes max</td>
 </tr>
 <tr>
-<td class="confluenceTd">log_file_system_bytes_in_use</td>
-<td class="confluenceTd">Shows the total number of disk bytes in use for the log file system.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">units</td>
+<td>mq_rlog_log_file_system_bytes_in_use_bytes</td>
+<td>gauge</td>
+<td>Shows the total number of disk bytes in use for the log file system.</td>
+<td>Log file system - bytes in use</td>
 </tr>
 <tr>
-<td class="confluenceTd">log_file_system_bytes_max</td>
-<td class="confluenceTd">Shows the number of disk bytes that are configured for the log file system. </td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">units</td>
+<td>mq_rlog_log_file_system_bytes_max_bytes</td>
+<td>gauge</td>
+<td>Shows the number of disk bytes that are configured for the log file system.&nbsp;</td>
+<td>Log file system - bytes max</td>
 </tr>
 <tr>
-<td class="confluenceTd">log_physical_bytes_written</td>
-<td class="confluenceTd">Shows the number of bytes being written to the recovery logs.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_rlog_log_physical_bytes_written_bytes</td>
+<td>counter</td>
+<td>Shows the number of bytes being written to the recovery logs.</td>
+<td>Log - physical bytes written</td>
 </tr>
 <tr>
-<td class="confluenceTd">log_logical_bytes_written</td>
-<td class="confluenceTd">Shows the logical number of bytes written to the recovery logs.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_rlog_log_logical_bytes_written_bytes</td>
+<td>counter</td>
+<td>Shows the logical number of bytes written to the recovery logs.</td>
+<td>Log - logical bytes written</td>
 </tr>
 <tr>
-<td class="confluenceTd">log_write_latency</td>
-<td class="confluenceTd">Shows a measure of the latency when writing synchronously to the queue manager recovery log.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">microseconds</td>
+<td>mq_rlog_log_write_latency_microseconds</td>
+<td>gauge</td>
+<td>Shows a measure of the latency when writing synchronously to the queue manager recovery log.</td>
+<td>Log - write latency</td>
 </tr>
 </tbody>
 </table>
