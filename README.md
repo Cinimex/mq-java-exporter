@@ -1,4 +1,4 @@
-# mq-java-exporter
+# IBM MQ Exporter
 
 Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and system metrics of it's host machine.
 
