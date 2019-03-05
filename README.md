@@ -2,6 +2,39 @@
 
 Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and system metrics of it's host machine.
 
+## Table of contents
+1. [Getting Started](https://github.com/Cinimex-Informatica/mq-java-exporter#getting-started)
+   - [Compatibility](https://github.com/Cinimex-Informatica/mq-java-exporter#compatibility)
+   - [Prerequisites](https://github.com/Cinimex-Informatica/mq-java-exporter#prerequisites)
+   - [Dependencies](https://github.com/Cinimex-Informatica/mq-java-exporter#dependencies)
+   - [Configuration](https://github.com/Cinimex-Informatica/mq-java-exporter#configuration)
+   - [Build](https://github.com/Cinimex-Informatica/mq-java-exporter#build)
+2. [Metrics](https://github.com/Cinimex-Informatica/mq-java-exporter#metrics)
+   - [Platform central processing units](https://github.com/Cinimex-Informatica/mq-java-exporter#platform-central-processing-units)
+     - [CPU performance - platform wide](https://github.com/Cinimex-Informatica/mq-java-exporter#cpu-performance---platform-wide)
+     - [CPU performance - running queue manager](https://github.com/Cinimex-Informatica/mq-java-exporter#cpu-performance---running-queue-manager)
+   - [Platform persistent data stores](https://github.com/Cinimex-Informatica/mq-java-exporter#platform-persistent-data-stores)
+     - [Disk usage - platform wide](https://github.com/Cinimex-Informatica/mq-java-exporter#disk-usage---platform-wide)
+     - [Disk usage - running queue managers](https://github.com/Cinimex-Informatica/mq-java-exporter#disk-usage---running-queue-managers)
+     - [Disk usage - queue manager recovery log](https://github.com/Cinimex-Informatica/mq-java-exporter#disk-usage---queue-manager-recovery-log)
+   - [API usage statistics](https://github.com/Cinimex-Informatica/mq-java-exporter#api-usage-statistics)
+     - [MQCONN and MQDISC](https://github.com/Cinimex-Informatica/mq-java-exporter#mqconn-and-mqdisc)
+     - [MQOPEN and MQCLOSE](https://github.com/Cinimex-Informatica/mq-java-exporter#mqopen-and-mqclose)
+     - [MQINQ and MQSET](https://github.com/Cinimex-Informatica/mq-java-exporter#mqinq-and-mqset)
+     - [MQPUT](https://github.com/Cinimex-Informatica/mq-java-exporter#mqput)
+     - [MQGET](https://github.com/Cinimex-Informatica/mq-java-exporter#mqget)
+     - [Commit and rollback](https://github.com/Cinimex-Informatica/mq-java-exporter#commit-and-rollback)
+     - [Subscribe](https://github.com/Cinimex-Informatica/mq-java-exporter#subscribe)
+     - [Publish](https://github.com/Cinimex-Informatica/mq-java-exporter#publish)
+   - [API per-queue usage statistics](https://github.com/Cinimex-Informatica/mq-java-exporter#api-per-queue-usage-statistics)
+     - [MQOPEN and MQCLOSE](https://github.com/Cinimex-Informatica/mq-java-exporter#mqopen-and-mqclose-1)
+     - [MQINQ and MQSET](https://github.com/Cinimex-Informatica/mq-java-exporter#mqinq-and-mqset-1)
+     - [MQPUT and MQPUT1](https://github.com/Cinimex-Informatica/mq-java-exporter#mqput-and-mqput1)
+     - [MQGET](https://github.com/Cinimex-Informatica/mq-java-exporter#mqget-1)
+3. [Issues and Contributions](https://github.com/Cinimex-Informatica/mq-java-exporter#issues-and-contributions)
+4. [Warning](https://github.com/Cinimex-Informatica/mq-java-exporter#warning)
+5. [License](https://github.com/Cinimex-Informatica/mq-java-exporter#license)
+
 ## Getting Started
 
 #### Compatibility
