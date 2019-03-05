@@ -251,546 +251,478 @@ mvn package
 
 #### API usage statistics
 ###### MQCONN and MQDISC
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">mqconn_mqconnx_count</td>
-<td class="confluenceTd">Shows the number of calls to MQCONN and MQCONNX.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqconn_mqconnx_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQCONN and MQCONNX.</td>
+<td>MQCONN/MQCONNX count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_mqconn_mqconnx_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQCONN and MQCONNX.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqconn_failed_mqconn_mqconnx_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQCONN and MQCONNX.</td>
+<td>Failed MQCONN/MQCONNX count</td>
 </tr>
 <tr>
-<td class="confluenceTd">concurrent_connections_high_water_mark</td>
-<td class="confluenceTd">Shows the maximum number of concurrent connections in the current statistics interval.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">units</td>
+<td>mq_mqconn_concurrent_connections_high_water_mark_totalconnections</td>
+<td>gauge</td>
+<td>Shows the maximum number of concurrent connections in the current statistics interval.</td>
+<td>Concurrent connections - high water mark</td>
 </tr>
 <tr>
-<td class="confluenceTd">mqdisc_count</td>
-<td class="confluenceTd">Shows the number of calls to MQDISC.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqdisc_mqdisc_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQDISC.</td>
+<td>MQDISC count</td>
 </tr>
 </tbody>
 </table>
 
 ###### MQOPEN and MQCLOSE
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">mqopen_count</td>
-<td class="confluenceTd">Shows the number of calls to MQOPEN.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqopen_mqopen_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQOPEN.</td>
+<td>MQOPEN count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_mqopen_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQOPEN.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqopen_failed_mqopen_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQOPEN.</td>
+<td>Failed MQOPEN count</td>
 </tr>
 <tr>
-<td class="confluenceTd">mqclose_count</td>
-<td class="confluenceTd">Shows the number of calls to MQCLOSE.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqclose_mqclose_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQCLOSE.</td>
+<td>MQCLOSE count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_mqclose_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQCLOSE.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqclose_failed_mqclose_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQCLOSE.</td>
+<td>Failed MQCLOSE count</td>
 </tr>
 </tbody>
 </table>
 
 ###### MQINQ and MQSET
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
-  <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">mqinq_count</td>
-<td class="confluenceTd">Shows the number of calls to MQINQ.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqinq_mqinq_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQINQ.</td>
+<td>MQINQ count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_mqinq_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQINQ.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqinq_failed_mqinq_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQINQ.</td>
+<td>Failed MQINQ count</td>
 </tr>
 <tr>
-<td class="confluenceTd">mqset_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSET.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqset_mqset_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSET.</td>
+<td>MQSET count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_mqset_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQSET.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_mqset_failed_mqset_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQSET.</td>
+<td>Failed MQSET count</td>
 </tr>
 </tbody>
 </table>
 
 ###### MQPUT
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">interval_total_mqput_mqput1_count</td>
-<td class="confluenceTd">Shows the number of calls to MQPUT and MQPUT1.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_interval_total_mqput_mqput1_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQPUT and MQPUT1.</td>
+<td>Interval total MQPUT/MQPUT1 count</td>
 </tr>
 <tr>
-<td class="confluenceTd">interval_total_mqput_mqput1_byte_count</td>
-<td class="confluenceTd">Shows the total bytes of data that is put by calls to MQPUT and MQPUT1.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_interval_total_mqput_mqput1_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows the total bytes of data that is put by calls to MQPUT and MQPUT1.</td>
+<td>Interval total MQPUT/MQPUT1 byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">non_persistent_message_mqput_count</td>
-<td class="confluenceTd">Shows the number of non-persistent messages that are put by MQPUT.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_non_persistent_message_mqput_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of non-persistent messages that are put by MQPUT.</td>
+<td>Non-persistent message MQPUT count</td>
 </tr>
 <tr>
-<td class="confluenceTd">persistent_message_mqput_count</td>
-<td class="confluenceTd">Shows the number of persistent messages that are put by MQPUT.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_persistent_message_mqput_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of persistent messages that are put by MQPUT.</td>
+<td>Persistent message MQPUT count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_mqput_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQPUT.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_failed_mqput_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQPUT.</td>
+<td>Failed MQPUT count</td>
 </tr>
 <tr>
-<td class="confluenceTd">non_persistent_message_mqput1_count</td>
-<td class="confluenceTd">Shows the number of non-persistent messages that are put by MQPUT1.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_non_persistent_message_mqput1_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of non-persistent messages that are put by MQPUT1.</td>
+<td>Non-persistent message MQPUT1 count</td>
 </tr>
 <tr>
-<td class="confluenceTd">persistent_message_mqput1_count</td>
-<td class="confluenceTd">Shows the number of persistent messages that are put by MQPUT1.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_persistent_message_mqput1_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of persistent messages that are put by MQPUT1.</td>
+<td>Persistent message MQPUT1 count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_mqput1_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQPUT1.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_failed_mqput1_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQPUT1.</td>
+<td>Failed MQPUT1 count</td>
 </tr>
 <tr>
-<td class="confluenceTd">put_non_persistent_messages_byte_count</td>
-<td class="confluenceTd">Shows the number of bytes put in non-persistent messages.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_put_non_persistent_messages_byte_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of bytes put in non-persistent messages.</td>
+<td>Put non-persistent messages - byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">put_persistent_messages_byte_count</td>
-<td class="confluenceTd">Shows the number of bytes put in persistent messages.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_put_persistent_messages_byte_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of bytes put in persistent messages.</td>
+<td>Put persistent messages - byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">mqstat_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSTAT.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_put_mqstat_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSTAT.</td>
+<td>MQSTAT count</td>
 </tr>
 </tbody>
 </table>
 
 ###### MQGET
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
 <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
+</tr>
 </tr>
 <tr>
-<td class="confluenceTd">interval_total_destructive_get_count</td>
-<td class="confluenceTd">Number of messages that are removed from queues by MQGET.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_interval_total_destructive_get_count_totalmessages</td>
+<td>counter</td>
+<td>Number of messages that are removed from queues by MQGET.</td>
+<td>Interval total destructive get- count</td>
 </tr>
 <tr>
-<td class="confluenceTd">interval_total_destructive_get_byte_count</td>
-<td class="confluenceTd">Bytes of data that is removed from queues by MQGET.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_interval_total_destructive_get_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Bytes of data that is removed from queues by MQGET.</td>
+<td>Interval total destructive get - byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">non_persistent_message_destructive_get_count</td>
-<td class="confluenceTd">Number of non-persistent messages that are removed from queues by MQGET.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_non_persistent_message_destructive_get_count_totalmessages</td>
+<td>counter</td>
+<td>Number of non-persistent messages that are removed from queues by MQGET.</td>
+<td>Non-persistent message destructive get - count</td>
 </tr>
 <tr>
-<td class="confluenceTd">persistent_message_destructive_get_count</td>
-<td class="confluenceTd">Number of persistent messages that are removed from queues by MQGET.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_persistent_message_destructive_get_count_totalmessages</td>
+<td>counter</td>
+<td>Number of persistent messages that are removed from queues by MQGET.</td>
+<td>Persistent message destructive get - count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_mqget_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQGET.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_failed_mqget_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQGET.</td>
+<td>Failed MQGET - count</td>
 </tr>
 <tr>
-<td class="confluenceTd">got_non_persistent_messages_byte_count</td>
-<td class="confluenceTd">Shows a count of bytes of non-persistent messages that are returned to MQGET.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_got_non_persistent_messages_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows a count of bytes of non-persistent messages that are returned to MQGET.</td>
+<td>Got non-persistent messages - byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">got_persistent_messages_byte_count</td>
-<td class="confluenceTd">Shows a count of bytes of persistent messages that are returned to MQGET.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_got_persistent_messages_byte_count_totalbytes</td>
+<td>counter</td>
+<td>Shows a count of bytes of persistent messages that are returned to MQGET.</td>
+<td>Got persistent messages - byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">non_persistent_message_browse_count</td>
-<td class="confluenceTd">Shows a count of non-persistent messages that have been browsed.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_non_persistent_message_browse_count_totalmessages</td>
+<td>counter</td>
+<td>Shows a count of non-persistent messages that have been browsed.</td>
+<td>Non-persistent message browse - count</td>
 </tr>
 <tr>
-<td class="confluenceTd">persistent_message_browse_count</td>
-<td class="confluenceTd">Shows a count of persistent messages that have been browsed.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_persistent_message_browse_count_totalmessages</td>
+<td>counter</td>
+<td>Shows a count of persistent messages that have been browsed.</td>
+<td>Persistent message browse - count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_browse_count</td>
-<td class="confluenceTd">Shows a count of failed message browses.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_failed_browse_count_totalbrowses</td>
+<td>counter</td>
+<td>Shows a count of failed message browses.</td>
+<td>Failed browse count</td>
 </tr>
 <tr>
-<td class="confluenceTd">non_persistent_message_browse_byte_count</td>
-<td class="confluenceTd">Shows the number of bytes of non-persistent messages that have been browsed.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_non_persistent_message_browse_byte_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of bytes of non-persistent messages that have been browsed.</td>
+<td>Non-persistent message browse - byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">persistent_message_browse_byte_count</td>
-<td class="confluenceTd">Shows the number of bytes of persistent messages that have been browsed.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_persistent_message_browse_byte_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of bytes of persistent messages that have been browsed.</td>
+<td>Persistent message browse - byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">expired_message_count</td>
-<td class="confluenceTd">Shows a count of expired messages.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_expired_message_count_totalmessages</td>
+<td>counter</td>
+<td>Shows a count of expired messages.</td>
+<td>Expired message count</td>
 </tr>
 <tr>
-<td class="confluenceTd">purged_queue_count</td>
-<td class="confluenceTd">Shows a count of queues that have been purged.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_purged_queue_count_totalmessages</td>
+<td>counter</td>
+<td>Shows a count of queues that have been purged.</td>
+<td>Purged queue count</td>
 </tr>
 <tr>
-<td class="confluenceTd">mqcb_count</td>
-<td class="confluenceTd">Shows the number of calls to MQCB.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_mqcb_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQCB.</td>
+<td>MQCB count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_mqcb_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQCB.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_failed_mqcb_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQCB.</td>
+<td>Failed MQCB count</td>
 </tr>
 <tr>
-<td class="confluenceTd">mqctl_count</td>
-<td class="confluenceTd">Shows the number of calls to MQCTL.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_get_mqctl_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQCTL.</td>
+<td>MQCTL count</td>
 </tr>
 </tbody>
 </table>
 
 ###### Commit and rollback
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
+</tr>
 </tr>
 <tr>
-<td class="confluenceTd">commit_count</td>
-<td class="confluenceTd">Shows the number of calls to MQCMIT.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_commit_commit_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQCMIT.</td>
+<td>Commit count</td>
 </tr>
 <tr>
-<td class="confluenceTd">rollback_count</td>
-<td class="confluenceTd">Shows the number of calls to MQBACK.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_rollback_rollback_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQBACK.</td>
+<td>Rollback count</td>
 </tr>
 </tbody>
 </table>
 
 ###### Subscribe
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
+</tr>
 </tr>
 <tr>
-<td class="confluenceTd">create_durable_subscription_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSUB to create durable subscriptions.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_create_durable_subscription_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSUB to create durable subscriptions.</td>
+<td>Create durable subscription count</td>
 </tr>
 <tr>
-<td class="confluenceTd">alter_durable_subscription_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSUB to alter durable subscriptions.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_alter_durable_subscription_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSUB to alter durable subscriptions.</td>
+<td>Alter durable subscription count</td>
 </tr>
 <tr>
-<td class="confluenceTd">resume_durable_subscription_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSUB to resume durable subscriptions.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_resume_durable_subscription_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSUB to resume durable subscriptions.</td>
+<td>Resume durable subscription count</td>
 </tr>
 <tr>
-<td class="confluenceTd">create_non_durable_subscription_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSUB to create non-durable subscriptions.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_create_non_durable_subscription_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSUB to create non-durable subscriptions.</td>
+<td>Create non-durable subscription count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_create_alter_resume_subscription_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQSUBRQ to create, alter, or resume subscriptions.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_failed_create_alter_resume_subscription_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQSUBRQ to create, alter, or resume subscriptions.</td>
+<td>Failed create/alter/resume subscription count</td>
 </tr>
 <tr>
-<td class="confluenceTd">delete_durable_subscription_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSUB to delete durable subscriptions.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_delete_durable_subscription_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSUB to delete durable subscriptions.</td>
+<td>Delete durable subscription count</td>
 </tr>
 <tr>
-<td class="confluenceTd">delete_non_durable_subscription_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSUB to delete non-durable subscriptions.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_delete_non_durable_subscription_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSUB to delete non-durable subscriptions.</td>
+<td>Delete non-durable subscription count</td>
 </tr>
 <tr>
-<td class="confluenceTd">subscription_delete_failure_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSUB to delete subscriptions.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_subscription_delete_failure_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSUB to delete subscriptions.</td>
+<td>Subscription delete failure count</td>
 </tr>
 <tr>
-<td class="confluenceTd">mqsubrq_count</td>
-<td class="confluenceTd">Shows the number of calls to MQSUBRQ</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_mqsubrq_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of calls to MQSUBRQ</td>
+<td>MQSUBRQ count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_mqsubrq_count</td>
-<td class="confluenceTd">Shows the number of failed calls to MQSUBRQ</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_failed_mqsubrq_count_totalcalls</td>
+<td>counter</td>
+<td>Shows the number of failed calls to MQSUBRQ</td>
+<td>Failed MQSUBRQ count</td>
 </tr>
 <tr>
-<td class="confluenceTd">durable_subscriber_high_water_mark</td>
-<td class="confluenceTd">Shows the maximum number of durable subscriptions in the current statistics interval.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_durable_subscriber_high_water_mark_subscriptions</td>
+<td>counter</td>
+<td>Shows the maximum number of durable subscriptions in the current statistics interval.</td>
+<td>Durable subscriber - high water mark</td>
 </tr>
 <tr>
-<td class="confluenceTd">durable_subscriber_low_water_mark</td>
-<td class="confluenceTd">Shows the minimum number of durable subscriptions in the current statistics interval.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_durable_subscriber_low_water_mark_subscriptions</td>
+<td>counter</td>
+<td>Shows the minimum number of durable subscriptions in the current statistics interval.</td>
+<td>Durable subscriber - low water mark</td>
 </tr>
 <tr>
-<td class="confluenceTd">non_durable_subscriber_high_water_mark</td>
-<td class="confluenceTd">Shows the maximum number of non-durable subscriptions in the current statistics interval.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_non_durable_subscriber_high_water_mark_subscriptions</td>
+<td>counter</td>
+<td>Shows the maximum number of non-durable subscriptions in the current statistics interval.</td>
+<td>Non-durable subscriber - high water mark</td>
 </tr>
 <tr>
-<td class="confluenceTd">non_durable_subscriber_low_water_mark</td>
-<td class="confluenceTd">Shows the minimum number of non-durable subscriptions in the current statistics interval.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_subscribe_non_durable_subscriber_low_water_mark_subscriptions</td>
+<td>counter</td>
+<td>Shows the minimum number of non-durable subscriptions in the current statistics interval.</td>
+<td>Non-durable subscriber - low water mark</td>
 </tr>
 </tbody>
 </table>
 
 ###### Publish
-<table class="wrapped confluenceTable">
+<table>
 <tbody>
- <tr>
-<td class="confluenceTd"><strong>Metric name</strong></td>
-<td class="confluenceTd"><strong>Short description</strong></td>
-<td class="confluenceTd"><strong>Requires object</strong></td>
-<td class="confluenceTd"><strong>Is a counter</strong></td>
-<td class="confluenceTd"><strong>Datatype</strong></td>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+<td><strong>MQ metric elemen</strong></td>
 </tr>
 <tr>
-<td class="confluenceTd">topic_mqput_mqput1_interval_total</td>
-<td class="confluenceTd">The number of messages that are put to topics.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_publish_topic_mqput_mqput1_interval_total_totalmessages</td>
+<td>counter</td>
+<td>The number of messages that are put to topics.</td>
+<td>Topic MQPUT/MQPUT1 interval total</td>
 </tr>
 <tr>
-<td class="confluenceTd">interval_total_topic_bytes_put</td>
-<td class="confluenceTd">The number of message bytes put to topics.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_publish_interval_total_topic_bytes_put_totalbytes</td>
+<td>counter</td>
+<td>The number of message bytes put to topics.</td>
+<td>Interval total topic bytes put</td>
 </tr>
 <tr>
-<td class="confluenceTd">published_to_subscribers_message_count</td>
-<td class="confluenceTd">Shows the number of messages that are published to subscribers.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_publish_published_to_subscribers_message_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of messages that are published to subscribers.</td>
+<td>Published to subscribers - message count</td>
 </tr>
 <tr>
-<td class="confluenceTd">published_to_subscribers_byte_count</td>
-<td class="confluenceTd">Shows the byte count of messages that are published to subscribers.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_publish_published_to_subscribers_byte_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the byte count of messages that are published to subscribers.</td>
+<td>Published to subscribers - byte count</td>
 </tr>
 <tr>
-<td class="confluenceTd">non_persistent_topic_mqput_mqput1_count</td>
-<td class="confluenceTd">Shows the number of non-persistent messages that are put to topics.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_publish_non_persistent_topic_mqput_mqput1_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of non-persistent messages that are put to topics.</td>
+<td>Non-persistent - topic MQPUT/MQPUT1 count</td>
 </tr>
 <tr>
-<td class="confluenceTd">persistent_topic_mqput_mqput1_count</td>
-<td class="confluenceTd">Shows the number of persistent messages that are put to topics.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_publish_persistent_topic_mqput_mqput1_count_totalmessages</td>
+<td>counter</td>
+<td>Shows the number of persistent messages that are put to topics.</td>
+<td>Persistent - topic MQPUT/MQPUT1 count</td>
 </tr>
 <tr>
-<td class="confluenceTd">failed_topic_mqput_mqput1_count</td>
-<td class="confluenceTd">Shows the number of failed attempts to put to a topic.</td>
-<td class="confluenceTd">No</td>
-<td class="confluenceTd">Yes</td>
-<td class="confluenceTd">delta</td>
+<td>mq_publish_failed_topic_mqput_mqput1_count_totalattempts</td>
+<td>counter</td>
+<td>Shows the number of failed attempts to put to a topic.</td>
+<td>Failed topic MQPUT/MQPUT1 count</td>
 </tr>
 </tbody>
 </table>
