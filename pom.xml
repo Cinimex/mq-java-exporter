@@ -11,7 +11,7 @@
         <mq.allclient.version>9.0.0.1</mq.allclient.version>
         <snakeyaml.version>1.23</snakeyaml.version>
         <prometheus.version>0.6.0</prometheus.version>
-        <mq.allclient.jar.path>./lib/com.ibm.mq.allclient.jar</mq.allclient.jar.path>
+        <mq.allclient.jar.path>/lib/com.ibm.mq.allclient.jar</mq.allclient.jar.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -23,6 +23,8 @@
             <groupId>com.ibm.mq</groupId>
             <artifactId>com.ibm.mq.allclient</artifactId>
             <version>${mq.allclient.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}${mq.allclient.jar.path}</systemPath>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
