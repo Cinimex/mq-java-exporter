@@ -1,15 +1,12 @@
 package ru.cinimex.exporter.mq;
 
-import com.ibm.mq.MQException;
-import com.ibm.mq.MQGetMessageOptions;
-import com.ibm.mq.MQMessage;
-import com.ibm.mq.MQTopic;
-import com.ibm.mq.constants.MQConstants;
-import ru.cinimex.exporter.mq.pcf.PCFDataParser;
 import ru.cinimex.exporter.mq.pcf.PCFElement;
-import ru.cinimex.exporter.prometheus.metrics.GaugeManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class is used to manage work of all subscribers.
@@ -39,91 +36,50 @@ public class MQSubscriberManager {
     /**
      * Creates subscribers and starts them.
      *
-     * @param elements          - all elements, retrieved from target queue manager.
-     * @param monitoringObjects - all monitoring objects.
+     * @param elements         - all elements, retrieved from target queue manager.
+     * @param monitoringQueues - all monitoring objects.
      */
-    public void runSubscribers(ArrayList<PCFElement> elements, ArrayList<String> monitoringObjects) {
+    public void runSubscribers(ArrayList<PCFElement> elements, ArrayList<String> monitoringQueues, ArrayList<String> monitoringListeners, ArrayList<String> monitoringChannels, boolean sendPCFCommands, boolean collectQueueMaxDepth, boolean usePCFWildcards) {
         subscribers = new ArrayList<>();
         int i = 0;
         for (PCFElement element : elements) {
             if (!element.requiresMQObject()) {
-                subscribers.add(i, new Thread(new Subscriber(element, queueManagerName)));
+                subscribers.add(i, new Thread(new MQTopicSubscriber(element, queueManagerName, connectionProperties, queueManagerName)));
                 subscribers.get(i).start();
                 i++;
             } else {
-                for (String object : monitoringObjects) {
+                for (String object : monitoringQueues) {
                     PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
                     objElement.formatTopicString(object);
-                    subscribers.add(i, new Thread(new Subscriber(objElement, queueManagerName, object)));
+                    subscribers.add(i, new Thread(new MQTopicSubscriber(objElement, queueManagerName, connectionProperties, queueManagerName, object)));
                     subscribers.get(i).start();
                     i++;
                 }
             }
         }
-    }
 
-    /**
-     * Subscriber is used to subscribe to specific topic.
-     */
-    class Subscriber implements Runnable {
-        private MQTopic topic;
-        private PCFElement element;
-        private MQConnection connection;
-        private String[] labels;
-
-        /**
-         * Subscriber constructor
-         *
-         * @param element - PCF message data, which is required for parsing statistics.
-         * @param labels  - labels array, which should be used for metrics.
-         */
-        public Subscriber(PCFElement element, String... labels) {
-            this.element = element;
-            if (connection == null) {
-                connection = new MQConnection();
-                connection.establish(queueManagerName, connectionProperties);
-            }
-            this.labels = labels;
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        for(String queue : monitoringQueues){
+            MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties,
+                    new MQObject(queue, MQObject.MQType.QUEUE));
+            subscribers.add(i, new Thread(subscriber));
+            executor.scheduleAtFixedRate(subscriber, 0, 10, TimeUnit.SECONDS);
         }
-
-        /**
-         * Starts subscriber.
-         */
-        public void run() {
-            try {
-                topic = connection.createTopic(element.getTopicString());
-                MQGetMessageOptions gmo = new MQGetMessageOptions();
-                gmo.options = MQConstants.MQGMO_WAIT | MQConstants.MQGMO_COMPLETE_MSG;
-                gmo.waitInterval = 12000;
-                while (true) {
-                    try {
-                        MQMessage msg = new MQMessage();
-                        topic.get(msg, gmo);
-                        HashMap<Integer, Double> receivedMetrics = PCFDataParser.getParsedData(PCFDataParser.convertToPCF(msg));
-                        Iterator<Map.Entry<Integer, Double>> it = receivedMetrics.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Map.Entry<Integer, Double> pair = it.next();
-                            //TODO: There is some exception during startup. Need do define, why it occurs (there is unmapped id)
-                            GaugeManager.updateMetric(PCFDataParser.getMetricName(element.getMetricDescription(pair.getKey()), element.requiresMQObject()), pair.getValue(), labels);
-                            it.remove();
-                        }
-                    } catch (MQException e) {
-                        if (e.getReason() == 2033) System.out.println("No messages in " + element.getTopicString());
-                    }
-                }
-            } catch (MQException e) {
-                System.out.println("An error occured while trying to get queue object " + element.getTopicString());
-                System.err.println(e.getStackTrace());
-            } finally {
-                if (topic != null && topic.isOpen()) {
-                    try {
-                        topic.close();
-                        connection.close();
-                    } catch (MQException e) {
-                        System.err.println(e.getStackTrace());
+   /*     if (sendPCFCommands) {
+            if (collectQueueMaxDepth) {
+                if (usePCFWildcards) {
+                    subscribers.add(i, new Thread(new MQPCFSubscriber(String queueManagerName, Hashtable<String, Object> connectionProperties, MQObject object)));
+                    subscribers.get(i).start();
+                    i++;
+                } else {
+                    for (String object : monitoringQueues) {
+                        subscribers.add(i, new Thread(new MQPCFSubscriber()));
+                        subscribers.get(i).start();
+                        i++;
                     }
                 }
             }
-        }
+        }*/
+
     }
 }

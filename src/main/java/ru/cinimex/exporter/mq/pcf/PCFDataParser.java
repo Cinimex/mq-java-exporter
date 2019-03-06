@@ -151,6 +151,8 @@ public class PCFDataParser {
                 case MQConstants.MQCA_TOPIC_STRING:
                     topicString = param.getStringValue();
                     break;
+                 default:
+                     System.out.println(param.getParameterName() + " : " + param.getStringValue());
             }
             if (topicString != null && rows.size() > 0) {
                 elements.add(new PCFElement(topicString, rows));
@@ -221,22 +223,5 @@ public class PCFDataParser {
             e.printStackTrace();
         }
         return null;
-    }
-
-    /**
-     * Receives header's description and converts it into metric name to make valid for Prometheus.
-     *
-     * @param description      - description, retrieved from PCFElement
-     * @param requiresMQObject - some metrics, retrieved from PCFElement, have identical descriptions. This flag allows to increase the uniqueness of names.
-     * @return - valid and unique metric name
-     */
-    public static String getMetricName(String description, boolean requiresMQObject) {
-        String metricName = description.toLowerCase().trim();
-        metricName = metricName.replaceAll("[-/ ]+", "_");
-        if (requiresMQObject) {
-            metricName = "object_" + metricName;
-        }
-
-        return metricName;
     }
 }

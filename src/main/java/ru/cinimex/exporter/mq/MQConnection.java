@@ -63,7 +63,7 @@ public class MQConnection {
         try {
             queueManager = new MQQueueManager(qmName, connectionProperties);
         } catch (MQException e) {
-            System.err.println(e.getStackTrace());
+            System.err.println(e.getMessage());
         }
     }
 
@@ -78,7 +78,7 @@ public class MQConnection {
         try {
             queueManager = new MQQueueManager(qmNqme, connectionProperties);
         } catch (MQException e) {
-            System.err.println(e.getStackTrace());
+            System.err.println(e.getMessage());
         }
     }
 
@@ -90,7 +90,7 @@ public class MQConnection {
             try {
                 queueManager.disconnect();
             } catch (MQException e) {
-                System.err.println(e.getStackTrace());
+                System.err.println(e.getMessage());
             }
         }
     }
@@ -104,5 +104,9 @@ public class MQConnection {
      */
     public MQTopic createTopic(String topic) throws MQException {
         return queueManager.accessTopic(topic, "", CMQC.MQTOPIC_OPEN_AS_SUBSCRIPTION, CMQC.MQSO_CREATE | CMQC.MQSO_NON_DURABLE | CMQC.MQSO_MANAGED);
+    }
+
+    public MQQueueManager getQueueManager(){
+        return  this.queueManager;
     }
 }
