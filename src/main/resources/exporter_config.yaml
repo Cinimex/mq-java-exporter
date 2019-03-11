@@ -16,6 +16,17 @@ prometheusEndpointParams:
 
 # Monitoring objects ----------------------------------
 
+PCFParameters:
+  sendPCFCommands: true
+  usePCFWildcards: true
+  scrapeInterval: 10
+
 queues:
   - TEST.QUEUE.1
   - TEST.QUEUE.2
+
+listeners:
+  - LISTENER01
+
+channels:
+  - TEST.CHANNEL
