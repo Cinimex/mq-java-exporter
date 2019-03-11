@@ -114,8 +114,8 @@ public class ExporterLauncher {
             } catch (MQException e) {
                 System.err.println(String.format("Error occured during disconnecting from topic  %s. Error: %s", topic.toString(), e.getStackTrace()));
             }
-            return elements;
         }
+        return elements;
     }
 
     private static MQMessage getEmptyMessage() {
