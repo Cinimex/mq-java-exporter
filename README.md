@@ -686,25 +686,25 @@ mvn package
 </tr>
 <tr>
 <td>mq_subscribe_durable_subscriber_high_water_mark_subscriptions</td>
-<td>counter</td>
+<td>gauge</td>
 <td>Shows the maximum number of durable subscriptions in the current statistics interval.</td>
 <td>Durable subscriber - high water mark</td>
 </tr>
 <tr>
 <td>mq_subscribe_durable_subscriber_low_water_mark_subscriptions</td>
-<td>counter</td>
+<td>gauge</td>
 <td>Shows the minimum number of durable subscriptions in the current statistics interval.</td>
 <td>Durable subscriber - low water mark</td>
 </tr>
 <tr>
 <td>mq_subscribe_non_durable_subscriber_high_water_mark_subscriptions</td>
-<td>counter</td>
+<td>gauge</td>
 <td>Shows the maximum number of non-durable subscriptions in the current statistics interval.</td>
 <td>Non-durable subscriber - high water mark</td>
 </tr>
 <tr>
 <td>mq_subscribe_non_durable_subscriber_low_water_mark_subscriptions</td>
-<td>counter</td>
+<td>gauge</td>
 <td>Shows the minimum number of non-durable subscriptions in the current statistics interval.</td>
 <td>Non-durable subscriber - low water mark</td>
 </tr>
