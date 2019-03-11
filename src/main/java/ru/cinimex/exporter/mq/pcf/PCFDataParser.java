@@ -151,8 +151,7 @@ public class PCFDataParser {
                 case MQConstants.MQCA_TOPIC_STRING:
                     topicString = param.getStringValue();
                     break;
-                 default:
-                     System.out.println(param.getParameterName() + " : " + param.getStringValue());
+                default:
             }
             if (topicString != null && rows.size() > 0) {
                 elements.add(new PCFElement(topicString, rows));

@@ -35,7 +35,6 @@ public class PCFElementRow {
      *
      * @return - returns row datatype.
      */
-    //TODO: Check all metrics to make sure if it's usefull
     public int getRowDatatype() {
         return rowDatatype;
     }

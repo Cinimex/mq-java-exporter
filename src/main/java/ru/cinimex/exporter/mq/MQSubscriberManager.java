@@ -34,12 +34,15 @@ public class MQSubscriberManager {
     }
 
     /**
-     * Creates subscribers and starts them.
+     * Creates pool with subscribers and starts them.
      *
-     * @param elements         - all elements, retrieved from target queue manager.
-     * @param monitoringQueues - all monitoring objects.
+     * @param elements - elements, received via MQ monitoring topics.
+     * @param objects - objects, retrieved from configuration file.
+     * @param sendPCFCommands - this flag indicates, if we should send additional PCF commands (To get queues max depth, channels and listeners statuses).
+     * @param usePCFWildcards - this flag indicates, if we should use wildcards (uses only 1 connection per MQObject type, but longer response processing).
+     * @param interval - interval in seconds, at which additional PCF commands are sent.
      */
-    public void runSubscribers(ArrayList<PCFElement> elements, ArrayList<String> monitoringQueues, ArrayList<String> monitoringListeners, ArrayList<String> monitoringChannels, boolean sendPCFCommands, boolean collectQueueMaxDepth, boolean usePCFWildcards) {
+    public void runSubscribers(ArrayList<PCFElement> elements, ArrayList<MQObject> objects, boolean sendPCFCommands, boolean usePCFWildcards, int interval) {
         subscribers = new ArrayList<>();
         int i = 0;
         for (PCFElement element : elements) {
@@ -48,38 +51,58 @@ public class MQSubscriberManager {
                 subscribers.get(i).start();
                 i++;
             } else {
-                for (String object : monitoringQueues) {
-                    PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
-                    objElement.formatTopicString(object);
-                    subscribers.add(i, new Thread(new MQTopicSubscriber(objElement, queueManagerName, connectionProperties, queueManagerName, object)));
-                    subscribers.get(i).start();
-                    i++;
-                }
-            }
-        }
-
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        for(String queue : monitoringQueues){
-            MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties,
-                    new MQObject(queue, MQObject.MQType.QUEUE));
-            subscribers.add(i, new Thread(subscriber));
-            executor.scheduleAtFixedRate(subscriber, 0, 10, TimeUnit.SECONDS);
-        }
-   /*     if (sendPCFCommands) {
-            if (collectQueueMaxDepth) {
-                if (usePCFWildcards) {
-                    subscribers.add(i, new Thread(new MQPCFSubscriber(String queueManagerName, Hashtable<String, Object> connectionProperties, MQObject object)));
-                    subscribers.get(i).start();
-                    i++;
-                } else {
-                    for (String object : monitoringQueues) {
-                        subscribers.add(i, new Thread(new MQPCFSubscriber()));
+                for (MQObject object : objects) {
+                    if (object.getType() == MQObject.MQType.QUEUE) {
+                        PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
+                        objElement.formatTopicString(object.getName());
+                        subscribers.add(i, new Thread(new MQTopicSubscriber(objElement, queueManagerName, connectionProperties, queueManagerName, object.getName())));
                         subscribers.get(i).start();
                         i++;
                     }
                 }
             }
-        }*/
+        }
+
+        if (sendPCFCommands) {
+            int corePoolSize = usePCFWildcards ? MQObject.MQType.values().length : objects.size();
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(corePoolSize);
+            if (usePCFWildcards) {
+                ArrayList<MQObject> queues = new ArrayList<MQObject>();
+                ArrayList<MQObject> channels = new ArrayList<MQObject>();
+                ArrayList<MQObject> listeners = new ArrayList<MQObject>();
+                for (MQObject object : objects) {
+                    switch (object.getType()) {
+                        case QUEUE:
+                            queues.add(object);
+                            break;
+                        case CHANNEL:
+                            channels.add(object);
+                            break;
+                        case LISTENER:
+                            listeners.add(object);
+                            break;
+                    }
+                }
+
+                MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, queues);
+                subscribers.add(i++, new Thread(subscriber));
+                executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
+
+                subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, channels);
+                subscribers.add(i++, new Thread(subscriber));
+                executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
+
+                subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, listeners);
+                subscribers.add(i++, new Thread(subscriber));
+                executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
+            } else {
+                for (MQObject object : objects) {
+                    MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, object);
+                    subscribers.add(i++, new Thread(subscriber));
+                    executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
+                }
+            }
+        }
 
     }
 }

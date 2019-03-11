@@ -9,14 +9,14 @@ import com.ibm.mq.constants.MQConstants;
 import java.util.Hashtable;
 
 /**
- * Class represents MQ connection
+ * Class represents MQ connection.
  */
 public class MQConnection {
     private Hashtable<String, Object> connectionProperties;
     private MQQueueManager queueManager;
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public MQConnection() {
 
@@ -26,10 +26,10 @@ public class MQConnection {
      * Method creates connection properties Hashtable from connection parameters.
      *
      * @param host     - host, where queue manager is located.
-     * @param port     - queue manager's port
-     * @param channel  - queue manager's channel
-     * @param user     - user, which has enough privilege on the queue manager (optional)
-     * @param password - password, which is required to establish connection with queue manager (optional)
+     * @param port     - queue manager's port.
+     * @param channel  - queue manager's channel.
+     * @param user     - user, which has enough privilege on the queue manager (optional).
+     * @param password - password, which is required to establish connection with queue manager (optional).
      * @param useMQCSP - flag, which indicates, if MQCSP auth should be used.
      * @return - returns prepared structure with all parameters transformed into queue manager's format.
      */
@@ -106,7 +106,11 @@ public class MQConnection {
         return queueManager.accessTopic(topic, "", CMQC.MQTOPIC_OPEN_AS_SUBSCRIPTION, CMQC.MQSO_CREATE | CMQC.MQSO_NON_DURABLE | CMQC.MQSO_MANAGED);
     }
 
-    public MQQueueManager getQueueManager(){
-        return  this.queueManager;
+    /**
+     * Returns MQQueueManager object.
+     * @return - MQQueueManager object.
+     */
+    public MQQueueManager getQueueManager() {
+        return this.queueManager;
     }
 }

@@ -15,10 +15,11 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * MQTopicSubscriber is used to subscribe to specific topic.
+ */
 public class MQTopicSubscriber implements Runnable {
-    /**
-     * Subscriber is used to subscribe to specific topic.
-     */
+
         private MQTopic topic;
         private PCFElement element;
         private MQConnection connection;

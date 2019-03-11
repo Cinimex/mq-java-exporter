@@ -1,6 +1,7 @@
 package ru.cinimex.exporter.prometheus.metrics;
 
 import com.ibm.mq.constants.MQConstants;
+import ru.cinimex.exporter.mq.MQObject;
 import ru.cinimex.exporter.mq.pcf.PCFElement;
 import ru.cinimex.exporter.mq.pcf.PCFElementRow;
 
@@ -11,14 +12,15 @@ import java.util.HashMap;
  * Class is used to manage work of all metrics.
  */
 public class MetricsManager {
-    public static HashMap<String, MetricInterface> metrics;
+    private static HashMap<String, MetricInterface> metrics;
 
     /**
      * Creates all required metrics
      *
      * @param elements - Array, which contains all PCFElements, retrieved from queue manager.
+     * @param types    - Array, which contains all MQObject types, which should be monitored via direct PCFCommands.
      */
-    public static void initMetrics(ArrayList<PCFElement> elements) {
+    public static void initMetrics(ArrayList<PCFElement> elements, ArrayList<MQObject.MQType> types) {
         metrics = new HashMap<String, MetricInterface>();
         for (PCFElement element : elements) {
             for (PCFElementRow row : element.getRows()) {
@@ -37,6 +39,10 @@ public class MetricsManager {
 
                 metrics.put(metricName, metric);
             }
+        }
+        for (MQObject.MQType type : types) {
+            String metricName = MetricsReference.getMetricName(type);
+            metrics.put(metricName, new SimpleGauge(metricName, MetricsReference.getMetricHelp(type), Labels.QMGR_NAME.name(), Labels.MQ_OBJECT_NAME.name()));
         }
 
     }

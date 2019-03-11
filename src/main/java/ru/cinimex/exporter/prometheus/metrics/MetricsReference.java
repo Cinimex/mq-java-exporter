@@ -3,11 +3,11 @@ package ru.cinimex.exporter.prometheus.metrics;
 import com.ibm.mq.constants.MQConstants;
 import ru.cinimex.exporter.mq.MQObject;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 public class MetricsReference {
 
-    private static ConcurrentHashMap<String, String> QUEUE_MANAGER_METRICS_REFERENCE = new ConcurrentHashMap<String, String>() {
+    private static HashMap<String, String> QUEUE_MANAGER_METRICS_REFERENCE = new HashMap<String, String>() {
         {
             put("User CPU time percentage", "system_cpu_user_cpu_time_percentage");
             put("System CPU time percentage", "system_cpu_cpu_time_percentage");
@@ -98,7 +98,16 @@ public class MetricsReference {
             put("Failed topic MQPUT/MQPUT1 count", "mq_publish_failed_topic_mqput_mqput1_count_totalattempts");
         }
     };
-    private static ConcurrentHashMap<String, String> MQ_OBJECT_METRICS_REFERENCE = new ConcurrentHashMap<String, String>() {
+
+    private static HashMap<MQObject.MQType, AdditionalMetric> MQ_OBJECT_ADDITIONAL_METRICS_REFERENCE = new HashMap<MQObject.MQType, AdditionalMetric>() {
+        {
+            put(MQObject.MQType.QUEUE, new AdditionalMetric("mqobject_queue_max_depth_messages", "The maximum number of messages that are allowed on the queue"));
+            put(MQObject.MQType.CHANNEL, new AdditionalMetric("mqobject_channel_status_code", "The status of the channel"));
+            put(MQObject.MQType.LISTENER, new AdditionalMetric("mqobject_listener_status_code", "The status of the listener"));
+        }
+    };
+
+    private static HashMap<String, String> MQ_OBJECT_METRICS_REFERENCE = new HashMap<String, String>() {
         {
             put("MQOPEN count", "mqobject_mqopen_mqopen_count_totalcalls");
             put("MQCLOSE count", "mqobject_mqclose_mqclose_count_totalcalls");
@@ -129,13 +138,35 @@ public class MetricsReference {
             put("queue purged count", "mqobject_get_queue_purged_count_totalqueues");
             put("average queue time", "mqobject_get_average_queue_time_microseconds");
             put("Queue depth", "mqobject_get_queue_depth_messages");
+        }
+    };
 
-            //TODO: расширить имена метрик здесь?
+    private static HashMap<Integer, Double> channelStatus = new HashMap<Integer, Double>() {
+        {
+            put(MQConstants.MQCHS_BINDING, (double) 6);
+            put(MQConstants.MQCHS_STARTING, (double) 2);
+            put(MQConstants.MQCHS_RUNNING, (double) 1);
+            put(MQConstants.MQCHS_PAUSED, (double) 3);
+            put(MQConstants.MQCHS_STOPPING, (double) 4);
+            put(MQConstants.MQCHS_RETRYING, (double) 5);
+            put(MQConstants.MQCHS_STOPPED, (double) 0);
+            put(MQConstants.MQCHS_REQUESTING, (double) 7);
+            put(MQConstants.MQCHS_SWITCHING, (double) 8);
+            put(MQConstants.MQCHS_INITIALIZING, (double) 9);
+            put(MQConstants.MQCHS_INACTIVE, (double) 10);
+        }
+    };
+
+    private static HashMap<Integer, Double> listenerStatus = new HashMap<Integer, Double>() {
+        {
+            put(MQConstants.MQSVC_STATUS_STARTING, (double) 2);
+            put(MQConstants.MQSVC_STATUS_RUNNING, (double) 1);
+            put(MQConstants.MQSVC_STATUS_STOPPING, (double) 0);
         }
     };
 
     public static String getMetricName(String description, boolean requiresObject, int datatype) {
-        ConcurrentHashMap<String, String> ref = requiresObject ? MQ_OBJECT_METRICS_REFERENCE : QUEUE_MANAGER_METRICS_REFERENCE;
+        HashMap<String, String> ref = requiresObject ? MQ_OBJECT_METRICS_REFERENCE : QUEUE_MANAGER_METRICS_REFERENCE;
         String metricName = ref.get(description);
         if (metricName == null) {
             metricName = generateMetricName(description, requiresObject, datatype);
@@ -144,11 +175,12 @@ public class MetricsReference {
         return metricName;
     }
 
-    public static String getMetricName(MQObject object){
-        String metric = "mqobject_get_" + object.getType().name().toLowerCase();
-        metric = metric.concat(MQConstants.lookup(object.getPCFHeader(), null).toLowerCase().replaceFirst("^[^_]+" +
-                "(?=_)", ""));
-        return metric;
+    public static String getMetricName(MQObject.MQType type) {
+        return MQ_OBJECT_ADDITIONAL_METRICS_REFERENCE.get(type).name;
+    }
+
+    public static String getMetricHelp(MQObject.MQType type) {
+        return MQ_OBJECT_ADDITIONAL_METRICS_REFERENCE.get(type).help;
     }
 
     private static String generateMetricName(String description, boolean requiresObject, int dataType) {
@@ -204,5 +236,34 @@ public class MetricsReference {
         //TODO:Add warning!
         System.out.println("Unknown metric name! Generated new name " + metricName + " from description " + description);
         return metricName;
+    }
+
+    //TODO: add error processing, think about returnValue possible values.
+    public static double getMetricValue(MQObject.MQType type, int value) {
+        double returnValue = -1;
+        switch (type) {
+            case QUEUE:
+                returnValue = value;
+                break;
+            case CHANNEL:
+                returnValue = channelStatus.get(value);
+                break;
+            case LISTENER:
+                returnValue = listenerStatus.get(value);
+                break;
+            default:
+                break;
+        }
+        return returnValue;
+    }
+
+    public static class AdditionalMetric {
+        public final String name;
+        public final String help;
+
+        public AdditionalMetric(String name, String help) {
+            this.name = name;
+            this.help = help;
+        }
     }
 }
