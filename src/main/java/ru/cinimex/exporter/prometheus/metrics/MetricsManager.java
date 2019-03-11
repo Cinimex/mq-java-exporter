@@ -1,6 +1,5 @@
 package ru.cinimex.exporter.prometheus.metrics;
 
-import com.ibm.mq.constants.MQConstants;
 import ru.cinimex.exporter.mq.MQObject;
 import ru.cinimex.exporter.mq.pcf.PCFElement;
 import ru.cinimex.exporter.mq.pcf.PCFElementRow;
@@ -25,19 +24,25 @@ public class MetricsManager {
         for (PCFElement element : elements) {
             for (PCFElementRow row : element.getRows()) {
                 String metricName = MetricsReference.getMetricName(row.getRowDesc(), element.requiresMQObject(), row.getRowDatatype());
+                MetricsReference.Metric.Type metricType = MetricsReference.getMetricType(row.getRowDesc(), element.requiresMQObject());
                 ArrayList<String> labels = new ArrayList<>();
                 labels.add(Labels.QMGR_NAME.name());
                 MetricInterface metric;
                 if (element.requiresMQObject()) {
                     labels.add(Labels.MQ_OBJECT_NAME.name());
                 }
-                if (row.getRowDatatype() == MQConstants.MQIAMO_MONITOR_DELTA) {
-                    metric = new SimpleCounter(metricName, row.getRowDesc(), labels.stream().toArray(String[]::new));
-                } else {
-                    metric = new SimpleGauge(metricName, row.getRowDesc(), labels.stream().toArray(String[]::new));
+                switch (metricType) {
+                    case SimpleGauge:
+                        metric = new SimpleGauge(metricName, row.getRowDesc(), labels.stream().toArray(String[]::new));
+                        metrics.put(metricName, metric);
+                        break;
+                    case SimpleCounter:
+                        metric = new SimpleCounter(metricName, row.getRowDesc(), labels.stream().toArray(String[]::new));
+                        metrics.put(metricName, metric);
+                        break;
+                    default:
+                        System.err.println("Unknown metric type!");
                 }
-
-                metrics.put(metricName, metric);
             }
         }
         for (MQObject.MQType type : types) {

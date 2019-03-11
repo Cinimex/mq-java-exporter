@@ -37,7 +37,7 @@ public class MQConnection {
         Hashtable<String, Object> properties = new Hashtable<String, Object>();
         properties.put(MQConstants.TRANSPORT_PROPERTY, host == null ? MQConstants.TRANSPORT_MQSERIES_BINDINGS : MQConstants.TRANSPORT_MQSERIES_CLIENT);
         if (host != null) properties.put(MQConstants.HOST_NAME_PROPERTY, host);
-        if (port != 0) properties.put(MQConstants.PORT_PROPERTY, new Integer(port));
+        if (port != 0) properties.put(MQConstants.PORT_PROPERTY, port);
         if (channel != null) properties.put(MQConstants.CHANNEL_PROPERTY, channel);
         if (user != null || password != null) {
             if (useMQCSP) properties.put(MQConstants.USE_MQCSP_AUTHENTICATION_PROPERTY, true);
