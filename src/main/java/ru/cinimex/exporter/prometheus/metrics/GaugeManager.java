@@ -1,6 +1,5 @@
 package ru.cinimex.exporter.prometheus.metrics;
 
-import ru.cinimex.exporter.mq.pcf.PCFDataParser;
 import ru.cinimex.exporter.mq.pcf.PCFElement;
 import ru.cinimex.exporter.mq.pcf.PCFElementRow;
 
@@ -22,7 +21,8 @@ public class GaugeManager {
         metrics = new HashMap<>();
         for (PCFElement element : elements) {
             for (PCFElementRow row : element.getRows()) {
-                String metricName = PCFDataParser.getMetricName(row.getRowDesc(), element.requiresMQObject());
+                String metricName = MetricsReference.getMetricName(row.getRowDesc(), element.requiresMQObject(),
+                        row.getRowDatatype());
                 if (element.requiresMQObject()) {
                     metrics.put(metricName, new SimpleGauge(metricName, row.getRowDesc(), Labels.QMGR_NAME.name(), Labels.MQ_OBJECT_NAME.name()));
                 } else {
@@ -41,7 +41,7 @@ public class GaugeManager {
      * @param labels     - metric labels
      */
     public static void updateMetric(String metricName, Double value, String... labels) {
-        metrics.get(metricName).setGauge(value, labels);
+        metrics.get(metricName).update(value, labels);
     }
 
     /**

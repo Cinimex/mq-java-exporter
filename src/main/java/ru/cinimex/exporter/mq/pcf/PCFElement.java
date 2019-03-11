@@ -74,6 +74,15 @@ public class PCFElement {
         return null;
     }
 
+    public int getRowDatatype(int rowId) {
+        for (PCFElementRow row : rows) {
+            if (row.getRowId() == rowId) {
+                return row.getRowDatatype();
+            }
+        }
+        return -1;
+    }
+
     /**
      * @return - returns all rows, which contain ids, descriptions and datatypes.
      */
