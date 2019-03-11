@@ -143,24 +143,24 @@ public class MetricsReference {
 
     private static HashMap<Integer, Double> channelStatus = new HashMap<Integer, Double>() {
         {
-            put(MQConstants.MQCHS_BINDING, (double) 6);
-            put(MQConstants.MQCHS_STARTING, (double) 2);
             put(MQConstants.MQCHS_RUNNING, (double) 1);
-            put(MQConstants.MQCHS_PAUSED, (double) 3);
-            put(MQConstants.MQCHS_STOPPING, (double) 4);
-            put(MQConstants.MQCHS_RETRYING, (double) 5);
+            put(MQConstants.MQCHS_REQUESTING, 0.8);
+            put(MQConstants.MQCHS_PAUSED, 0.7);
+            put(MQConstants.MQCHS_BINDING, 0.6);
+            put(MQConstants.MQCHS_STARTING, 0.5);
+            put(MQConstants.MQCHS_INITIALIZING, 0.4);
+            put(MQConstants.MQCHS_SWITCHING, 0.3);
+            put(MQConstants.MQCHS_STOPPING, 0.2);
+            put(MQConstants.MQCHS_RETRYING, 0.1);
             put(MQConstants.MQCHS_STOPPED, (double) 0);
-            put(MQConstants.MQCHS_REQUESTING, (double) 7);
-            put(MQConstants.MQCHS_SWITCHING, (double) 8);
-            put(MQConstants.MQCHS_INITIALIZING, (double) 9);
-            put(MQConstants.MQCHS_INACTIVE, (double) 10);
+            put(MQConstants.MQCHS_INACTIVE, (double) -1);
         }
     };
 
     private static HashMap<Integer, Double> listenerStatus = new HashMap<Integer, Double>() {
         {
-            put(MQConstants.MQSVC_STATUS_STARTING, (double) 2);
             put(MQConstants.MQSVC_STATUS_RUNNING, (double) 1);
+            put(MQConstants.MQSVC_STATUS_STARTING, 0.5);
             put(MQConstants.MQSVC_STATUS_STOPPING, (double) 0);
         }
     };
