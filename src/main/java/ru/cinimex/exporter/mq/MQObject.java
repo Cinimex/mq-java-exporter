@@ -3,10 +3,6 @@ package ru.cinimex.exporter.mq;
 import com.ibm.mq.constants.MQConstants;
 import com.ibm.mq.pcf.PCFMessage;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 /**
  * Class represents MQObject (Queue, channel or listener). It stores object type and all PCFParameters, required for correct request.
  */

@@ -40,19 +40,19 @@ public class ExporterLauncher {
             ArrayList<MQObject> objects = new ArrayList<>();
 
             if (config.sendPCFCommands()) {
-                if (config.getQueues().size() > 0) {
+                if (config.getQueues() != null && config.getQueues().size() > 0) {
                     monitoringTypes.add(MQObject.MQType.QUEUE);
                     for (String queueName : config.getQueues()) {
                         objects.add(new MQObject(queueName, MQObject.MQType.QUEUE));
                     }
                 }
-                if (config.getChannels().size() > 0) {
+                if (config.getChannels() != null && config.getChannels().size() > 0) {
                     monitoringTypes.add(MQObject.MQType.CHANNEL);
                     for (String channelName : config.getChannels()) {
                         objects.add(new MQObject(channelName, MQObject.MQType.CHANNEL));
                     }
                 }
-                if (config.getListeners().size() > 0) {
+                if (config.getListeners() != null && config.getListeners().size() > 0) {
                     monitoringTypes.add(MQObject.MQType.LISTENER);
                     for (String listenerName : config.getListeners()) {
                         objects.add(new MQObject(listenerName, MQObject.MQType.LISTENER));
