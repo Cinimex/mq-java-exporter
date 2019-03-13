@@ -5,6 +5,8 @@ import com.ibm.mq.constants.MQConstants;
 import com.ibm.mq.pcf.PCFException;
 import com.ibm.mq.pcf.PCFMessage;
 import com.ibm.mq.pcf.PCFMessageAgent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.prometheus.metrics.MetricsManager;
 import ru.cinimex.exporter.prometheus.metrics.MetricsReference;
 
@@ -17,6 +19,7 @@ import java.util.Hashtable;
  * retrieve specific statistics, which couldn't be retrieved by MQTopicSubscriber.
  */
 public class MQPCFSubscriber implements Runnable {
+    private static final Logger logger = LogManager.getLogger(MQPCFSubscriber.class);
     private MQConnection connection;
     private String queueManagerName;
     private MQObject object;
@@ -55,16 +58,15 @@ public class MQPCFSubscriber implements Runnable {
      * @param connectionProperties - map with all required connection params.
      */
     private void establishMQConnection(String queueManagerName, Hashtable<String, Object> connectionProperties) {
-        if (connection == null) {
-            connection = new MQConnection();
-            connection.establish(queueManagerName, connectionProperties);
-        }
-        this.queueManagerName = queueManagerName;
-        //TODO: error handling
         try {
+            if (connection == null) {
+                connection = new MQConnection();
+                connection.establish(queueManagerName, connectionProperties);
+            }
+            this.queueManagerName = queueManagerName;
             this.agent = new PCFMessageAgent(connection.getQueueManager());
         } catch (MQException e) {
-            e.printStackTrace();
+            logger.error("Error occurred during establishing connection with queue manager: ", e);
         }
     }
 
@@ -114,14 +116,12 @@ public class MQPCFSubscriber implements Runnable {
                     updateMetricWithoutWildcards(directPCFResponse[0], objectName);
                 } catch (PCFException e) {
                     //This error means, that channel has status "inactive".
+                    logger.warn("Channel {} is possibly inactive.", objectName);
                     if (e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
                         MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQCHS_INACTIVE), queueManagerName, objectName);
                     }
-                } catch (MQException e) {
-                    //TODO: error handling
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException | MQException e) {
+                    logger.error("Error occurred during sending PCF command: ", e);
                 }
             }
         }
@@ -130,6 +130,7 @@ public class MQPCFSubscriber implements Runnable {
     @Override
     public void run() {
         try {
+            logger.debug("Sending PCF command for object type {} with name {}...", object.getType(), object.getName());
             PCFMessage[] pcfResponse = agent.send(object.getPCFCmd());
             if (!objects.isEmpty()) {
                 updateMetricsWithWildcards(pcfResponse);
@@ -138,15 +139,14 @@ public class MQPCFSubscriber implements Runnable {
                     updateMetricWithoutWildcards(response, object.getName());
                 }
             }
+            logger.debug("PCF response for object type {} with name {} was processed successfully.", object.getType(), object.getName());
         } catch (PCFException e) {
             if (e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
+                logger.warn("Channel {} is possibly inactive.", object.getName());
                 MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQCHS_INACTIVE), queueManagerName, object.getName());
             }
-        } catch (MQException e) {
-            //TODO: error handling
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (MQException | IOException e) {
+            logger.error("Error occurred during sending PCF command: ", e);
         }
     }
 

@@ -4,6 +4,8 @@ import com.ibm.mq.MQException;
 import com.ibm.mq.MQMessage;
 import com.ibm.mq.constants.MQConstants;
 import com.ibm.mq.pcf.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.HashMap;
  * Class PCFDataParser contains only static methods and was created to simplify work with PCF messages.
  */
 public class PCFDataParser {
+    private static final Logger logger = LogManager.getLogger(PCFDataParser.class);
 
     /**
      * Method parses PCFMessage, which contains info about all monitoring classes
@@ -53,7 +56,7 @@ public class PCFDataParser {
                                 topicString = groupParam.getStringValue();
                                 break;
                             default:
-                                //TODO:add warning
+                                logger.warn("Unknown parameter type was found while parsing PCFClass! Will be ignored. {} = {}", groupParam.getParameterName(), groupParam.getStringValue());
                                 break;
                         }
 
@@ -96,7 +99,7 @@ public class PCFDataParser {
                                 topicString = groupParam.getStringValue();
                                 break;
                             default:
-                                //TODO:add warning
+                                logger.warn("Unknown parameter type was found while parsing PCFType! Will be ignored." + " {} = {}", groupParam.getParameterName(), groupParam.getStringValue());
                                 break;
                         }
 
@@ -140,7 +143,7 @@ public class PCFDataParser {
                                 rowDesc = groupParam.getStringValue();
                                 break;
                             default:
-                                //TODO:add warning
+                                logger.warn("Unknown parameter type was found while parsing PCFElement! Will be " + "ignored." + " {} = {}", groupParam.getParameterName(), groupParam.getStringValue());
                                 break;
                         }
 
@@ -171,7 +174,6 @@ public class PCFDataParser {
         HashMap<Integer, Double> data = new HashMap<Integer, Double>();
         while (params.hasMoreElements()) {
             PCFParameter param = params.nextElement();
-            //TODO: Add other types for parsing (look for example here: https://www.ibm.com/developerworks/community/blogs/messaging/entry/A_first_look_at_MQ_Resource_USeage_handling_using_Java?lang=en).
             switch (param.getParameter()) {
                 case MQConstants.MQCA_Q_MGR_NAME:
                     break;
@@ -199,6 +201,10 @@ public class PCFDataParser {
                             data.put(statistic.getParameter(), new Double(statistic.getLongValue()));
                             break;
                         }
+                        default: {
+                            logger.warn("Unknown parameter type was found while parsing PCF monitoring data! Will be " + "ignored." + " {} = {}", param.getParameterName(), param.getStringValue());
+                            break;
+                        }
                     }
             }
 
@@ -213,13 +219,10 @@ public class PCFDataParser {
      * @return - converted PCFMessage
      */
     public static PCFMessage convertToPCF(MQMessage message) {
-        //TODO: add error processing
         try {
             return new PCFMessage(message);
-        } catch (MQException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (MQException | IOException e) {
+            logger.error("Unable to convert MQMessage to PCFMessage: ", e);
         }
         return null;
     }

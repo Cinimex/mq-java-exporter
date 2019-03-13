@@ -1,5 +1,8 @@
 package ru.cinimex.exporter.mq.pcf;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 
 /**
@@ -7,6 +10,7 @@ import java.util.ArrayList;
  * $SYS/MQ/INFO/QMGR/{QMGR_NAME}/Monitor/{CLASS}/{TYPE} MQ topic.
  */
 public class PCFElement {
+    private static final Logger logger = LogManager.getLogger(PCFElement.class);
     private final ArrayList<PCFElementRow> rows;
     private String sourceTopicString;
     private String topicString;
@@ -25,6 +29,9 @@ public class PCFElement {
         this.topicString = topicString;
         this.rows = rows;
         this.mqObjectRequired = topicString.contains("%s");
+        if (topicString == null) {
+            logger.warn("Topic string is empty: ", this.toString());
+        }
     }
 
 
