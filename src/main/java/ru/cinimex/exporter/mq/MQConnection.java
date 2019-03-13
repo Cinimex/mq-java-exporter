@@ -5,6 +5,8 @@ import com.ibm.mq.MQQueueManager;
 import com.ibm.mq.MQTopic;
 import com.ibm.mq.constants.CMQC;
 import com.ibm.mq.constants.MQConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Hashtable;
 
@@ -12,6 +14,7 @@ import java.util.Hashtable;
  * Class represents MQ connection.
  */
 public class MQConnection {
+    private static final Logger logger = LogManager.getLogger(MQConnection.class);
     private Hashtable<String, Object> connectionProperties;
     private MQQueueManager queueManager;
 
@@ -58,13 +61,9 @@ public class MQConnection {
      * @param password - password, which is required to establish connection with queue manager (optional).
      * @param useMQCSP - flag, which indicates, if MQCSP auth should be used.
      */
-    public void establish(String host, int port, String channel, String qmName, String user, String password, boolean useMQCSP) {
+    public void establish(String host, int port, String channel, String qmName, String user, String password, boolean useMQCSP) throws MQException {
         connectionProperties = createMQConnectionParams(host, port, channel, user, password, useMQCSP);
-        try {
-            queueManager = new MQQueueManager(qmName, connectionProperties);
-        } catch (MQException e) {
-            System.err.println(e.getMessage());
-        }
+        queueManager = new MQQueueManager(qmName, connectionProperties);
     }
 
 
@@ -74,12 +73,8 @@ public class MQConnection {
      * @param qmNqme               - queue manager's name.
      * @param connectionProperties - prepared structure with all parameters transformed into queue manager's format. See {@link #createMQConnectionParams(String, int, String, String, String, boolean)} for more info.
      */
-    public void establish(String qmNqme, Hashtable<String, Object> connectionProperties) {
-        try {
-            queueManager = new MQQueueManager(qmNqme, connectionProperties);
-        } catch (MQException e) {
-            System.err.println(e.getMessage());
-        }
+    public void establish(String qmNqme, Hashtable<String, Object> connectionProperties) throws MQException {
+        queueManager = new MQQueueManager(qmNqme, connectionProperties);
     }
 
     /**
@@ -90,7 +85,7 @@ public class MQConnection {
             try {
                 queueManager.disconnect();
             } catch (MQException e) {
-                System.err.println(e.getMessage());
+                logger.error("Failed!", e);
             }
         }
     }
@@ -108,6 +103,7 @@ public class MQConnection {
 
     /**
      * Returns MQQueueManager object.
+     *
      * @return - MQQueueManager object.
      */
     public MQQueueManager getQueueManager() {

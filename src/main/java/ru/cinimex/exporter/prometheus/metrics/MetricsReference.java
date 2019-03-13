@@ -1,11 +1,14 @@
 package ru.cinimex.exporter.prometheus.metrics;
 
 import com.ibm.mq.constants.MQConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.mq.MQObject;
 
 import java.util.HashMap;
 
 public class MetricsReference {
+    private static final Logger logger = LogManager.getLogger(MetricsReference.class);
 
     private static HashMap<String, Metric> QUEUE_MANAGER_METRICS_REFERENCE = new HashMap<String, Metric>() {
         {
@@ -233,13 +236,14 @@ public class MetricsReference {
                 metricName = metricName.concat("_delta");
                 break;
             }
+            default: {
+                logger.warn("Unknown metric type: {}", MQConstants.lookup(dataType, "MQIAMO_"));
+            }
         }
-        //TODO:Add warning!
-        System.out.println("Unknown metric name! Generated new name " + metricName + " from description " + description);
+        logger.warn("Unknown metric name! Generated new name '{}' from description '{}'", metricName, description);
         return metricName;
     }
 
-    //TODO: add error processing, think about returnValue possible values.
     public static double getMetricValue(MQObject.MQType type, int value) {
         double returnValue = -1;
         switch (type) {
@@ -253,6 +257,7 @@ public class MetricsReference {
                 returnValue = listenerStatus.get(value);
                 break;
             default:
+                logger.warn("Unknown metric type {}.", type.name());
                 break;
         }
         return returnValue;

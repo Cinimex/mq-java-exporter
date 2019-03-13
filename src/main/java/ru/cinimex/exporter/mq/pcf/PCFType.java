@@ -1,10 +1,14 @@
 package ru.cinimex.exporter.mq.pcf;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * This class represents PCFMessage parameter, which could be received from
  * $SYS/MQ/INFO/QMGR/{QMGR_NAME}/Monitor/METADATA/{CLASS}/TYPES MQ topic.
  */
 public class PCFType {
+    private static final Logger logger = LogManager.getLogger(PCFType.class);
     private String monitorName;
     private String monitorDesc;
     private String topicString;
@@ -17,10 +21,12 @@ public class PCFType {
      * @param topicString - MQ topic, where  detailed information is published (each type has it's own topic)
      */
     protected PCFType(String monitorName, String monitorDesc, String topicString) {
-        //TODO: add null-checks and -1 checks (warnings, i guess)
         this.monitorName = monitorName;
         this.monitorDesc = monitorDesc;
         this.topicString = topicString;
+        if(topicString == null){
+            logger.warn("Topic string is empty: ", this.toString());
+        }
     }
 
     /**

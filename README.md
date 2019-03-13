@@ -55,13 +55,60 @@ Support [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com
 -	[IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 
 #### Configuration
-All settings have to be set in mq-java-exporter\src\main\resources\exporter_config.yaml.
-- MQ connection information. Describes MQ connection information.
-- Prometheus connection information. Describes Prometheus connection information.
-- Monitoring objects. Sets names of objects, that have to be monitored: queues, channels.
+All connection and monitoring settings have to be set in exporter_config.yaml file.
+Below is an example of a filled configuration file with all possible fields:
+```yaml
+# MQ connection information -------------------------------
+qmgrConnectionParams:
+# Queue manager name.
+  qmgrName: QM
+# Queue manager host.
+  qmgrHost: hostname
+# Queue manager connection port.
+  qmgrPort: 1414
+# Queue manager connection channel.
+  qmgrChannel: SYSTEM.DEF.SVRCONN
+# Username, which will be used for connection (optional).
+  user: mqm
+# Password, which will be used for connection (optional).
+  password: mqm
+# Use MQCSP for connection?
+  mqscp: false
 
-1. Fill exporter_config.yaml with your enviroments configuration. 
+# Prometheus connection information -------------------------------
+prometheusEndpointParams:
+# URL and port which will be used to expose metrics for Prometheus.
+  url: /metrics
+  port: 8080
 
+
+# Monitoring objects ----------------------------------
+# This block refers to collecting of additional metrics.
+# If there are any queues, channels or listeners in the config file below,
+# these metrics may be useful for you. (More info about additional metrics is located 
+# under "MQ PCF API specific statistics" section.   
+PCFParameters:
+# Collect additional metrics? If false, all settings in this section below are ignored. 
+  sendPCFCommands: true
+# Use wildcards? If yes, only one PCF command will be send, matching all objects on queue manager. Otherwise, each 
+# object will be monitored by separate PCF command.  
+  usePCFWildcards: true
+# Interval in seconds between sending PCF commands.
+  scrapeInterval: 10
+
+# Monitored queues.
+queues:
+  - QUEUE1
+  - QUEUE2
+
+# Monitored listeners.
+listeners:
+  - LISTENER01
+ 
+# Monitored channels.
+channels:
+ - MANAGEMENT.CHANNEL
+```
 #### Build
 
 1. Download current repository.
@@ -79,6 +126,7 @@ mvn package
 ```shell
  java -jar mq_exporter.jar /opt/mq_exporter/exporter_config.yaml
 ```
+The only input parameter is the path to your configuration file.
 
 ## Metrics
 #### Platform central processing units

@@ -2,11 +2,14 @@ package ru.cinimex.exporter.mq;
 
 import com.ibm.mq.constants.MQConstants;
 import com.ibm.mq.pcf.PCFMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Class represents MQObject (Queue, channel or listener). It stores object type and all PCFParameters, required for correct request.
  */
 public class MQObject {
+    private static final Logger logger = LogManager.getLogger(MQObject.class);
     private String name;
     private MQType type;
     private PCFMessage PCFCmd;
@@ -41,8 +44,11 @@ public class MQObject {
                 PCFCmd.addParameter(MQConstants.MQCACH_CHANNEL_NAME, name); //PCF command would try to retrieve statistics about channel with specific name
                 PCFHeader = MQConstants.MQIACH_CHANNEL_STATUS;//the only statistics we want to know about channel is it's status.
                 break;
-            default:
-                //TODO:Exception
+            default: {
+                logger.error("Unknown type for MQObject: {}", type.name());
+                throw new RuntimeException("Unable to create new MQObject. Received unexpected MQObject type: " + type.name());
+            }
+
         }
     }
 
@@ -50,7 +56,7 @@ public class MQObject {
      * This method returns MQConstant int code, which represents name for input object.
      *
      * @param type - object type.
-     * @return - integer code.
+     * @return - integer code. Returns -1 if code wasn't found.
      */
     public static int objectNameCode(MQObject.MQType type) {
         int code = -1;
@@ -108,7 +114,5 @@ public class MQObject {
     /**
      * This enum represents all supported MQObject types.
      */
-    public enum MQType {
-        QUEUE, CHANNEL, LISTENER
-    }
+    public enum MQType {QUEUE, CHANNEL, LISTENER}
 }

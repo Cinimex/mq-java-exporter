@@ -6,6 +6,8 @@ import com.ibm.mq.MQMessage;
 import com.ibm.mq.MQTopic;
 import com.ibm.mq.constants.MQConstants;
 import com.ibm.mq.pcf.PCFMessage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.mq.MQConnection;
 import ru.cinimex.exporter.mq.MQObject;
 import ru.cinimex.exporter.mq.MQSubscriberManager;
@@ -25,46 +27,51 @@ import java.util.ArrayList;
  * Main class of mq exporter tool. Parses config, scans topics, starts subscribers.
  */
 public class ExporterLauncher {
+    private static final Logger logger = LogManager.getLogger(ExporterLauncher.class);
     private static final String topicString = "$SYS/MQ/INFO/QMGR/%s/Monitor/METADATA/CLASSES";
     private static final int getMsgOpt = MQConstants.MQGMO_WAIT | MQConstants.MQGMO_COMPLETE_MSG | MQConstants.MQGMO_SYNCPOINT;
 
-    public static void main(String[] args) throws MQException, IOException {
+    public static void main(String[] args) {
         if (args.length == 0) {
-            System.err.println("It seems that you forgot to specify the path to the config file.");
+            logger.error("It seems like you forgot to specify path to the config file.");
             System.exit(1);
         }
         Config config = new Config(args[0]);
-        try {
-            ArrayList<PCFElement> elements = getAllPublishedMetrics(config);
-            ArrayList<MQObject.MQType> monitoringTypes = new ArrayList<>();
-            ArrayList<MQObject> objects = new ArrayList<>();
 
-            if (config.sendPCFCommands()) {
-                if (config.getQueues() != null && config.getQueues().size() > 0) {
-                    monitoringTypes.add(MQObject.MQType.QUEUE);
-                    for (String queueName : config.getQueues()) {
-                        objects.add(new MQObject(queueName, MQObject.MQType.QUEUE));
-                    }
-                }
-                if (config.getChannels() != null && config.getChannels().size() > 0) {
-                    monitoringTypes.add(MQObject.MQType.CHANNEL);
-                    for (String channelName : config.getChannels()) {
-                        objects.add(new MQObject(channelName, MQObject.MQType.CHANNEL));
-                    }
-                }
-                if (config.getListeners() != null && config.getListeners().size() > 0) {
-                    monitoringTypes.add(MQObject.MQType.LISTENER);
-                    for (String listenerName : config.getListeners()) {
-                        objects.add(new MQObject(listenerName, MQObject.MQType.LISTENER));
-                    }
+        ArrayList<PCFElement> elements = getAllPublishedMetrics(config);
+        ArrayList<MQObject.MQType> monitoringTypes = new ArrayList<>();
+        ArrayList<MQObject> objects = new ArrayList<>();
+
+        if (config.sendPCFCommands()) {
+            if (config.getQueues() != null && config.getQueues().size() > 0) {
+                monitoringTypes.add(MQObject.MQType.QUEUE);
+                for (String queueName : config.getQueues()) {
+                    objects.add(new MQObject(queueName, MQObject.MQType.QUEUE));
+                    logger.debug("Queue {} was added for additional monitoring.", queueName);
                 }
             }
-            MetricsManager.initMetrics(elements, monitoringTypes);
-            MQSubscriberManager manager = new MQSubscriberManager(config.getQmgrHost(), config.getQmgrPort(), config.getQmgrChannel(), config.getQmgrName(), config.getUser(), config.getPassword(), config.useMqscp());
-            manager.runSubscribers(elements, objects, config.sendPCFCommands(), config.usePCFWildcards(), config.getScrapeInterval());
+            if (config.getChannels() != null && config.getChannels().size() > 0) {
+                monitoringTypes.add(MQObject.MQType.CHANNEL);
+                for (String channelName : config.getChannels()) {
+                    objects.add(new MQObject(channelName, MQObject.MQType.CHANNEL));
+                    logger.debug("Channel {} was added for additional monitoring.", channelName);
+                }
+            }
+            if (config.getListeners() != null && config.getListeners().size() > 0) {
+                monitoringTypes.add(MQObject.MQType.LISTENER);
+                for (String listenerName : config.getListeners()) {
+                    objects.add(new MQObject(listenerName, MQObject.MQType.LISTENER));
+                    logger.debug("Listener {} was added for additional monitoring.", listenerName);
+                }
+            }
+        }
+        MetricsManager.initMetrics(elements, monitoringTypes);
+        MQSubscriberManager manager = new MQSubscriberManager(config.getQmgrHost(), config.getQmgrPort(), config.getQmgrChannel(), config.getQmgrName(), config.getUser(), config.getPassword(), config.useMqscp());
+        manager.runSubscribers(elements, objects, config.sendPCFCommands(), config.usePCFWildcards(), config.getScrapeInterval());
+        try {
             new HTTPServer(new InetSocketAddress("0.0.0.0", config.getEndpPort()), config.getEndpURL(), Registry.getRegistry(), false);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+        } catch (IOException e) {
+            logger.error("Error occurred during expanding endpoint for Prometheus: ", e);
         }
     }
 
@@ -81,9 +88,8 @@ public class ExporterLauncher {
         MQGetMessageOptions gmo = new MQGetMessageOptions();
         gmo.options = getMsgOpt;
         gmo.waitInterval = 30000;
-        connection.establish(config.getQmgrHost(), config.getQmgrPort(), config.getQmgrChannel(), config.getQmgrName(), config.getUser(), config.getPassword(), config.useMqscp());
-
         try {
+            connection.establish(config.getQmgrHost(), config.getQmgrPort(), config.getQmgrChannel(), config.getQmgrName(), config.getUser(), config.getPassword(), config.useMqscp());
             topic = connection.createTopic(String.format(topicString, config.getQmgrName()));
             MQMessage msg = getEmptyMessage();
             topic.get(msg, gmo);
@@ -103,8 +109,8 @@ public class ExporterLauncher {
                     elements.addAll(PCFDataParser.getPCFElements(pcfResponse));
                 }
             }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+        } catch (MQException | IOException e) {
+            logger.error("Failed!", e);
         } finally {
             try {
                 if (topic != null && topic.isOpen()) {
@@ -112,7 +118,7 @@ public class ExporterLauncher {
                 }
                 connection.close();
             } catch (MQException e) {
-                System.err.println(String.format("Error occured during disconnecting from topic  %s. Error: %s", topic.toString(), e.getStackTrace()));
+                logger.error("Error occurred during disconnecting from topic {}. Error: ", topic.toString(), e);
             }
         }
         return elements;
