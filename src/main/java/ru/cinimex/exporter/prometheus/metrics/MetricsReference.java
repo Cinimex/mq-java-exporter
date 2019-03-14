@@ -88,10 +88,10 @@ public class MetricsReference {
             put("Subscription delete failure count", new Metric("mq_subscribe_subscription_delete_failure_count_totalcalls", Metric.Type.SimpleCounter));
             put("MQSUBRQ count", new Metric("mq_subscribe_mqsubrq_count_totalcalls", Metric.Type.SimpleCounter));
             put("Failed MQSUBRQ count", new Metric("mq_subscribe_failed_mqsubrq_count_totalcalls", Metric.Type.SimpleCounter));
-            put("Durable subscriber - high water mark", new Metric("mq_subscribe_durable_subscriber_high_water_mark_subscriptions", Metric.Type.SimpleGauge));
-            put("Durable subscriber - low water mark", new Metric("mq_subscribe_durable_subscriber_low_water_mark_subscriptions", Metric.Type.SimpleGauge));
-            put("Non-durable subscriber - high water mark", new Metric("mq_subscribe_non_durable_subscriber_high_water_mark_subscriptions", Metric.Type.SimpleGauge));
-            put("Non-durable subscriber - low water mark", new Metric("mq_subscribe_non_durable_subscriber_low_water_mark_subscriptions", Metric.Type.SimpleGauge));
+            put("Durable subscriber - high water mark", new Metric("mq_subscribe_durable_subscriber_high_water_mark_subscriptions", Metric.Type.ExtremeGaugeMax));
+            put("Durable subscriber - low water mark", new Metric("mq_subscribe_durable_subscriber_low_water_mark_subscriptions", Metric.Type.ExtremeGaugeMin));
+            put("Non-durable subscriber - high water mark", new Metric("mq_subscribe_non_durable_subscriber_high_water_mark_subscriptions", Metric.Type.ExtremeGaugeMax));
+            put("Non-durable subscriber - low water mark", new Metric("mq_subscribe_non_durable_subscriber_low_water_mark_subscriptions", Metric.Type.ExtremeGaugeMin));
             put("Topic MQPUT/MQPUT1 interval total", new Metric("mq_publish_topic_mqput_mqput1_interval_total_totalmessages", Metric.Type.SimpleCounter));
             put("Interval total topic bytes put", new Metric("mq_publish_interval_total_topic_bytes_put_totalbytes", Metric.Type.SimpleCounter));
             put("Published to subscribers - message count", new Metric("mq_publish_published_to_subscribers_message_count_totalmessages", Metric.Type.SimpleCounter));
@@ -289,7 +289,7 @@ public class MetricsReference {
         }
 
         public enum Type {
-            SimpleCounter, SimpleGauge
+            SimpleCounter, SimpleGauge, ExtremeGaugeMin, ExtremeGaugeMax
         }
     }
 }

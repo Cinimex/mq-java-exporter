@@ -7,7 +7,7 @@ import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.cinimex.exporter.ExporterLauncher;
+import ru.cinimex.exporter.prometheus.metrics.MetricsManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -149,6 +149,7 @@ public class HTTPServer {
             }
             t.close();
             logger.debug("Data was sent to Prometheus.");
+            MetricsManager.notifyMetricsWereScraped();
         }
 
     }

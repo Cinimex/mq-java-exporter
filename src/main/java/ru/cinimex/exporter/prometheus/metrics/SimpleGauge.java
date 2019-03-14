@@ -35,6 +35,9 @@ public class SimpleGauge implements MetricInterface {
     @Override
     public void update(double value, String... labels) {
         setGauge(value, labels);
+    }
 
+    @Override
+    public void notifyWasScraped() {
     }
 }
