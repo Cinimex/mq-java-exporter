@@ -11,6 +11,7 @@ public class SimpleCounter implements MetricInterface {
 
     /**
      * Counter constructor.
+     *
      * @param metricName - metric name.
      * @param metricInfo - metric info (description).
      * @param labelNames - labels.
@@ -34,5 +35,9 @@ public class SimpleCounter implements MetricInterface {
     @Override
     public void update(double value, String... labels) {
         incCounter(value, labels);
+    }
+
+    @Override
+    public void notifyWasScraped() {
     }
 }

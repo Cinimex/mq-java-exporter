@@ -137,7 +137,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>system_cpu_user_cpu_time_percentage</td>

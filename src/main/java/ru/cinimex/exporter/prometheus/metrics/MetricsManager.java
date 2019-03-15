@@ -46,6 +46,16 @@ public class MetricsManager {
                         metrics.put(metricName, metric);
                         logger.trace("New counter created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);
                         break;
+                    case ExtremeGaugeMax:
+                        metric = new ExtremeGauge(metricName, row.getRowDesc(), true, labels.stream().toArray(String[]::new));
+                        metrics.put(metricName, metric);
+                        logger.trace("New extreme gauge created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);
+                        break;
+                    case ExtremeGaugeMin:
+                        metric = new ExtremeGauge(metricName, row.getRowDesc(), false, labels.stream().toArray(String[]::new));
+                        metrics.put(metricName, metric);
+                        logger.trace("New extreme gauge created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);
+                        break;
                     default:
                         logger.error("Error during metrics initialization: Unknown metric type! Make sure it is one " + "of: {}", MetricsReference.Metric.Type.values());
                 }
@@ -68,6 +78,15 @@ public class MetricsManager {
      */
     public static void updateMetric(String metricName, Double value, String... labels) {
         metrics.get(metricName).update(value, labels);
+    }
+
+    /**
+     * Notifies all metrics after each Prometheus scrape.
+     */
+    public static void notifyMetricsWereScraped() {
+        for (MetricInterface metric : metrics.values()) {
+            metric.notifyWasScraped();
+        }
     }
 
     /**
