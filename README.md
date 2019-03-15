@@ -129,6 +129,10 @@ mvn package
 The only input parameter is the path to your configuration file.
 
 ## Metrics
+#### Metrics naming convention
+###### Understanding metrics names
+![Naming example 1](/docs/images/metric_naming_example_1.png)
+![Naming example 2](/docs/images/metric_naming_example_2.png)
 #### Platform central processing units
 ###### CPU performance - platform wide
 <table>
