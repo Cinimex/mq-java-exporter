@@ -9,7 +9,11 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
    - [Dependencies](#dependencies)
    - [Configuration](#configuration)
    - [Build](#build)
-2. [Metrics](#metrics)
+2. [Metrics naming convention](#metrics-naming-convention)
+   - [Understanding metrics names](#understanding-metrics-names)
+   - [Domains and subdomains](#domains-and-subdomains)
+   - [Units](#units)
+3. [Metrics](#metrics)
    - [Platform central processing units](#platform-central-processing-units)
      - [CPU performance - platform wide](#cpu-performance---platform-wide)
      - [CPU performance - running queue manager](#cpu-performance---running-queue-manager)
@@ -36,9 +40,9 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
      - [MQ constants mapping](#mq-constants-mapping)
        - [Channel status mapping](#channel-status-mapping)
        - [Listener status mapping](#listener-status-mapping)
-3. [Issues and Contributions](#issues-and-contributions)
-4. [Warning](#warning)
-5. [License](#license)
+4. [Issues and Contributions](#issues-and-contributions)
+5. [Warning](#warning)
+6. [License](#license)
 
 ## Getting Started
 
@@ -128,11 +132,21 @@ mvn package
 ```
 The only input parameter is the path to your configuration file.
 
+## Metrics naming convention
+#### Understanding metrics names
+All metrics have predefined structure: domain, subdomain, name, units:
+
+<img src="/docs/images/metric_naming_example_1.png" data-canonical-src="/docs/images/metric_naming_example_1.png" width="554" height="120" />
+
+- Domain - single-word presentation of metric type.
+- Subdomain - single-word presentation of metric type. It is more specific than domain and can be used
+ 
+<img src="/docs/images/metric_naming_example_2.png" data-canonical-src="/docs/images/metric_naming_example_2.png" width="899" height="120" />
+
+#### Domains and subdomains
+#### Units
+
 ## Metrics
-#### Metrics naming convention
-###### Understanding metrics names
-![Naming example 1](/docs/images/metric_naming_example_1.png)
-![Naming example 2](/docs/images/metric_naming_example_2.png)
 #### Platform central processing units
 ###### CPU performance - platform wide
 <table>
