@@ -272,6 +272,8 @@ All metrics have predefined structure: domain, subdomain, name, units:
    
 ###### Units
 
+["Metric and label naming"](https://prometheus.io/docs/practices/naming/#metric-and-label-naming) article by Prometheus states that metrics "...should use base units (e.g. seconds, bytes, meters - not milliseconds, megabytes, kilometers)". But it is not usefull for using IBM MQ exporter. So the exporter has following list of units:
+
 <table>
 <tbody>
 <tr>
@@ -280,63 +282,63 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tr>
 <tr>
 <td>percentage</td>
-<td>percentage</td>
+<td>Shows %</td>
 </tr>
 <tr>
 <td>hundredths</td>
-<td>hundredths</td>
+<td>Shows amount of hundredths</td>
 </tr>
 <tr>
 <td>megabytes</td>
-<td>megabytes</td>
+<td>Shows amount of megabytes</td>
 </tr>
 <tr>
 <td>files</td>
-<td>files</td>
+<td>Shows amount of files</td>
 </tr>
 <tr>
 <td>bytes</td>
-<td>bytes</td>
+<td>Shows amount of bytes</td>
 </tr>
 <tr>
 <td>microseconds</td>
-<td>microseconds</td>
+<td>Shows amount of microseconds.</td>
 </tr>
 <tr>
 <td>totalcalls</td>
-<td>totalcalls</td>
+<td>Shows amount of calls. An accumulating count has "total" as the first part of a suffix.</td>
 </tr>
 <tr>
 <td>totalconnections</td>
-<td>totalconnections</td>
+<td>Shows amount of connections. An accumulating count has "total" as the first part of a suffix.</td>
 </tr>
 <tr>
 <td>totalmessages</td>
-<td>totalmessages</td>
+<td>Shows amount of messages. An accumulating count has "total" as the first part of a suffix.</td>
 </tr>
 <tr>
 <td>totalbytes</td>
-<td>totalbytes</td>
+<td>Shows amount of bytes. An accumulating count has "total" as the first part of a suffix.</td>
 </tr>
 <tr>
 <td>totalbrowses</td>
-<td>totalbrowses</td>
+<td>Shows amount of browses. An accumulating count has "total" as the first part of a suffix.</td>
 </tr>
 <tr>
 <td>subscriptions</td>
-<td>subscriptions</td>
+<td>Shows amount of subscriptions.</td>
 </tr>
 <tr>
 <td>totalattempts</td>
-<td>totalattempts</td>
+<td>Shows amount of attempts. An accumulating count has "total" as the first part of a suffix.</td>
 </tr>
 <tr>
 <td>totalqueues</td>
-<td>totalqueues</td>
+<td>Shows amount of queues. An accumulating count has "total" as the first part of a suffix.</td>
 </tr>
 <tr>
 <td>messages</td>
-<td>messages</td>
+<td>Shows amount of messages.</td>
 </tr>
 </tbody>
 </table>
