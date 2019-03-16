@@ -187,7 +187,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 
 - **Domain** - the first single-word prefix that represents a metric type. The examples of domain-level prefixes are: system, mq, mqobject and etc. More information can be found in ["Domains and subdomains" section](#domains-and-subdomains).
 - **Subdomain** - second single-word prefix representation of a metric type. It provides more specific information about metric type and helps to differentiate metrics in a single domain. The examples of subdomain-level prefixes are: cpu, ram, put, subscribe, get and etc. More information can be found in ["Domains and subdomains" section](#domains-and-subdomains).
-- **Units** - single-word suffix describing the metric's unit, in plural form. Note that an accumulating count has "total" as the first part of a suffix. The examples of unit suffixes are: percentage, hundredths, messages, calls and etc. More information can be found in ["Units" section](#units).
+- **Units** - single-word suffix describing the metric's unit, in plural form. Note that an accumulating count has "total" as the first part of a suffix. The examples of unit suffixes are: percentage, hundredths, messages, totalmessages and etc. More information can be found in ["Units" section](#units).
 - **Name** - represents metric meaning. The examples of a metric name are: cpu_time, cpu_load_fifteen_minute_average, failed_mqget_count and etc. Note that the amount of words in a metric name can vary:
  
 <img src="/docs/images/metric_naming_example_2.png" data-canonical-src="/docs/images/metric_naming_example_2.png" width="899" height="120" />
