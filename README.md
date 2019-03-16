@@ -161,99 +161,111 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td rowspan="2">system</td>
 <td rowspan="2">Platform wide system metrics</td>
 <td>cpu</td>
-<td>cpu</td>
+<td>CPU-related performance metrics</td>
 </tr>
 <tr>
 <td>ram</td>
-<td>ram</td>
+<td>RAM-related performance metrics</td>
 </tr>
 <tr>
 <td rowspan="15">mq</td>
-<td rowspan="15">MQ manager metrics</td>
+<td rowspan="15">MQ manager wide metrics</td>
 <td>cpu</td>
-<td>cpu</td>
+<td>CPU metrics of a running queue manager</td>
 </tr>
 <tr>
 <td>disk</td>
-<td>disk</td>
+<td>Disk usage metrics, related to a running queue manager</td>
 </tr>
 <tr>
 <td>rlog</td>
-<td>rlog</td>
+<td>Queue manager recovery log metrics</td>
 </tr>
 <tr>
 <td>mqconn</td>
-<td>mqconn</td>
+<td>Metrics related to MQCONN calls to a queue manager</td>
 </tr>
 <tr>
 <td>mqdisc</td>
-<td>mqdisc</td>
+<td>Metrics related to MQDISC calls to a queue manager</td>
 </tr>
 <tr>
 <td>mqopen</td>
-<td>mqopen</td>
+<td>Metrics related to MQOPEN calls to a queue manager</td>
 </tr>
 <tr>
 <td>mqclose</td>
-<td>mqclose</td>
+<td>Metrics related to MQCLOSE calls to a queue manager</td>
 </tr>
 <tr>
 <td>mqinq</td>
-<td>mqinq</td>
+<td>Metrics related to MQINQ calls to a queue manager</td>
 </tr>
 <tr>
 <td>mqset</td>
-<td>mqset</td>
+<td>Metrics related to MQSET calls to a queue manager</td>
 </tr>
 <tr>
 <td>put</td>
-<td>put</td>
+<td>Metrics related to MQPUT, MQPUT1 and MQSTAT calls to a queue manager</td>
 </tr>
 <tr>
 <td>get</td>
-<td>get</td>
+<td>Metrics related to MQGET, MQCB and MQCTL calls to a queue manager</td>
 </tr>
 <tr>
 <td>commit</td>
-<td>commit</td>
+<td>Metrics related to MQCMIT calls to a queue manager</td>
 </tr>
 <tr>
 <td>rollback</td>
-<td>rollback</td>
+<td>Metrics related to MQBACK calls to a queue manager</td>
 </tr>
 <tr>
 <td>subscribe</td>
-<td>subscribe</td>
+<td>Metrics related to subscriptions of a queue manager</td>
 </tr>
 <tr>
 <td>publish</td>
-<td>publish</td>
+<td>Metrics related to publications of a queue manager</td>
 </tr>   
 <tr>
-<td rowspan="6">mqobject</td>
-<td rowspan="6">mqobject</td>
+<td rowspan="9">mqobject</td>
+<td rowspan="9">Metrics for specific objects of a queue manager: for a queue, for a channel, for a listener</td>
 <td>mqopen</td>
-<td>mqopen</td>
+<td>Metrics related to MQOPEN calls to a specific queue</td>
 </tr>
 <tr>
 <td>mqclose</td>
-<td>mqclose</td>
+<td>Metrics related to MQCLOSE calls to a specific queue</td>
 </tr>
 <tr>
 <td>mqinq</td>
-<td>mqinq</td>
+<td>Metrics related to MQINQ calls to a specific queue</td>
 </tr>
 <tr>
 <td>mqset</td>
-<td>mqset</td>
+<td>Metrics related to MQSET calls to a specific queue</td>
 </tr>
 <tr>
 <td>put</td>
-<td>put</td>
+<td>Metrics related to MQPUT and MQPUT1 calls to a specific queue</td>
 </tr>
 <tr>
 <td>get</td>
-<td>get</td>
+<td>Metrics related to MQGET calls to a specific queue</td>
+</tr>   
+<tr>
+<td>queue</td>
+<td>Metrics related to a specific queue</td>
+</tr>
+<tr>
+<td>channel</td>
+<td>Metrics related to a specific channel</td>
+</tr>
+<tr>
+<td>listener</td>
+<td>Metrics related to a specific listener</td>
 </tr>
 </tbody>
 </table>
