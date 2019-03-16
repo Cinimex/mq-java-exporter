@@ -9,37 +9,38 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
    - [Dependencies](#dependencies)
    - [Configuration](#configuration)
    - [Build](#build)
-2. [Metrics naming convention](#metrics-naming-convention)
-   - [Understanding metrics names](#understanding-metrics-names)
-   - [Domains and subdomains](#domains-and-subdomains)
-   - [Units](#units)
-3. [Metrics](#metrics)
-   - [Platform central processing units](#platform-central-processing-units)
-     - [CPU performance - platform wide](#cpu-performance---platform-wide)
-     - [CPU performance - running queue manager](#cpu-performance---running-queue-manager)
-   - [Platform persistent data stores](#platform-persistent-data-stores)
-     - [Disk usage - platform wide](#disk-usage---platform-wide)
-     - [Disk usage - running queue managers](#disk-usage---running-queue-managers)
-     - [Disk usage - queue manager recovery log](#disk-usage---queue-manager-recovery-log)
-   - [API usage statistics](#api-usage-statistics)
-     - [MQCONN and MQDISC](#mqconn-and-mqdisc)
-     - [MQOPEN and MQCLOSE](#mqopen-and-mqclose)
-     - [MQINQ and MQSET](#mqinq-and-mqset)
-     - [MQPUT](#mqput)
-     - [MQGET](#mqget)
-     - [Commit and rollback](#commit-and-rollback)
-     - [Subscribe](#subscribe)
-     - [Publish](#publish)
-   - [API per-queue usage statistics](#api-per-queue-usage-statistics)
-     - [MQOPEN and MQCLOSE](#mqopen-and-mqclose-1)
-     - [MQINQ and MQSET](#mqinq-and-mqset-1)
-     - [MQPUT and MQPUT1](#mqput-and-mqput1)
-     - [MQGET](#mqget-1)
-   - [MQ PCF API specific statistics](#mq-pcf-api-specific-statistics)
-     - [PCF requests](#pcf-requests)
-     - [MQ constants mapping](#mq-constants-mapping)
-       - [Channel status mapping](#channel-status-mapping)
-       - [Listener status mapping](#listener-status-mapping)
+2. [Metrics](#metrics)
+   - [Metrics naming convention](#metrics-naming-convention)
+     - [Understanding metrics names](#understanding-metrics-names)
+     - [Domains and subdomains](#domains-and-subdomains)
+     - [Units](#units)
+   - [Metrics list](#metrics-list)
+     - [Platform central processing units](#platform-central-processing-units)
+       - [CPU performance - platform wide](#cpu-performance---platform-wide)
+       - [CPU performance - running queue manager](#cpu-performance---running-queue-manager)
+     - [Platform persistent data stores](#platform-persistent-data-stores)
+       - [Disk usage - platform wide](#disk-usage---platform-wide)
+       - [Disk usage - running queue managers](#disk-usage---running-queue-managers)
+       - [Disk usage - queue manager recovery log](#disk-usage---queue-manager-recovery-log)
+     - [API usage statistics](#api-usage-statistics)
+       - [MQCONN and MQDISC](#mqconn-and-mqdisc)
+       - [MQOPEN and MQCLOSE](#mqopen-and-mqclose)
+       - [MQINQ and MQSET](#mqinq-and-mqset)
+       - [MQPUT](#mqput)
+       - [MQGET](#mqget)
+       - [Commit and rollback](#commit-and-rollback)
+       - [Subscribe](#subscribe)
+       - [Publish](#publish)
+     - [API per-queue usage statistics](#api-per-queue-usage-statistics)
+       - [MQOPEN and MQCLOSE](#mqopen-and-mqclose-1)
+       - [MQINQ and MQSET](#mqinq-and-mqset-1)
+       - [MQPUT and MQPUT1](#mqput-and-mqput1)
+       - [MQGET](#mqget-1)
+     - [MQ PCF API specific statistics](#mq-pcf-api-specific-statistics)
+       - [PCF requests](#pcf-requests)
+       - [MQ constants mapping](#mq-constants-mapping)
+         - [Channel status mapping](#channel-status-mapping)
+         - [Listener status mapping](#listener-status-mapping)
 4. [Issues and Contributions](#issues-and-contributions)
 5. [Warning](#warning)
 6. [License](#license)
@@ -132,22 +133,204 @@ mvn package
 ```
 The only input parameter is the path to your configuration file.
 
-## Metrics naming convention
-#### Understanding metrics names
+## Metrics
+#### Metrics naming convention
+###### Understanding metrics names
 All metrics have predefined structure: domain, subdomain, name, units:
 
 <img src="/docs/images/metric_naming_example_1.png" data-canonical-src="/docs/images/metric_naming_example_1.png" width="554" height="120" />
 
-- Domain - single-word presentation of metric type.
-- Subdomain - single-word presentation of metric type. It is more specific than domain and can be used
+- **Domain** - the first single-word prefix that represents a metric type. The examples of domain-level prefixes are: system, mq, mqobject and etc. More information can be found in ["Domains and subdomains" section](#domains-and-subdomains).
+- **Subdomain** - second single-word prefix representation of a metric type. It provides more specific information about metric type and helps to differentiate metrics in a single domain. The examples of subdomain-level prefixes are: cpu, ram, put, subscribe, get and etc. More information can be found in ["Domains and subdomains" section](#domains-and-subdomains).
+- **Units** - single-word suffix describing the metric's unit, in plural form. Note that an accumulating count has "total" as the first part of a suffix. The examples of unit suffixes are: percentage, hundredths, messages, calls and etc. More information can be found in ["Units" section](#units).
+- **Name** - represents metric meaning. The examples of a metric name are: cpu_time, cpu_load_fifteen_minute_average, failed_mqget_count and etc. Note that the amount of words in a metric name can vary:
  
 <img src="/docs/images/metric_naming_example_2.png" data-canonical-src="/docs/images/metric_naming_example_2.png" width="899" height="120" />
 
-#### Domains and subdomains
-#### Units
+###### Domains and subdomains
 
-## Metrics
-#### Platform central processing units
+<table>
+<tbody>
+<tr>
+<td><strong>Domain</strong></td>
+<td><strong>Domain description</strong></td>
+<td><strong>Subdomain</strong></td>
+<td><strong>Subdomain description</strong></td>
+</tr>
+<tr>
+<td rowspan="2">system</td>
+<td rowspan="2">Platform wide system metrics</td>
+<td>cpu</td>
+<td>cpu</td>
+</tr>
+<tr>
+<td>ram</td>
+<td>ram</td>
+</tr>
+<tr>
+<td rowspan="15">mq</td>
+<td rowspan="15">MQ manager metrics</td>
+<td>cpu</td>
+<td>cpu</td>
+</tr>
+<tr>
+<td>disk</td>
+<td>disk</td>
+</tr>
+<tr>
+<td>rlog</td>
+<td>rlog</td>
+</tr>
+<tr>
+<td>mqconn</td>
+<td>mqconn</td>
+</tr>
+<tr>
+<td>mqdisc</td>
+<td>mqdisc</td>
+</tr>
+<tr>
+<td>mqopen</td>
+<td>mqopen</td>
+</tr>
+<tr>
+<td>mqclose</td>
+<td>mqclose</td>
+</tr>
+<tr>
+<td>mqinq</td>
+<td>mqinq</td>
+</tr>
+<tr>
+<td>mqset</td>
+<td>mqset</td>
+</tr>
+<tr>
+<td>put</td>
+<td>put</td>
+</tr>
+<tr>
+<td>get</td>
+<td>get</td>
+</tr>
+<tr>
+<td>commit</td>
+<td>commit</td>
+</tr>
+<tr>
+<td>rollback</td>
+<td>rollback</td>
+</tr>
+<tr>
+<td>subscribe</td>
+<td>subscribe</td>
+</tr>
+<tr>
+<td>publish</td>
+<td>publish</td>
+</tr>   
+<tr>
+<td rowspan="6">mqobject</td>
+<td rowspan="6">mqobject</td>
+<td>mqopen</td>
+<td>mqopen</td>
+</tr>
+<tr>
+<td>mqclose</td>
+<td>mqclose</td>
+</tr>
+<tr>
+<td>mqinq</td>
+<td>mqinq</td>
+</tr>
+<tr>
+<td>mqset</td>
+<td>mqset</td>
+</tr>
+<tr>
+<td>put</td>
+<td>put</td>
+</tr>
+<tr>
+<td>get</td>
+<td>get</td>
+</tr>
+</tbody>
+</table>
+   
+###### Units
+
+<table>
+<tbody>
+<tr>
+<td><strong>Unit</strong></td>
+<td><strong>Unit description</strong></td>
+</tr>
+<tr>
+<td>percentage</td>
+<td>percentage</td>
+</tr>
+<tr>
+<td>hundredths</td>
+<td>hundredths</td>
+</tr>
+<tr>
+<td>megabytes</td>
+<td>megabytes</td>
+</tr>
+<tr>
+<td>files</td>
+<td>files</td>
+</tr>
+<tr>
+<td>bytes</td>
+<td>bytes</td>
+</tr>
+<tr>
+<td>microseconds</td>
+<td>microseconds</td>
+</tr>
+<tr>
+<td>totalcalls</td>
+<td>totalcalls</td>
+</tr>
+<tr>
+<td>totalconnections</td>
+<td>totalconnections</td>
+</tr>
+<tr>
+<td>totalmessages</td>
+<td>totalmessages</td>
+</tr>
+<tr>
+<td>totalbytes</td>
+<td>totalbytes</td>
+</tr>
+<tr>
+<td>totalbrowses</td>
+<td>totalbrowses</td>
+</tr>
+<tr>
+<td>subscriptions</td>
+<td>subscriptions</td>
+</tr>
+<tr>
+<td>totalattempts</td>
+<td>totalattempts</td>
+</tr>
+<tr>
+<td>totalqueues</td>
+<td>totalqueues</td>
+</tr>
+<tr>
+<td>messages</td>
+<td>messages</td>
+</tr>
+</tbody>
+</table>
+
+#### Metrics list
+##### Platform central processing units
 ###### CPU performance - platform wide
 <table>
 <tbody>
@@ -232,7 +415,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-#### Platform persistent data stores
+##### Platform persistent data stores
 ###### Disk usage - platform wide
 <table>
 <tbody>
@@ -353,7 +536,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-#### API usage statistics
+##### API usage statistics
 ###### MQCONN and MQDISC
 <table>
 <tbody>
@@ -831,7 +1014,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-#### API per-queue usage statistics
+##### API per-queue usage statistics
 ###### MQOPEN and MQCLOSE
 <table>
 <tbody>
@@ -1053,8 +1236,8 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-#### MQ PCF API specific statistics
-##### PCF requests
+##### MQ PCF API specific statistics
+###### PCF requests
 These metrics are collected via sending direct PCF commands to queue manager.
 <table>
 <tbody>
