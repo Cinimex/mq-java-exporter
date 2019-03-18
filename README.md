@@ -647,7 +647,7 @@ This section provides a description of metrics related to MQCONN and MQDISC call
 </tbody>
 </table>
 
-###### MQOPEN and MQCLOSE
+###### MQOPEN and MQCLOSE metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to MQOPEN and MQCLOSE calls to a queue manager.
 <table>
@@ -685,7 +685,7 @@ This section provides a description of metrics related to MQOPEN and MQCLOSE cal
 </tbody>
 </table>
 
-###### MQINQ and MQSET
+###### MQINQ and MQSET metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to MQINQ and MQSET calls to a queue manager.
 <table>
@@ -723,7 +723,7 @@ This section provides a description of metrics related to MQINQ and MQSET calls 
 </tbody>
 </table>
 
-###### MQPUT
+###### MQPUT metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to MQPUT, MQPUT1 and MQSTAT calls to a queue manager.
 <table>
@@ -803,7 +803,7 @@ This section provides a description of metrics related to MQPUT, MQPUT1 and MQST
 </tbody>
 </table>
 
-###### MQGET
+###### MQGET metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to MQGET, MQCB and MQCTL calls to a queue manager.
 <table>
@@ -920,7 +920,7 @@ This section provides a description of metrics related to MQGET, MQCB and MQCTL 
 </tbody>
 </table>
 
-###### Commit and rollback
+###### Commit and rollback metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to MQCMIT and MQBACK calls to a queue manager.
 <table>
@@ -947,7 +947,7 @@ This section provides a description of metrics related to MQCMIT and MQBACK call
 </tbody>
 </table>
 
-###### Subscribe
+###### Subscription metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to subscriptions of a queue manager.
 <table>
@@ -1046,7 +1046,7 @@ This section provides a description of metrics related to subscriptions of a que
 </tbody>
 </table>
 
-###### Publish
+###### Publication metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to publications  of a queue manager.
 <table>
@@ -1102,8 +1102,8 @@ This section provides a description of metrics related to publications  of a que
 </tbody>
 </table>
 
-#### API per-queue usage statistics
-###### MQOPEN and MQCLOSE
+#### API per-queue usage metrics
+###### MQOPEN and MQCLOSE metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to MQOPEN and MQCLOSE calls to a specific queue.
 <table>
@@ -1129,7 +1129,7 @@ This section provides a description of metrics related to MQOPEN and MQCLOSE cal
 </tbody>
 </table>
 
-###### MQINQ and MQSET
+###### MQINQ and MQSET metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to MQINQ and MQSET calls to a specific queue.
 <table>
@@ -1154,7 +1154,7 @@ This section provides a description of metrics related to MQINQ and MQSET calls 
 </tbody>
 </table>
 
-###### MQPUT and MQPUT1
+###### MQPUT and MQPUT1 metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to MQPUT and MQPUT1 calls to a specific queue.
 <table>
@@ -1234,7 +1234,7 @@ This section provides a description of metrics related to MQPUT and MQPUT1 calls
 </tbody>
 </table>
 
-###### MQGET
+###### MQGET metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics related to MQGET calls to a specific queue.
 <table>
@@ -1332,8 +1332,8 @@ This section provides a description of metrics related to MQGET calls to a speci
 </tbody>
 </table>
 
-#### MQ PCF API specific statistics
-##### PCF requests
+#### MQ PCF API specific metrics
+##### Obtained by PCF commands metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics of queues, channels and listeners that are collected via sending direct PCF commands to queue manager.
 <table>
