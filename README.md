@@ -49,20 +49,24 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
 6. [License](#license)
 
 ## Getting Started
-
 #### Compatibility
-
-Support [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm) version 9.0.x.x.
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+Supports [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm) version 9.0.x.x.
 
 #### Prerequisites
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+List of prerequisites:
 - [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
 -	[Maven](https://maven.apache.org/)
 
 #### Dependencies
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+List of dependencies:
 -	[Prometheus](https://prometheus.io)
 -	[IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 
 #### Configuration
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 All connection and monitoring settings have to be set in exporter_config.yaml file.
 Below is an example of a filled configuration file with all possible fields:
 ```yaml
@@ -118,7 +122,8 @@ channels:
  - MANAGEMENT.CHANNEL
 ```
 #### Build
-
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+Steps, that need to be taken to build the exporter:
 1. Download current repository.
 2. Install [Maven](https://maven.apache.org/).
 3. Go to mq-java-exporter root folder (where pom.xml is located) and run: 
@@ -130,12 +135,12 @@ mvn package
 4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and mq_exporter.jar should appear there.
 
 #### Run
- 
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 To run exporter, dependency-jars directory (and all jars in it) and
 mq_exporter.jar should be located in the same folder.
 
 ##### Running exporter as mq service
-
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 It is recommended way of running the exporter. **Note**: all commands
  should be executed via MQ CLI. More info can be found [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q083460_.htm).
  
@@ -165,8 +170,8 @@ It is recommended way of running the exporter. **Note**: all commands
    STOP SERVICE(MQEXPORTER)
   ```
 ##### Running exporter as standalone java application
-
- To run exporter execute the following command:
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+To run exporter execute the following command:
 
 ```shell
  java -jar mq_exporter.jar /opt/mq_exporter/exporter_config.yaml
@@ -174,8 +179,9 @@ It is recommended way of running the exporter. **Note**: all commands
 The only input parameter is the path to your configuration file.
 
 ## Metrics
-#### Metrics naming convention
-###### Understanding metrics names
+### Metrics naming convention
+#### Understanding metrics names
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 All metrics have predefined structure: domain, subdomain, name, units:
 
 <img src="/docs/images/metric_naming_example_1.png" data-canonical-src="/docs/images/metric_naming_example_1.png" width="554" height="120" />
@@ -187,8 +193,8 @@ All metrics have predefined structure: domain, subdomain, name, units:
  
 <img src="/docs/images/metric_naming_example_2.png" data-canonical-src="/docs/images/metric_naming_example_2.png" width="899" height="120" />
 
-###### Domains and subdomains
-
+#### Domains and subdomains
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -310,7 +316,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
    
-###### Units
+#### Units
 
 ["Metric and label naming"](https://prometheus.io/docs/practices/naming/#metric-and-label-naming) article by Prometheus states that metrics "...should use base units (e.g. seconds, bytes, meters - not milliseconds, megabytes, kilometers)". But it is not usefull for using IBM MQ exporter. So the exporter has following list of units:
 
@@ -383,8 +389,8 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-#### Metrics list
-##### Platform central processing units
+### Metrics list
+#### Platform central processing units
 ###### CPU performance - platform wide
 <table>
 <tbody>
@@ -469,7 +475,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-##### Platform persistent data stores
+#### Platform persistent data stores
 ###### Disk usage - platform wide
 <table>
 <tbody>
@@ -590,7 +596,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-##### API usage statistics
+#### API usage statistics
 ###### MQCONN and MQDISC
 <table>
 <tbody>
@@ -1068,7 +1074,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-##### API per-queue usage statistics
+#### API per-queue usage statistics
 ###### MQOPEN and MQCLOSE
 <table>
 <tbody>
@@ -1290,8 +1296,8 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-##### MQ PCF API specific statistics
-###### PCF requests
+#### MQ PCF API specific statistics
+##### PCF requests
 These metrics are collected via sending direct PCF commands to queue manager.
 <table>
 <tbody>
@@ -1373,7 +1379,7 @@ These metrics are collected via sending direct PCF commands to queue manager.
 </tbody>
 </table>
 
-<b>Warning</b>: INACTIVE status correctness is not guaranteed. If channel has status INACTIVE, there is no way to retrieve it's status by PCF command (because technically channel has no status) and MQRCCF_CHL_STATUS_NOT_FOUND will be returned by queue manager. Since INACTIVE status of the channel is the most frequent reason for receiving such an error, we interpret it as INACTIVE status of the channel.
+<b>Note</b>: If channel has status INACTIVE, there is no way to retrieve it's status by PCF command (because technically channel has no status) and MQRCCF_CHL_STATUS_NOT_FOUND will be returned by queue manager. Since INACTIVE status of the channel is the most frequent reason for receiving such an error, the exporter interprets it as INACTIVE status of the channel.
 
 ###### Listener status mapping
 <table>
@@ -1398,11 +1404,14 @@ These metrics are collected via sending direct PCF commands to queue manager.
 </table>
 
 ## Issues and Contributions
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 Feel free to express your thoughts about the exporter, unexpected behaviour and\or issues. New feature suggestions are welcome, use [issue tracker](https://github.com/Cinimex-Informatica/mq-java-exporter/issues). 
 Pull requests are always welcome.
 
 ## Warning
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 The exporter is provided as-is with no guarantees. 
 
 ## License
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 The exporter and it's code is licensed under the [Apache License 2.0](https://github.com/Cinimex-Informatica/mq-java-exporter/blob/master/LICENSE).
