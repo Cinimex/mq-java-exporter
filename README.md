@@ -129,21 +129,13 @@ mvn package
 To run exporter, dependency-jars directory (and all jars in it) and
 mq_exporter.jar should be located in the same folder.
 
-##### Running exporter as standalone java application
-
- To run exporter execute the following command:
-
-```shell
- java -jar mq_exporter.jar /opt/mq_exporter/exporter_config.yaml
-```
-The only input parameter is the path to your configuration file.
-
 ##### Running exporter as mq service
 
+It is recommended way of running the exporter. **Note**: all commands
+ should be executed via MQ CLI. More info can be found [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q083460_.htm).
+ 
  Define queue manager service with the following command: 
  
- (**Note**: this
- command should be executed via MQ CLI. More info [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q083460_.htm))
  ```mq
   DEFINE SERVICE(MQEXPORTER) CONTROL(QMGR) SERVTYPE(SERVER) +
   STARTCMD('/opt/mqm/java/jre64/jre/bin/java')              +
@@ -167,7 +159,15 @@ The only input parameter is the path to your configuration file.
   ```mq
    STOP SERVICE(MQEXPORTER)
   ```
-  
+##### Running exporter as standalone java application
+
+ To run exporter execute the following command:
+
+```shell
+ java -jar mq_exporter.jar /opt/mq_exporter/exporter_config.yaml
+```
+The only input parameter is the path to your configuration file.
+
 ## Metrics
 #### Platform central processing units
 ###### CPU performance - platform wide
