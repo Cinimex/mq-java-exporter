@@ -286,7 +286,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tr>
 <tr>
 <td>hundredths</td>
-<td>Shows amount of hundredths</td>
+<td>Shows amount of hundredths. For example, "370 hundredths equal" to "3.70". It is used to reflect system's load average.</td>
 </tr>
 <tr>
 <td>megabytes</td>
