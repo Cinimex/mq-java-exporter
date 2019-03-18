@@ -18,22 +18,22 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
      - [Domains and subdomains](#domains-and-subdomains)
      - [Units](#units)
    - [Metrics list](#metrics-list)
-     - [Platform central processing units](#platform-central-processing-units)
-       - [CPU performance - platform wide](#cpu-performance---platform-wide)
-       - [CPU performance - running queue manager](#cpu-performance---running-queue-manager)
-     - [Platform persistent data stores](#platform-persistent-data-stores)
-       - [Disk usage - platform wide](#disk-usage---platform-wide)
-       - [Disk usage - running queue managers](#disk-usage---running-queue-managers)
-       - [Disk usage - queue manager recovery log](#disk-usage---queue-manager-recovery-log)
-     - [API usage statistics](#api-usage-statistics)
-       - [MQCONN and MQDISC](#mqconn-and-mqdisc)
-       - [MQOPEN and MQCLOSE](#mqopen-and-mqclose)
-       - [MQINQ and MQSET](#mqinq-and-mqset)
-       - [MQPUT](#mqput)
-       - [MQGET](#mqget)
-       - [Commit and rollback](#commit-and-rollback)
-       - [Subscribe](#subscribe)
-       - [Publish](#publish)
+     - [CPU metrics](#cpu-metrics)
+       - [CPU performance - platform wide metrics](#cpu-performance---platform-wide-metrics)
+       - [CPU performance metrics - running queue manager](#cpu-performance-metrics---running-queue-manager)
+     - [Platform persistent data store related metrics](#platform-persistent-data-store-related-metrics)
+       - [Disk usage metrics - platform wide](#disk-usage-metrics---platform-wide)
+       - [Disk usage metrics - running queue managers](#disk-usage-metrics---running-queue-managers)
+       - [Disk usage metrics - queue manager recovery log](#disk-usage-metrics---queue-manager-recovery-log)
+     - [API usage metrics](#api-usage-metrics)
+       - [MQCONN and MQDISC metrics](#mqconn-and-mqdisc-metrics)
+       - [MQOPEN and MQCLOSE metrics](#mqopen-and-mqclose-metrics)
+       - [MQINQ and MQSET metrics](#mqinq-and-mqset-metrics)
+       - [MQPUT metrics](#mqput-metrics)
+       - [MQGET metrics](#mqget-metrics)
+       - [Commit and rollback metrics](#commit-and-rollback-metrics)
+       - [Subscribe metrics](#subscribe-metrics)
+       - [Publish metrics](#publish-metrics)
      - [API per-queue usage statistics](#api-per-queue-usage-statistics)
        - [MQOPEN and MQCLOSE](#mqopen-and-mqclose-1)
        - [MQINQ and MQSET](#mqinq-and-mqset-1)
@@ -481,7 +481,7 @@ This section provides a description of CPU metrics of a running queue manager.
 </tbody>
 </table>
 
-#### Platform persistent data stores related metrics
+#### Platform persistent data store related metrics
 ###### Disk usage metrics - platform wide
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of disk usage metrics.
