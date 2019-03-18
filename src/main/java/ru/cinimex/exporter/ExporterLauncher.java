@@ -42,29 +42,25 @@ public class ExporterLauncher {
         ArrayList<MQObject.MQType> monitoringTypes = new ArrayList<>();
         ArrayList<MQObject> objects = new ArrayList<>();
 
-        if (config.sendPCFCommands()) {
-            if (config.getQueues() != null && config.getQueues().size() > 0) {
-                monitoringTypes.add(MQObject.MQType.QUEUE);
-                for (String queueName : config.getQueues()) {
-                    objects.add(new MQObject(queueName, MQObject.MQType.QUEUE));
-                    logger.debug("Queue {} was added for additional monitoring.", queueName);
-                }
-            }
-            if (config.getChannels() != null && config.getChannels().size() > 0) {
-                monitoringTypes.add(MQObject.MQType.CHANNEL);
-                for (String channelName : config.getChannels()) {
-                    objects.add(new MQObject(channelName, MQObject.MQType.CHANNEL));
-                    logger.debug("Channel {} was added for additional monitoring.", channelName);
-                }
-            }
-            if (config.getListeners() != null && config.getListeners().size() > 0) {
-                monitoringTypes.add(MQObject.MQType.LISTENER);
-                for (String listenerName : config.getListeners()) {
-                    objects.add(new MQObject(listenerName, MQObject.MQType.LISTENER));
-                    logger.debug("Listener {} was added for additional monitoring.", listenerName);
-                }
+        if (config.getQueues() != null && config.getQueues().size() > 0) {
+            monitoringTypes.add(MQObject.MQType.QUEUE);
+            for (String queueName : config.getQueues()) {
+                objects.add(new MQObject(queueName, MQObject.MQType.QUEUE));
             }
         }
+        if (config.getChannels() != null && config.getChannels().size() > 0) {
+            monitoringTypes.add(MQObject.MQType.CHANNEL);
+            for (String channelName : config.getChannels()) {
+                objects.add(new MQObject(channelName, MQObject.MQType.CHANNEL));
+            }
+        }
+        if (config.getListeners() != null && config.getListeners().size() > 0) {
+            monitoringTypes.add(MQObject.MQType.LISTENER);
+            for (String listenerName : config.getListeners()) {
+                objects.add(new MQObject(listenerName, MQObject.MQType.LISTENER));
+            }
+        }
+
         MetricsManager.initMetrics(elements, monitoringTypes);
         MQSubscriberManager manager = new MQSubscriberManager(config.getQmgrHost(), config.getQmgrPort(), config.getQmgrChannel(), config.getQmgrName(), config.getUser(), config.getPassword(), config.useMqscp());
         manager.runSubscribers(elements, objects, config.sendPCFCommands(), config.usePCFWildcards(), config.getScrapeInterval());
