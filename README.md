@@ -40,7 +40,7 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
        - [MQPUT and MQPUT1 metrics](#mqput-and-mqput1-metrics)
        - [MQGET metrics](#mqget-metrics-1)
      - [MQ PCF API specific metrics](#mq-pcf-api-specific-metrics)
-       - [PCF requests](#pcf-requests)
+       - [Metrics obtained by PCF commands](#metrics-obtained-by-pcf-commands)
        - [MQ constants mapping](#mq-constants-mapping)
          - [Channel status mapping](#channel-status-mapping)
          - [Listener status mapping](#listener-status-mapping)
@@ -1354,12 +1354,12 @@ This section provides a description of metrics of queues, channels and listeners
 <tr>
 <td>mqobject_channel_status_code</td>
 <td>gauge</td>
-<td>Shows current channel status.</td>
+<td>Shows current channel status. Mapping of channel statuses to prometheus metric values can be found <a href="#channel-status-mapping">here</a>.</td>
 </tr>
 <tr>
 <td>mqobject_listener_status_code</td>
 <td>gauge</td>
-<td>Shows current listener status.</td>
+<td>Shows current listener status. Mapping of listener statuses to prometheus metric values can be found <a href="#listener-status-mapping">here</a>.</td>
 </tr>
 </tbody>
 </table>
