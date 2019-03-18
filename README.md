@@ -322,6 +322,7 @@ This section provides a description of domains and subdomains and reflects their
    
 #### Units
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metric units.<br/>
 ["Metric and label naming"](https://prometheus.io/docs/practices/naming/#metric-and-label-naming) article by Prometheus states that metrics "...should use base units (e.g. seconds, bytes, meters - not milliseconds, megabytes, kilometers)". But it is not usefull for using IBM MQ exporter. So the exporter has following list of units:
 
 <table>
@@ -394,9 +395,10 @@ This section provides a description of domains and subdomains and reflects their
 </table>
 
 ### Metrics list
-#### Platform central processing units
-###### CPU performance - platform wide
+#### CPU metrics
+###### CPU performance - platform wide metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of CPU- and RAM-related metrics.
 <table>
 <tbody>
 <tr>
@@ -450,8 +452,9 @@ This section provides a description of domains and subdomains and reflects their
 </tbody>
 </table>
 
-###### CPU performance - running queue manager
+###### CPU performance metrics - running queue manager
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of CPU metrics of a running queue manager.
 <table>
 <tbody>
 <tr>
@@ -481,9 +484,10 @@ This section provides a description of domains and subdomains and reflects their
 </tbody>
 </table>
 
-#### Platform persistent data stores
-###### Disk usage - platform wide
+#### Platform persistent data stores related metrics
+###### Disk usage metrics - platform wide
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of disk usage metrics.
 <table>
 <tbody>
 <tr>
@@ -525,8 +529,9 @@ This section provides a description of domains and subdomains and reflects their
 </tbody>
 </table>
 
-###### Disk usage - running queue managers
+###### Disk usage metrics - running queue managers
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of disk usage metrics, related to a running queue manager.
 <table>
 <tbody>
 <tr>
@@ -550,8 +555,9 @@ This section provides a description of domains and subdomains and reflects their
 </tbody>
 </table>
 
-###### Disk usage - queue manager recovery log
+###### Disk usage metrics - queue manager recovery log
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of disk usage metrics, related to queue manager recovery log.
 <table>
 <tbody>
 <tr>
@@ -605,9 +611,10 @@ This section provides a description of domains and subdomains and reflects their
 </tbody>
 </table>
 
-#### API usage statistics
-###### MQCONN and MQDISC
+#### API usage metrics
+###### MQCONN and MQDISC metrics
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQCONN and MQDISC calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -645,6 +652,7 @@ This section provides a description of domains and subdomains and reflects their
 
 ###### MQOPEN and MQCLOSE
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQOPEN and MQCLOSE calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -682,6 +690,7 @@ This section provides a description of domains and subdomains and reflects their
 
 ###### MQINQ and MQSET
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQINQ and MQSET calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -719,6 +728,7 @@ This section provides a description of domains and subdomains and reflects their
 
 ###### MQPUT
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQPUT, MQPUT1 and MQSTAT calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -798,6 +808,7 @@ This section provides a description of domains and subdomains and reflects their
 
 ###### MQGET
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQGET, MQCB and MQCTL calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -914,6 +925,7 @@ This section provides a description of domains and subdomains and reflects their
 
 ###### Commit and rollback
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQCMIT and MQBACK calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -940,6 +952,7 @@ This section provides a description of domains and subdomains and reflects their
 
 ###### Subscribe
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to subscriptions of a queue manager.
 <table>
 <tbody>
 <tr>
@@ -1038,6 +1051,7 @@ This section provides a description of domains and subdomains and reflects their
 
 ###### Publish
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to publications  of a queue manager.
 <table>
 <tbody>
 <tr>
@@ -1094,6 +1108,7 @@ This section provides a description of domains and subdomains and reflects their
 #### API per-queue usage statistics
 ###### MQOPEN and MQCLOSE
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQOPEN and MQCLOSE calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -1119,6 +1134,7 @@ This section provides a description of domains and subdomains and reflects their
 
 ###### MQINQ and MQSET
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQINQ and MQSET calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -1143,6 +1159,7 @@ This section provides a description of domains and subdomains and reflects their
 
 ###### MQPUT and MQPUT1
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQPUT and MQPUT1 calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -1222,6 +1239,7 @@ This section provides a description of domains and subdomains and reflects their
 
 ###### MQGET
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQGET calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -1320,7 +1338,7 @@ This section provides a description of domains and subdomains and reflects their
 #### MQ PCF API specific statistics
 ##### PCF requests
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
-These metrics are collected via sending direct PCF commands to queue manager.
+This section provides a description of metrics of queues, channels and listeners that are collected via sending direct PCF commands to queue manager.
 <table>
 <tbody>
 <tr>
@@ -1349,6 +1367,7 @@ These metrics are collected via sending direct PCF commands to queue manager.
 ##### MQ constants mapping
 ###### Channel status mapping
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a mapping between MQ channel statuses and metric values, that are sent to Prometheus.
 <table>
 <tbody>
 <tr>
@@ -1406,6 +1425,7 @@ These metrics are collected via sending direct PCF commands to queue manager.
 
 ###### Listener status mapping
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a mapping between MQ listener statuses and metric values, that are sent to Prometheus.
 <table>
 <tbody>
 <tr>
