@@ -19,7 +19,7 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
      - [Units](#units)
    - [Metrics list](#metrics-list)
      - [CPU metrics](#cpu-metrics)
-       - [CPU performance - platform wide metrics](#cpu-performance---platform-wide-metrics)
+       - [CPU performance metrics - platform wide](#cpu-performance-metrics---platform-wide)
        - [CPU performance metrics - running queue manager](#cpu-performance-metrics---running-queue-manager)
      - [Platform persistent data store related metrics](#platform-persistent-data-store-related-metrics)
        - [Disk usage metrics - platform wide](#disk-usage-metrics---platform-wide)
@@ -393,7 +393,7 @@ This section provides a description of metric units.<br/>
 
 ### Metrics list
 #### CPU metrics
-###### CPU performance - platform wide metrics
+###### CPU performance metrics - platform wide
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of CPU- and RAM-related metrics.
 <table>
