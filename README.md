@@ -9,6 +9,9 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
    - [Dependencies](#dependencies)
    - [Configuration](#configuration)
    - [Build](#build)
+   - [Run](#run)
+     - [Running exporter as mq service](#running-exporter-as-mq-service)
+     - [Running exporter as standalone java application](#running-exporter-as-standalone-java-application)
 2. [Metrics](#metrics)
    - [Platform central processing units](#platform-central-processing-units)
      - [CPU performance - platform wide](#cpu-performance---platform-wide)
@@ -119,9 +122,46 @@ channels:
 mvn package
 ```
 
-4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and webspheremq_exporter.jar should appear there. 
-5. To run exporter, dependency-jars directory (and all jars in it) and mq_exporter.jar should be located in the same folder.
-6. To run exporter execute the following command: 
+4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and mq_exporter.jar should appear there.
+
+#### Run
+ 
+To run exporter, dependency-jars directory (and all jars in it) and
+mq_exporter.jar should be located in the same folder.
+
+##### Running exporter as mq service
+
+It is recommended way of running the exporter. **Note**: all commands
+ should be executed via MQ CLI. More info can be found [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q083460_.htm).
+ 
+ Define queue manager service with the following command: 
+ 
+ ```mq
+  DEFINE SERVICE(MQEXPORTER) CONTROL(QMGR) SERVTYPE(SERVER) +
+  STARTCMD('/opt/mqm/java/jre64/jre/bin/java')              +
+  STARTARG('-Dlog4j.configurationFile=/opt/mq_exporter/log4j2.properties -jar /opt/mq_exporter/mq_exporter.jar /opt/mq_exporter/exporter_config.yaml') +
+  STOPCMD('/usr/bin/kill ' ) STOPARG(+MQ_SERVER_PID+)       +
+  STDOUT('/opt/mq_exporter/mq_prometheus.out')              +
+  STDERR('/opt/mq_exporter/mq_prometheus.out')              +
+  DESCR('MQ exporter for Prometheus')
+ ```
+ More information about this command can be found
+ [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q085740_.htm).
+  
+ To start exporter, execute the following command:
+ 
+ ```mq
+  START SERVICE(MQEXPORTER)
+ ```
+ 
+ To stop exporter, execute the following command:
+ 
+  ```mq
+   STOP SERVICE(MQEXPORTER)
+  ```
+##### Running exporter as standalone java application
+
+ To run exporter execute the following command:
 
 ```shell
  java -jar mq_exporter.jar /opt/mq_exporter/exporter_config.yaml
@@ -191,7 +231,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_cpu_user_cpu_time_estimate_percentage</td>
@@ -222,7 +262,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_disk_trace_file_system_in_use_megabytes</td>
@@ -264,7 +304,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_disk_file_system_in_use_megabytes</td>
@@ -288,7 +328,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_rlog_log_bytes_in_use_bytes</td>
@@ -343,7 +383,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_mqconn_mqconnx_count_totalcalls</td>
@@ -379,7 +419,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_mqopen_mqopen_count_totalcalls</td>
@@ -415,7 +455,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_mqinq_mqinq_count_totalcalls</td>
@@ -451,7 +491,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_put_interval_total_mqput_mqput1_count_totalcalls</td>
@@ -529,7 +569,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 </tr>
 <tr>
@@ -644,7 +684,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 </tr>
 <tr>
@@ -669,7 +709,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 </tr>
 <tr>
@@ -766,7 +806,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_publish_topic_mqput_mqput1_interval_total_totalmessages</td>
@@ -821,7 +861,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mqobject_mqopen_mqopen_count_totalcalls</td>
@@ -845,7 +885,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <td>mqobject_mqinq_mqinq_count_totalcalls</td>
 <td>counter</td>
@@ -868,7 +908,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mqobject_put_mqput_mqput1_count_totalcalls</td>
@@ -946,7 +986,7 @@ The only input parameter is the path to your configuration file.
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mqobject_get_mqget_count_totalcalls</td>
