@@ -317,7 +317,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
    
 #### Units
-
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 ["Metric and label naming"](https://prometheus.io/docs/practices/naming/#metric-and-label-naming) article by Prometheus states that metrics "...should use base units (e.g. seconds, bytes, meters - not milliseconds, megabytes, kilometers)". But it is not usefull for using IBM MQ exporter. So the exporter has following list of units:
 
 <table>
@@ -392,6 +392,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 ### Metrics list
 #### Platform central processing units
 ###### CPU performance - platform wide
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -446,6 +447,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### CPU performance - running queue manager
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -477,6 +479,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 
 #### Platform persistent data stores
 ###### Disk usage - platform wide
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -519,6 +522,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### Disk usage - running queue managers
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -543,6 +547,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### Disk usage - queue manager recovery log
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -598,6 +603,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 
 #### API usage statistics
 ###### MQCONN and MQDISC
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -634,6 +640,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### MQOPEN and MQCLOSE
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -670,6 +677,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### MQINQ and MQSET
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -706,6 +714,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### MQPUT
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -784,6 +793,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### MQGET
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -899,6 +909,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### Commit and rollback
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -924,6 +935,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### Subscribe
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -1021,6 +1033,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### Publish
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -1076,6 +1089,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 
 #### API per-queue usage statistics
 ###### MQOPEN and MQCLOSE
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -1100,6 +1114,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### MQINQ and MQSET
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -1123,6 +1138,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### MQPUT and MQPUT1
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -1201,6 +1217,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </table>
 
 ###### MQGET
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -1298,6 +1315,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 
 #### MQ PCF API specific statistics
 ##### PCF requests
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 These metrics are collected via sending direct PCF commands to queue manager.
 <table>
 <tbody>
@@ -1326,6 +1344,7 @@ These metrics are collected via sending direct PCF commands to queue manager.
 
 ##### MQ constants mapping
 ###### Channel status mapping
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
@@ -1382,6 +1401,7 @@ These metrics are collected via sending direct PCF commands to queue manager.
 <b>Note</b>: If channel has status INACTIVE, there is no way to retrieve it's status by PCF command (because technically channel has no status) and MQRCCF_CHL_STATUS_NOT_FOUND will be returned by queue manager. Since INACTIVE status of the channel is the most frequent reason for receiving such an error, the exporter interprets it as INACTIVE status of the channel.
 
 ###### Listener status mapping
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 <table>
 <tbody>
 <tr>
