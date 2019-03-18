@@ -61,7 +61,9 @@ public class MQTopicSubscriber implements Runnable {
                     Iterator<Map.Entry<Integer, Double>> it = receivedMetrics.entrySet().iterator();
                     while (it.hasNext()) {
                         Map.Entry<Integer, Double> pair = it.next();
-                        MetricsManager.updateMetric(MetricsReference.getMetricName(element.getMetricDescription(pair.getKey()), element.requiresMQObject(), element.getRowDatatype(pair.getKey().intValue())), pair.getValue(), labels);
+                        int id = pair.getKey();
+                        double value = PCFDataParser.getExactValue(pair.getValue(), element.getRowDatatype(id));
+                        MetricsManager.updateMetric(MetricsReference.getMetricName(element.getMetricDescription(id), element.requiresMQObject(), element.getRowDatatype(id)), value, labels);
                         it.remove();
                     }
                 } catch (MQException e) {
