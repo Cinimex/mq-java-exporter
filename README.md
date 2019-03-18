@@ -198,6 +198,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 
 #### Domains and subdomains
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of domains and subdomains and reflects their relations.
 <table>
 <tbody>
 <tr>
