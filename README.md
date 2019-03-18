@@ -34,12 +34,12 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
        - [Commit and rollback metrics](#commit-and-rollback-metrics)
        - [Subscription metrics](#subscription-metrics)
        - [Publication metrics](#publication-metrics)
-     - [API per-queue usage statistics](#api-per-queue-usage-statistics)
-       - [MQOPEN and MQCLOSE](#mqopen-and-mqclose-1)
-       - [MQINQ and MQSET](#mqinq-and-mqset-1)
-       - [MQPUT and MQPUT1](#mqput-and-mqput1)
-       - [MQGET](#mqget-1)
-     - [MQ PCF API specific statistics](#mq-pcf-api-specific-statistics)
+     - [API per-queue usage metrics](#api-per-queue-usage-metrics)
+       - [MQOPEN and MQCLOSE metrics](#mqopen-and-mqclose-metrics-1)
+       - [MQINQ and MQSET metrics](#mqinq-and-mqset-metrics-1)
+       - [MQPUT and MQPUT1 metrics](#mqput-and-mqput1-metrics)
+       - [MQGET metrics](#mqget-metrics-1)
+     - [MQ PCF API specific metrics](#mq-pcf-api-specific-metrics)
        - [PCF requests](#pcf-requests)
        - [MQ constants mapping](#mq-constants-mapping)
          - [Channel status mapping](#channel-status-mapping)
@@ -1336,7 +1336,7 @@ This section provides a description of metrics related to MQGET calls to a speci
 </table>
 
 #### MQ PCF API specific metrics
-##### Obtained by PCF commands metrics
+##### Metrics obtained by PCF commands
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metrics of queues, channels and listeners that are collected via sending direct PCF commands to queue manager.
 <table>
