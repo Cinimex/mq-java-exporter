@@ -202,7 +202,7 @@ public class PCFDataParser {
                             break;
                         }
                         default: {
-                            logger.warn("Unknown parameter type was found while parsing PCF monitoring data! Will be " + "ignored." + " {} = {}", param.getParameterName(), param.getStringValue());
+                            logger.warn("Unknown parameter type was found while parsing PCF monitoring data! Will be ignored. {} = {}", param.getParameterName(), param.getStringValue());
                             break;
                         }
                     }
@@ -210,6 +210,21 @@ public class PCFDataParser {
 
         }
         return data;
+    }
+
+    /**
+     * Additional processing for values with specific data types, received from MQ.
+     *
+     * @param value    - raw value.
+     * @param dataType - data type.
+     * @return - parsed value. (Returns input value, if there is no additional processing required).
+     */
+    public static double getExactValue(double value, int dataType) {
+        switch (dataType) {
+            case MQConstants.MQIAMO_MONITOR_PERCENT:
+                return value / 100.0;
+        }
+        return value;
     }
 
     /**
