@@ -162,9 +162,10 @@ public class MetricsReference {
 
     private static HashMap<Integer, Double> listenerStatus = new HashMap<Integer, Double>() {
         {
-            put(MQConstants.MQSVC_STATUS_RUNNING, (double) 1);
-            put(MQConstants.MQSVC_STATUS_STARTING, 0.5);
-            put(MQConstants.MQSVC_STATUS_STOPPING, (double) 0);
+            put(MQConstants.MQSVC_STATUS_RUNNING, 1.0);
+            put(MQConstants.MQSVC_STATUS_STARTING, 0.75);
+            put(MQConstants.MQSVC_STATUS_STOPPING, 0.5);
+            put(MQConstants.MQSVC_STATUS_STOPPED, 0.0);
         }
     };
 

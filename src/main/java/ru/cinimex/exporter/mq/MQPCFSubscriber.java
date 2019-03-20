@@ -116,9 +116,13 @@ public class MQPCFSubscriber implements Runnable {
                     updateMetricWithoutWildcards(directPCFResponse[0], objectName);
                 } catch (PCFException e) {
                     //This error means, that channel has status "inactive".
-                    logger.warn("Channel {} is possibly inactive.", objectName);
-                    if (e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
+                    if (object.getType() == MQObject.MQType.CHANNEL && e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
                         MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQCHS_INACTIVE), queueManagerName, objectName);
+                        logger.warn("Channel {} is possibly inactive.", objectName);
+                    }
+                    if (object.getType() == MQObject.MQType.LISTENER && e.reasonCode == MQConstants.MQRC_UNKNOWN_OBJECT_NAME) {
+                        MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQSVC_STATUS_STOPPED), queueManagerName, objectName);
+                        logger.warn("Listener {} is possibly stopped.", objectName);
                     }
                 } catch (IOException | MQException e) {
                     logger.error("Error occurred during sending PCF command: ", e);
@@ -144,6 +148,10 @@ public class MQPCFSubscriber implements Runnable {
             if (e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
                 logger.warn("Channel {} is possibly inactive.", object.getName());
                 MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQCHS_INACTIVE), queueManagerName, object.getName());
+            }
+            if (object.getType() == MQObject.MQType.LISTENER && e.reasonCode == MQConstants.MQRC_UNKNOWN_OBJECT_NAME) {
+                MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQSVC_STATUS_STOPPED), queueManagerName, object.getName());
+                logger.warn("Listener {} is possibly stopped.", object.getName());
             }
         } catch (MQException | IOException e) {
             logger.error("Error occurred during sending PCF command: ", e);

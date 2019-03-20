@@ -1445,12 +1445,17 @@ This section provides a mapping between MQ listener statuses and metric values, 
 </tr>
 <tr>
 <td>STARTING</td>
-<td>0.5</td>
+<td>0.75</td>
 </tr>
 <tr>
 <td>STOPPING</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>STOPPED</td>
 <td>0</td>
 </tr>
+
 </tbody>
 </table>
 
