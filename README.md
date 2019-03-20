@@ -208,8 +208,8 @@ This section provides a description of domains and subdomains and reflects their
 <td><strong>Subdomain description</strong></td>
 </tr>
 <tr>
-<td rowspan="2">system</td>
-<td rowspan="2">Platform wide system metrics</td>
+<td rowspan="3">system</td>
+<td rowspan="3">Platform wide system metrics</td>
 <td>cpu</td>
 <td>CPU-related performance metrics</td>
 </tr>
@@ -218,10 +218,17 @@ This section provides a description of domains and subdomains and reflects their
 <td>RAM-related performance metrics</td>
 </tr>
 <tr>
-<td rowspan="15">mq</td>
-<td rowspan="15">MQ manager wide metrics</td>
+<td>disk</td>
+<td>Disk usage metrics</td>
+</tr>
+<tr>
+<td rowspan="16">mq</td>
+<td rowspan="16">MQ manager wide metrics</td>
 <td>cpu</td>
 <td>CPU metrics of a running queue manager</td>
+</tr>
+<td>ram</td>
+<td>RAM-related metrics, related to a running queue manager</td>
 </tr>
 <tr>
 <td>disk</td>
@@ -476,7 +483,7 @@ This section provides a description of CPU metrics of a running queue manager.
 <td>System CPU time - percentage estimate for queue manager</td>
 </tr>
 <tr>
-<td>mq_cpu_ram_total_estimate_megabytes</td>
+<td>mq_ram_ram_total_estimate_megabytes</td>
 <td>gauge</td>
 <td>Estimates the total bytes of RAM in use by the queue managers that are being monitored.</td>
 <td>RAM total bytes - estimate for queue manager</td>
@@ -497,31 +504,31 @@ This section provides a description of disk usage metrics.
 <td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
-<td>mq_disk_trace_file_system_in_use_megabytes</td>
+<td>system_disk_trace_file_system_in_use_megabytes</td>
 <td>gauge</td>
 <td>Shows the number of bytes of disk storage that are being used by the trace file system.</td>
 <td>MQ trace file system - bytes in use</td>
 </tr>
 <tr>
-<td>mq_disk_trace_file_system_free_space_percentage</td>
+<td>system_disk_trace_file_system_free_space_percentage</td>
 <td>gauge</td>
 <td>Shows the disk storage that is reserved for the trace file system that is free.</td>
 <td>MQ trace file system - free space</td>
 </tr>
 <tr>
-<td>mq_disk_errors_file_system_in_use_megabytes</td>
+<td>system_disk_errors_file_system_in_use_megabytes</td>
 <td>gauge</td>
 <td>Shows the number of bytes of disk storage that is being used by error data.</td>
 <td>MQ errors file system - bytes in use</td>
 </tr>
 <tr>
-<td>mq_disk_errors_file_system_free_space_percentage</td>
+<td>system_disk_errors_file_system_free_space_percentage</td>
 <td>gauge</td>
 <td>Shows the disk storage that is reserved for error data that is free.</td>
 <td>MQ errors file system - free space</td>
 </tr>
 <tr>
-<td>mq_disk_fdc_file_count_files</td>
+<td>system_disk_fdc_file_count_files</td>
 <td>gauge</td>
 <td>Shows the current number of FDC files.</td>
 <td>MQ FDC file count</td>
@@ -1309,25 +1316,25 @@ This section provides a description of metrics related to MQGET calls to a speci
 <td>MQGET browse persistent byte count</td>
 </tr>
 <tr>
-<td>mqobject_get_messages_expired_totalmessages</td>
+<td>mqobject_queue_messages_expired_totalmessages</td>
 <td>counter</td>
 <td>Shows a count of expired messages.</td>
 <td>messages expired</td>
 </tr>
 <tr>
-<td>mqobject_get_queue_purged_count_totalqueues</td>
+<td>mqobject_queue_queue_purged_count_totalqueues</td>
 <td>counter</td>
 <td>Shows a count of queues that have been purged.</td>
 <td>queue purged count</td>
 </tr>
 <tr>
-<td>mqobject_get_average_queue_time_microseconds</td>
+<td>mqobject_queue_average_queue_time_microseconds</td>
 <td>gauge</td>
 <td>Shows the average latency of messages that are retrieved from the queue.</td>
 <td>average queue time</td>
 </tr>
 <tr>
-<td>mqobject_get_queue_depth_messages</td>
+<td>mqobject_queue_queue_depth_messages</td>
 <td>gauge</td>
 <td>Shows the number of messages on the queue.</td>
 <td>Queue depth</td>
@@ -1347,17 +1354,17 @@ This section provides a description of metrics of queues, channels and listeners
 <td><strong>Short description</strong></td>
 </tr>
 <tr>
-<td>mqobject_queue_max_depth_messages</td>
+<td>mqobject_queue_queue_max_depth_messages</td>
 <td>gauge</td>
 <td>Shows maximum number of messages that are allowed on the queue.</td>
 </tr>
 <tr>
-<td>mqobject_channel_status_code</td>
+<td>mqobject_channel_channel_status_code</td>
 <td>gauge</td>
 <td>Shows current channel status. Mapping of channel statuses to prometheus metric values can be found <a href="#channel-status-mapping">here</a>.</td>
 </tr>
 <tr>
-<td>mqobject_listener_status_code</td>
+<td>mqobject_listener_listener_status_code</td>
 <td>gauge</td>
 <td>Shows current listener status. Mapping of listener statuses to prometheus metric values can be found <a href="#listener-status-mapping">here</a>.</td>
 </tr>
@@ -1455,7 +1462,7 @@ Pull requests are always welcome.
 ## Known issues
 The following are known issues and may affect your use of exporter.
 
-* Metric mq_cpu_ram_total_estimate_megabytes may contain negative
+* Metric mq_ram_ram_total_estimate_megabytes may contain negative
   values.
   [#62](https://github.com/Cinimex-Informatica/mq-java-exporter/issues/62)
   

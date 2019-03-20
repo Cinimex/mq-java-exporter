@@ -21,12 +21,12 @@ public class MetricsReference {
             put("RAM total bytes", new Metric("system_ram_ram_total_megabytes", Metric.Type.SimpleGauge));
             put("User CPU time - percentage estimate for queue manager", new Metric("mq_cpu_user_cpu_time_estimate_percentage", Metric.Type.SimpleGauge));
             put("System CPU time - percentage estimate for queue manager", new Metric("mq_cpu_system_cpu_time_estimat_percentage", Metric.Type.SimpleGauge));
-            put("RAM total bytes - estimate for queue manager", new Metric("mq_cpu_ram_total_estimate_megabytes", Metric.Type.SimpleGauge));
-            put("MQ trace file system - bytes in use", new Metric("mq_disk_trace_file_system_in_use_megabytes", Metric.Type.SimpleGauge));
-            put("MQ trace file system - free space", new Metric("mq_disk_trace_file_system_free_space_percentage", Metric.Type.SimpleGauge));
-            put("MQ errors file system - bytes in use", new Metric("mq_disk_errors_file_system_in_use_megabytes", Metric.Type.SimpleGauge));
-            put("MQ errors file system - free space", new Metric("mq_disk_errors_file_system_free_space_percentage", Metric.Type.SimpleGauge));
-            put("MQ FDC file count", new Metric("mq_disk_fdc_file_count_files", Metric.Type.SimpleGauge));
+            put("RAM total bytes - estimate for queue manager", new Metric("mq_ram_ram_total_estimate_megabytes", Metric.Type.SimpleGauge));
+            put("MQ trace file system - bytes in use", new Metric("system_disk_trace_file_system_in_use_megabytes", Metric.Type.SimpleGauge));
+            put("MQ trace file system - free space", new Metric("system_disk_trace_file_system_free_space_percentage", Metric.Type.SimpleGauge));
+            put("MQ errors file system - bytes in use", new Metric("system_disk_errors_file_system_in_use_megabytes", Metric.Type.SimpleGauge));
+            put("MQ errors file system - free space", new Metric("system_disk_errors_file_system_free_space_percentage", Metric.Type.SimpleGauge));
+            put("MQ FDC file count", new Metric("system_disk_fdc_file_count_files", Metric.Type.SimpleGauge));
             put("Queue Manager file system - bytes in use", new Metric("mq_disk_file_system_in_use_megabytes", Metric.Type.SimpleGauge));
             put("Queue Manager file system - free space", new Metric("mq_disk_file_system_free_space_percentage", Metric.Type.SimpleGauge));
             put("Log - bytes in use", new Metric("mq_rlog_log_bytes_in_use_bytes", Metric.Type.SimpleGauge));
@@ -104,9 +104,9 @@ public class MetricsReference {
 
     private static HashMap<MQObject.MQType, AdditionalMetric> MQ_OBJECT_ADDITIONAL_METRICS_REFERENCE = new HashMap<MQObject.MQType, AdditionalMetric>() {
         {
-            put(MQObject.MQType.QUEUE, new AdditionalMetric("mqobject_queue_max_depth_messages", "The maximum number of messages that are allowed on the queue"));
-            put(MQObject.MQType.CHANNEL, new AdditionalMetric("mqobject_channel_status_code", "The status of the channel"));
-            put(MQObject.MQType.LISTENER, new AdditionalMetric("mqobject_listener_status_code", "The status of the listener"));
+            put(MQObject.MQType.QUEUE, new AdditionalMetric("mqobject_queue_queue_max_depth_messages", "The maximum " + "number of messages that are allowed on the queue"));
+            put(MQObject.MQType.CHANNEL, new AdditionalMetric("mqobject_channel_channel_status_code", "The status of " + "the channel"));
+            put(MQObject.MQType.LISTENER, new AdditionalMetric("mqobject_listener_listener_status_code", "The status " + "of the listener"));
         }
     };
 
@@ -138,9 +138,9 @@ public class MetricsReference {
             put("MQGET browse non-persistent byte count", new Metric("mqobject_get_mqget_browse_non_persistent_byte_count_totalbytes", Metric.Type.SimpleCounter));
             put("MQGET browse persistent byte count", new Metric("mqobject_get_mqget_browse_persistent_byte_count_totalbytes", Metric.Type.SimpleCounter));
             put("messages expired", new Metric("mqobject_get_messages_expired_totalmessages", Metric.Type.SimpleCounter));
-            put("queue purged count", new Metric("mqobject_get_queue_purged_count_totalqueues", Metric.Type.SimpleCounter));
-            put("average queue time", new Metric("mqobject_get_average_queue_time_microseconds", Metric.Type.SimpleGauge));
-            put("Queue depth", new Metric("mqobject_get_queue_depth_messages", Metric.Type.SimpleGauge));
+            put("queue purged count", new Metric("mqobject_queue_queue_purged_count_totalqueues", Metric.Type.SimpleCounter));
+            put("average queue time", new Metric("mqobject_queue_average_queue_time_microseconds", Metric.Type.SimpleGauge));
+            put("Queue depth", new Metric("mqobject_queue_queue_depth_messages", Metric.Type.SimpleGauge));
         }
     };
 
