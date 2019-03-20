@@ -18,29 +18,29 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
      - [Domains and subdomains](#domains-and-subdomains)
      - [Units](#units)
    - [Metrics list](#metrics-list)
-     - [Platform central processing units](#platform-central-processing-units)
-       - [CPU performance - platform wide](#cpu-performance---platform-wide)
-       - [CPU performance - running queue manager](#cpu-performance---running-queue-manager)
-     - [Platform persistent data stores](#platform-persistent-data-stores)
-       - [Disk usage - platform wide](#disk-usage---platform-wide)
-       - [Disk usage - running queue managers](#disk-usage---running-queue-managers)
-       - [Disk usage - queue manager recovery log](#disk-usage---queue-manager-recovery-log)
-     - [API usage statistics](#api-usage-statistics)
-       - [MQCONN and MQDISC](#mqconn-and-mqdisc)
-       - [MQOPEN and MQCLOSE](#mqopen-and-mqclose)
-       - [MQINQ and MQSET](#mqinq-and-mqset)
-       - [MQPUT](#mqput)
-       - [MQGET](#mqget)
-       - [Commit and rollback](#commit-and-rollback)
-       - [Subscribe](#subscribe)
-       - [Publish](#publish)
-     - [API per-queue usage statistics](#api-per-queue-usage-statistics)
-       - [MQOPEN and MQCLOSE](#mqopen-and-mqclose-1)
-       - [MQINQ and MQSET](#mqinq-and-mqset-1)
-       - [MQPUT and MQPUT1](#mqput-and-mqput1)
-       - [MQGET](#mqget-1)
-     - [MQ PCF API specific statistics](#mq-pcf-api-specific-statistics)
-       - [PCF requests](#pcf-requests)
+     - [CPU metrics](#cpu-metrics)
+       - [CPU performance metrics - platform wide](#cpu-performance-metrics---platform-wide)
+       - [CPU performance metrics - running queue manager](#cpu-performance-metrics---running-queue-manager)
+     - [Platform persistent data store related metrics](#platform-persistent-data-store-related-metrics)
+       - [Disk usage metrics - platform wide](#disk-usage-metrics---platform-wide)
+       - [Disk usage metrics - running queue managers](#disk-usage-metrics---running-queue-managers)
+       - [Disk usage metrics - queue manager recovery log](#disk-usage-metrics---queue-manager-recovery-log)
+     - [API usage metrics](#api-usage-metrics)
+       - [MQCONN and MQDISC metrics](#mqconn-and-mqdisc-metrics)
+       - [MQOPEN and MQCLOSE metrics](#mqopen-and-mqclose-metrics)
+       - [MQINQ and MQSET metrics](#mqinq-and-mqset-metrics)
+       - [MQPUT metrics](#mqput-metrics)
+       - [MQGET metrics](#mqget-metrics)
+       - [Commit and rollback metrics](#commit-and-rollback-metrics)
+       - [Subscription metrics](#subscription-metrics)
+       - [Publication metrics](#publication-metrics)
+     - [API per-queue usage metrics](#api-per-queue-usage-metrics)
+       - [MQOPEN and MQCLOSE metrics](#mqopen-and-mqclose-metrics-1)
+       - [MQINQ and MQSET metrics](#mqinq-and-mqset-metrics-1)
+       - [MQPUT and MQPUT1 metrics](#mqput-and-mqput1-metrics)
+       - [MQGET metrics](#mqget-metrics-1)
+     - [MQ PCF API specific metrics](#mq-pcf-api-specific-metrics)
+       - [Metrics obtained by PCF commands](#metrics-obtained-by-pcf-commands)
        - [MQ constants mapping](#mq-constants-mapping)
          - [Channel status mapping](#channel-status-mapping)
          - [Listener status mapping](#listener-status-mapping)
@@ -50,24 +50,26 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
 6. [License](#license)
 
 ## Getting Started
-
 #### Compatibility
-
-Supports IBM
-MQ(https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
-version 9.0.x.x and above. 
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+Supports [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm) version 9.0.x.x and above.
 
 Was tested on MQ ver.9.0.x.x and MQ ver. 9.1.x.x.
 
 #### Prerequisites
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+List of prerequisites:
 - [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
 -	[Maven](https://maven.apache.org/)
 
 #### Dependencies
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+List of dependencies:
 -	[Prometheus](https://prometheus.io)
 -	[IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 
 #### Configuration
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 All connection and monitoring settings have to be set in exporter_config.yaml file.
 Below is an example of a filled configuration file with all possible fields:
 ```yaml
@@ -123,7 +125,8 @@ channels:
  - MANAGEMENT.CHANNEL
 ```
 #### Build
-
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+Steps, that need to be taken to build the exporter:
 1. Download current repository.
 2. Install [Maven](https://maven.apache.org/).
 3. Go to mq-java-exporter root folder (where pom.xml is located) and run: 
@@ -135,12 +138,12 @@ mvn package
 4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and mq_exporter.jar should appear there.
 
 #### Run
- 
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 To run exporter, dependency-jars directory (and all jars in it) and
 mq_exporter.jar should be located in the same folder.
 
 ##### Running exporter as mq service
-
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 It is recommended way of running the exporter. **Note**: all commands
  should be executed via MQ CLI. More info can be found [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q083460_.htm).
  
@@ -170,8 +173,8 @@ It is recommended way of running the exporter. **Note**: all commands
    STOP SERVICE(MQEXPORTER)
   ```
 ##### Running exporter as standalone java application
-
- To run exporter execute the following command:
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+To run exporter execute the following command:
 
 ```shell
  java -jar mq_exporter.jar /opt/mq_exporter/exporter_config.yaml
@@ -179,8 +182,9 @@ It is recommended way of running the exporter. **Note**: all commands
 The only input parameter is the path to your configuration file.
 
 ## Metrics
-#### Metrics naming convention
-###### Understanding metrics names
+### Metrics naming convention
+#### Understanding metrics names
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 All metrics have predefined structure: domain, subdomain, name, units:
 
 <img src="/docs/images/metric_naming_example_1.png" data-canonical-src="/docs/images/metric_naming_example_1.png" width="554" height="120" />
@@ -192,8 +196,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
  
 <img src="/docs/images/metric_naming_example_2.png" data-canonical-src="/docs/images/metric_naming_example_2.png" width="899" height="120" />
 
-###### Domains and subdomains
-
+#### Domains and subdomains
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of domains and subdomains and reflects their relations.
 <table>
 <tbody>
 <tr>
@@ -315,8 +320,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
    
-###### Units
-
+#### Units
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metric units.<br/>
 ["Metric and label naming"](https://prometheus.io/docs/practices/naming/#metric-and-label-naming) article by Prometheus states that metrics "...should use base units (e.g. seconds, bytes, meters - not milliseconds, megabytes, kilometers)". But it is not usefull for using IBM MQ exporter. So the exporter has following list of units:
 
 <table>
@@ -388,9 +394,11 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-#### Metrics list
-##### Platform central processing units
-###### CPU performance - platform wide
+### Metrics list
+#### CPU metrics
+###### CPU performance metrics - platform wide
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of CPU- and RAM-related metrics.
 <table>
 <tbody>
 <tr>
@@ -444,7 +452,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### CPU performance - running queue manager
+###### CPU performance metrics - running queue manager
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of CPU metrics of a running queue manager.
 <table>
 <tbody>
 <tr>
@@ -474,8 +484,10 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-##### Platform persistent data stores
-###### Disk usage - platform wide
+#### Platform persistent data store related metrics
+###### Disk usage metrics - platform wide
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of disk usage metrics.
 <table>
 <tbody>
 <tr>
@@ -517,7 +529,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### Disk usage - running queue managers
+###### Disk usage metrics - running queue managers
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of disk usage metrics, related to a running queue manager.
 <table>
 <tbody>
 <tr>
@@ -541,7 +555,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### Disk usage - queue manager recovery log
+###### Disk usage metrics - queue manager recovery log
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of disk usage metrics, related to queue manager recovery log.
 <table>
 <tbody>
 <tr>
@@ -595,8 +611,10 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-##### API usage statistics
-###### MQCONN and MQDISC
+#### API usage metrics
+###### MQCONN and MQDISC metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQCONN and MQDISC calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -632,7 +650,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### MQOPEN and MQCLOSE
+###### MQOPEN and MQCLOSE metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQOPEN and MQCLOSE calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -668,7 +688,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### MQINQ and MQSET
+###### MQINQ and MQSET metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQINQ and MQSET calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -704,7 +726,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### MQPUT
+###### MQPUT metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQPUT, MQPUT1 and MQSTAT calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -782,7 +806,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### MQGET
+###### MQGET metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQGET, MQCB and MQCTL calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -897,7 +923,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### Commit and rollback
+###### Commit and rollback metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQCMIT and MQBACK calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -922,7 +950,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### Subscribe
+###### Subscription metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to subscriptions of a queue manager.
 <table>
 <tbody>
 <tr>
@@ -1019,7 +1049,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### Publish
+###### Publication metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to publications  of a queue manager.
 <table>
 <tbody>
 <tr>
@@ -1073,8 +1105,10 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-##### API per-queue usage statistics
-###### MQOPEN and MQCLOSE
+#### API per-queue usage metrics
+###### MQOPEN and MQCLOSE metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQOPEN and MQCLOSE calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -1098,7 +1132,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### MQINQ and MQSET
+###### MQINQ and MQSET metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQINQ and MQSET calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -1121,7 +1157,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### MQPUT and MQPUT1
+###### MQPUT and MQPUT1 metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQPUT and MQPUT1 calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -1199,7 +1237,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-###### MQGET
+###### MQGET metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQGET calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -1295,9 +1335,10 @@ All metrics have predefined structure: domain, subdomain, name, units:
 </tbody>
 </table>
 
-##### MQ PCF API specific statistics
-###### PCF requests
-These metrics are collected via sending direct PCF commands to queue manager.
+#### MQ PCF API specific metrics
+##### Metrics obtained by PCF commands
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics of queues, channels and listeners that are collected via sending direct PCF commands to queue manager.
 <table>
 <tbody>
 <tr>
@@ -1313,18 +1354,20 @@ These metrics are collected via sending direct PCF commands to queue manager.
 <tr>
 <td>mqobject_channel_status_code</td>
 <td>gauge</td>
-<td>Shows current channel status.</td>
+<td>Shows current channel status. Mapping of channel statuses to prometheus metric values can be found <a href="#channel-status-mapping">here</a>.</td>
 </tr>
 <tr>
 <td>mqobject_listener_status_code</td>
 <td>gauge</td>
-<td>Shows current listener status.</td>
+<td>Shows current listener status. Mapping of listener statuses to prometheus metric values can be found <a href="#listener-status-mapping">here</a>.</td>
 </tr>
 </tbody>
 </table>
 
 ##### MQ constants mapping
 ###### Channel status mapping
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a mapping between MQ channel statuses and metric values, that are sent to Prometheus.
 <table>
 <tbody>
 <tr>
@@ -1378,9 +1421,11 @@ These metrics are collected via sending direct PCF commands to queue manager.
 </tbody>
 </table>
 
-<b>Warning</b>: INACTIVE status correctness is not guaranteed. If channel has status INACTIVE, there is no way to retrieve it's status by PCF command (because technically channel has no status) and MQRCCF_CHL_STATUS_NOT_FOUND will be returned by queue manager. Since INACTIVE status of the channel is the most frequent reason for receiving such an error, we interpret it as INACTIVE status of the channel.
+<b>Note</b>: If channel has status INACTIVE, there is no way to retrieve it's status by PCF command (because technically channel has no status) and MQRCCF_CHL_STATUS_NOT_FOUND will be returned by queue manager. Since INACTIVE status of the channel is the most frequent reason for receiving such an error, the exporter interprets it as INACTIVE status of the channel.
 
 ###### Listener status mapping
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a mapping between MQ listener statuses and metric values, that are sent to Prometheus.
 <table>
 <tbody>
 <tr>
@@ -1403,6 +1448,7 @@ These metrics are collected via sending direct PCF commands to queue manager.
 </table>
 
 ## Issues and Contributions
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 Feel free to express your thoughts about the exporter, unexpected behaviour and\or issues. New feature suggestions are welcome, use [issue tracker](https://github.com/Cinimex-Informatica/mq-java-exporter/issues). 
 Pull requests are always welcome.
 
@@ -1422,7 +1468,9 @@ The following are known issues and may affect your use of exporter.
    the fix from IBM for MQ ver. 9.0.x.x.
 
 ## Warning
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 The exporter is provided as-is with no guarantees. 
 
 ## License
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 The exporter and it's code is licensed under the [Apache License 2.0](https://github.com/Cinimex-Informatica/mq-java-exporter/blob/master/LICENSE).
