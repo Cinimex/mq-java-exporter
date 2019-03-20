@@ -85,6 +85,7 @@ qmgrConnectionParams:
   qmgrChannel: SYSTEM.DEF.SVRCONN
 # Username, which will be used for connection (optional).
 # User must have permission to subscribe to the topic $SYS/MQ/INFO/QMGR/QM/Monitor/ and all subtopics.
+# User also must have permission to inquire  channels, queues and listeners listed below! 
   user: mqm
 # Password, which will be used for connection (optional).
   password: mqm
@@ -106,7 +107,6 @@ prometheusEndpointParams:
 PCFParameters:
 # Collect additional metrics? If false, all settings in this section below are ignored. 
 # If yes, additional metrics will be collected for all queues, channels and listeners listed below. 
-# Note: User must have permission to inquire  channels, queues and listeners listed below! 
   sendPCFCommands: true
 # Use wildcards? If yes, only one PCF command will be send, matching all objects on queue manager. Otherwise, each 
 # object will be monitored by separate PCF command.  
