@@ -6,7 +6,7 @@ import ru.cinimex.exporter.prometheus.Registry;
 /**
  * Represents Prometheus basic metric. Counter, which can increase and decrease.
  */
-public class SimpleGauge {
+public class SimpleGauge implements MetricInterface {
     private Gauge gauge;
 
     /**
@@ -28,9 +28,16 @@ public class SimpleGauge {
      * @param value       - new value.
      * @param labelValues - value labels.
      */
-    public void setGauge(double value, String... labelValues) {
+    private void setGauge(double value, String... labelValues) {
         gauge.labels(labelValues).set(value);
     }
 
+    @Override
+    public void update(double value, String... labels) {
+        setGauge(value, labels);
+    }
 
+    @Override
+    public void notifyWasScraped() {
+    }
 }

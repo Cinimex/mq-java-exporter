@@ -5,6 +5,9 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.common.TextFormat;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import ru.cinimex.exporter.prometheus.metrics.MetricsManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,6 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPOutputStream;
 
 public class HTTPServer {
+    private static final Logger logger = LogManager.getLogger(HTTPServer.class);
     protected final HttpServer server;
     protected final ExecutorService executorService;
 
@@ -35,6 +39,7 @@ public class HTTPServer {
         executorService = Executors.newFixedThreadPool(5, NamedDaemonThreadFactory.defaultThreadFactory(daemon));
         server.setExecutor(executorService);
         start(daemon);
+        logger.info("Endpoint {} on port {} successfully expanded!", url, addr.getPort());
     }
 
 
@@ -118,6 +123,7 @@ public class HTTPServer {
 
 
         public void handle(HttpExchange t) throws IOException {
+            logger.debug("Received request from Prometheus.");
             String query = t.getRequestURI().getRawQuery();
 
             ByteArrayOutputStream response = this.response.get();
@@ -142,6 +148,8 @@ public class HTTPServer {
                 response.writeTo(t.getResponseBody());
             }
             t.close();
+            logger.debug("Data was sent to Prometheus.");
+            MetricsManager.notifyMetricsWereScraped();
         }
 
     }

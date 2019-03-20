@@ -11,7 +11,8 @@
         <mq.allclient.version>9.0.0.1</mq.allclient.version>
         <snakeyaml.version>1.23</snakeyaml.version>
         <prometheus.version>0.6.0</prometheus.version>
-        <mq.allclient.jar.path>./lib/com.ibm.mq.allclient.jar</mq.allclient.jar.path>
+        <log4j.version>2.11.2</log4j.version>
+        <mq.allclient.jar.path>/lib/com.ibm.mq.allclient.jar</mq.allclient.jar.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -23,6 +24,8 @@
             <groupId>com.ibm.mq</groupId>
             <artifactId>com.ibm.mq.allclient</artifactId>
             <version>${mq.allclient.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}${mq.allclient.jar.path}</systemPath>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -39,9 +42,19 @@
             <artifactId>simpleclient_common</artifactId>
             <version>${prometheus.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
     </dependencies>
     <build>
-        <finalName>webspheremq_exporter</finalName>
+        <finalName>mq_exporter</finalName>
         <plugins>
             <!-- Set a JDK compiler level -->
             <plugin>
@@ -59,6 +72,10 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.1.1</version>
                 <configuration>
+                    <excludes>
+                        <exclude>**/exporter_config.yaml</exclude>
+                        <exclude>**/log4j2.properties</exclude>
+                    </excludes>
                     <archive>
                         <manifest>
                             <!-- Jar file entry point -->

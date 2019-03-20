@@ -3,43 +3,56 @@
 Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and system metrics of it's host machine.
 
 ## Table of contents
-1. [Getting Started](https://github.com/Cinimex-Informatica/mq-java-exporter#getting-started)
-   - [Compatibility](https://github.com/Cinimex-Informatica/mq-java-exporter#compatibility)
-   - [Prerequisites](https://github.com/Cinimex-Informatica/mq-java-exporter#prerequisites)
-   - [Dependencies](https://github.com/Cinimex-Informatica/mq-java-exporter#dependencies)
-   - [Configuration](https://github.com/Cinimex-Informatica/mq-java-exporter#configuration)
-   - [Build](https://github.com/Cinimex-Informatica/mq-java-exporter#build)
-2. [Metrics](https://github.com/Cinimex-Informatica/mq-java-exporter#metrics)
-   - [Platform central processing units](https://github.com/Cinimex-Informatica/mq-java-exporter#platform-central-processing-units)
-     - [CPU performance - platform wide](https://github.com/Cinimex-Informatica/mq-java-exporter#cpu-performance---platform-wide)
-     - [CPU performance - running queue manager](https://github.com/Cinimex-Informatica/mq-java-exporter#cpu-performance---running-queue-manager)
-   - [Platform persistent data stores](https://github.com/Cinimex-Informatica/mq-java-exporter#platform-persistent-data-stores)
-     - [Disk usage - platform wide](https://github.com/Cinimex-Informatica/mq-java-exporter#disk-usage---platform-wide)
-     - [Disk usage - running queue managers](https://github.com/Cinimex-Informatica/mq-java-exporter#disk-usage---running-queue-managers)
-     - [Disk usage - queue manager recovery log](https://github.com/Cinimex-Informatica/mq-java-exporter#disk-usage---queue-manager-recovery-log)
-   - [API usage statistics](https://github.com/Cinimex-Informatica/mq-java-exporter#api-usage-statistics)
-     - [MQCONN and MQDISC](https://github.com/Cinimex-Informatica/mq-java-exporter#mqconn-and-mqdisc)
-     - [MQOPEN and MQCLOSE](https://github.com/Cinimex-Informatica/mq-java-exporter#mqopen-and-mqclose)
-     - [MQINQ and MQSET](https://github.com/Cinimex-Informatica/mq-java-exporter#mqinq-and-mqset)
-     - [MQPUT](https://github.com/Cinimex-Informatica/mq-java-exporter#mqput)
-     - [MQGET](https://github.com/Cinimex-Informatica/mq-java-exporter#mqget)
-     - [Commit and rollback](https://github.com/Cinimex-Informatica/mq-java-exporter#commit-and-rollback)
-     - [Subscribe](https://github.com/Cinimex-Informatica/mq-java-exporter#subscribe)
-     - [Publish](https://github.com/Cinimex-Informatica/mq-java-exporter#publish)
-   - [API per-queue usage statistics](https://github.com/Cinimex-Informatica/mq-java-exporter#api-per-queue-usage-statistics)
-     - [MQOPEN and MQCLOSE](https://github.com/Cinimex-Informatica/mq-java-exporter#mqopen-and-mqclose-1)
-     - [MQINQ and MQSET](https://github.com/Cinimex-Informatica/mq-java-exporter#mqinq-and-mqset-1)
-     - [MQPUT and MQPUT1](https://github.com/Cinimex-Informatica/mq-java-exporter#mqput-and-mqput1)
-     - [MQGET](https://github.com/Cinimex-Informatica/mq-java-exporter#mqget-1)
-3. [Issues and Contributions](https://github.com/Cinimex-Informatica/mq-java-exporter#issues-and-contributions)
-4. [Warning](https://github.com/Cinimex-Informatica/mq-java-exporter#warning)
-5. [License](https://github.com/Cinimex-Informatica/mq-java-exporter#license)
+1. [Getting Started](#getting-started)
+   - [Compatibility](#compatibility)
+   - [Prerequisites](#prerequisites)
+   - [Dependencies](#dependencies)
+   - [Configuration](#configuration)
+   - [Build](#build)
+   - [Run](#run)
+     - [Running exporter as mq service](#running-exporter-as-mq-service)
+     - [Running exporter as standalone java application](#running-exporter-as-standalone-java-application)
+2. [Metrics](#metrics)
+   - [Platform central processing units](#platform-central-processing-units)
+     - [CPU performance - platform wide](#cpu-performance---platform-wide)
+     - [CPU performance - running queue manager](#cpu-performance---running-queue-manager)
+   - [Platform persistent data stores](#platform-persistent-data-stores)
+     - [Disk usage - platform wide](#disk-usage---platform-wide)
+     - [Disk usage - running queue managers](#disk-usage---running-queue-managers)
+     - [Disk usage - queue manager recovery log](#disk-usage---queue-manager-recovery-log)
+   - [API usage statistics](#api-usage-statistics)
+     - [MQCONN and MQDISC](#mqconn-and-mqdisc)
+     - [MQOPEN and MQCLOSE](#mqopen-and-mqclose)
+     - [MQINQ and MQSET](#mqinq-and-mqset)
+     - [MQPUT](#mqput)
+     - [MQGET](#mqget)
+     - [Commit and rollback](#commit-and-rollback)
+     - [Subscribe](#subscribe)
+     - [Publish](#publish)
+   - [API per-queue usage statistics](#api-per-queue-usage-statistics)
+     - [MQOPEN and MQCLOSE](#mqopen-and-mqclose-1)
+     - [MQINQ and MQSET](#mqinq-and-mqset-1)
+     - [MQPUT and MQPUT1](#mqput-and-mqput1)
+     - [MQGET](#mqget-1)
+   - [MQ PCF API specific statistics](#mq-pcf-api-specific-statistics)
+     - [PCF requests](#pcf-requests)
+     - [MQ constants mapping](#mq-constants-mapping)
+       - [Channel status mapping](#channel-status-mapping)
+       - [Listener status mapping](#listener-status-mapping)
+3. [Issues and Contributions](#issues-and-contributions)
+4. [Known issues](#known-issues)
+5. [Warning](#warning)
+6. [License](#license)
 
 ## Getting Started
 
 #### Compatibility
 
-Support [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm) version 9.0.x.x.
+Supports IBM
+MQ(https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
+version 9.0.x.x and above. 
+
+Was tested on MQ ver.9.0.x.x and MQ ver. 9.1.x.x.
 
 #### Prerequisites
 - [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
@@ -50,13 +63,60 @@ Support [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com
 -	[IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 
 #### Configuration
-All settings have to be set in mq-java-exporter\src\main\resources\exporter_config.yaml.
-- MQ connection information. Describes MQ connection information.
-- Prometheus connection information. Describes Prometheus connection information.
-- Monitoring objects. Sets names of objects, that have to be monitored: queues, channels.
+All connection and monitoring settings have to be set in exporter_config.yaml file.
+Below is an example of a filled configuration file with all possible fields:
+```yaml
+# MQ connection information -------------------------------
+qmgrConnectionParams:
+# Queue manager name.
+  qmgrName: QM
+# Queue manager host.
+  qmgrHost: hostname
+# Queue manager connection port.
+  qmgrPort: 1414
+# Queue manager connection channel.
+  qmgrChannel: SYSTEM.DEF.SVRCONN
+# Username, which will be used for connection (optional).
+  user: mqm
+# Password, which will be used for connection (optional).
+  password: mqm
+# Use MQCSP for connection?
+  mqscp: false
 
-1. Fill exporter_config.yaml with your enviroments configuration. 
+# Prometheus connection information -------------------------------
+prometheusEndpointParams:
+# URL and port which will be used to expose metrics for Prometheus.
+  url: /metrics
+  port: 8080
 
+
+# Monitoring objects ----------------------------------
+# This block refers to collecting of additional metrics.
+# If there are any queues, channels or listeners in the config file below,
+# these metrics may be useful for you. (More info about additional metrics is located 
+# under "MQ PCF API specific statistics" section.   
+PCFParameters:
+# Collect additional metrics? If false, all settings in this section below are ignored. 
+  sendPCFCommands: true
+# Use wildcards? If yes, only one PCF command will be send, matching all objects on queue manager. Otherwise, each 
+# object will be monitored by separate PCF command.  
+  usePCFWildcards: true
+# Interval in seconds between sending PCF commands.
+  scrapeInterval: 10
+
+# Monitored queues.
+queues:
+  - QUEUE1
+  - QUEUE2
+
+# Monitored listeners.
+listeners:
+  - LISTENER01
+ 
+# Monitored channels.
+channels:
+ - MANAGEMENT.CHANNEL
+```
 #### Build
 
 1. Download current repository.
@@ -67,13 +127,51 @@ All settings have to be set in mq-java-exporter\src\main\resources\exporter_conf
 mvn package
 ```
 
-4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and webspheremq_exporter.jar should appear there. 
-5. To run exporter, dependency-jars directory (and all jars in it) and mq_exporter.jar should be located in the same folder.
-6. To run exporter execute the following command: 
+4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and mq_exporter.jar should appear there.
+
+#### Run
+ 
+To run exporter, dependency-jars directory (and all jars in it) and
+mq_exporter.jar should be located in the same folder.
+
+##### Running exporter as mq service
+
+It is recommended way of running the exporter. **Note**: all commands
+ should be executed via MQ CLI. More info can be found [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q083460_.htm).
+ 
+ Define queue manager service with the following command: 
+ 
+ ```mq
+  DEFINE SERVICE(MQEXPORTER) CONTROL(QMGR) SERVTYPE(SERVER) +
+  STARTCMD('/opt/mqm/java/jre64/jre/bin/java')              +
+  STARTARG('-Dlog4j.configurationFile=/opt/mq_exporter/log4j2.properties -jar /opt/mq_exporter/mq_exporter.jar /opt/mq_exporter/exporter_config.yaml') +
+  STOPCMD('/usr/bin/kill ' ) STOPARG(+MQ_SERVER_PID+)       +
+  STDOUT('/opt/mq_exporter/mq_prometheus.out')              +
+  STDERR('/opt/mq_exporter/mq_prometheus.out')              +
+  DESCR('MQ exporter for Prometheus')
+ ```
+ More information about this command can be found
+ [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q085740_.htm).
+  
+ To start exporter, execute the following command:
+ 
+ ```mq
+  START SERVICE(MQEXPORTER)
+ ```
+ 
+ To stop exporter, execute the following command:
+ 
+  ```mq
+   STOP SERVICE(MQEXPORTER)
+  ```
+##### Running exporter as standalone java application
+
+ To run exporter execute the following command:
 
 ```shell
  java -jar mq_exporter.jar /opt/mq_exporter/exporter_config.yaml
 ```
+The only input parameter is the path to your configuration file.
 
 ## Metrics
 #### Platform central processing units
@@ -84,7 +182,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>system_cpu_user_cpu_time_percentage</td>
@@ -138,7 +236,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_cpu_user_cpu_time_estimate_percentage</td>
@@ -169,7 +267,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_disk_trace_file_system_in_use_megabytes</td>
@@ -211,7 +309,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_disk_file_system_in_use_megabytes</td>
@@ -235,7 +333,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_rlog_log_bytes_in_use_bytes</td>
@@ -290,7 +388,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_mqconn_mqconnx_count_totalcalls</td>
@@ -326,7 +424,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_mqopen_mqopen_count_totalcalls</td>
@@ -362,7 +460,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_mqinq_mqinq_count_totalcalls</td>
@@ -398,7 +496,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_put_interval_total_mqput_mqput1_count_totalcalls</td>
@@ -476,7 +574,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 </tr>
 <tr>
@@ -591,7 +689,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 </tr>
 <tr>
@@ -616,7 +714,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 </tr>
 <tr>
@@ -681,25 +779,25 @@ mvn package
 </tr>
 <tr>
 <td>mq_subscribe_durable_subscriber_high_water_mark_subscriptions</td>
-<td>counter</td>
+<td>gauge</td>
 <td>Shows the maximum number of durable subscriptions in the current statistics interval.</td>
 <td>Durable subscriber - high water mark</td>
 </tr>
 <tr>
 <td>mq_subscribe_durable_subscriber_low_water_mark_subscriptions</td>
-<td>counter</td>
+<td>gauge</td>
 <td>Shows the minimum number of durable subscriptions in the current statistics interval.</td>
 <td>Durable subscriber - low water mark</td>
 </tr>
 <tr>
 <td>mq_subscribe_non_durable_subscriber_high_water_mark_subscriptions</td>
-<td>counter</td>
+<td>gauge</td>
 <td>Shows the maximum number of non-durable subscriptions in the current statistics interval.</td>
 <td>Non-durable subscriber - high water mark</td>
 </tr>
 <tr>
 <td>mq_subscribe_non_durable_subscriber_low_water_mark_subscriptions</td>
-<td>counter</td>
+<td>gauge</td>
 <td>Shows the minimum number of non-durable subscriptions in the current statistics interval.</td>
 <td>Non-durable subscriber - low water mark</td>
 </tr>
@@ -713,7 +811,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_publish_topic_mqput_mqput1_interval_total_totalmessages</td>
@@ -768,7 +866,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mqobject_mqopen_mqopen_count_totalcalls</td>
@@ -792,7 +890,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <td>mqobject_mqinq_mqinq_count_totalcalls</td>
 <td>counter</td>
@@ -815,7 +913,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mqobject_put_mqput_mqput1_count_totalcalls</td>
@@ -893,7 +991,7 @@ mvn package
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mqobject_get_mqget_count_totalcalls</td>
@@ -982,9 +1080,131 @@ mvn package
 </tbody>
 </table>
 
+#### MQ PCF API specific statistics
+##### PCF requests
+These metrics are collected via sending direct PCF commands to queue manager.
+<table>
+<tbody>
+<tr>
+<td><strong>Prometheus metric name</strong></td>
+<td><strong>Metric type</strong></td>
+<td><strong>Short description</strong></td>
+</tr>
+<tr>
+<td>mqobject_queue_max_depth_messages</td>
+<td>gauge</td>
+<td>Shows maximum number of messages that are allowed on the queue.</td>
+</tr>
+<tr>
+<td>mqobject_channel_status_code</td>
+<td>gauge</td>
+<td>Shows current channel status.</td>
+</tr>
+<tr>
+<td>mqobject_listener_status_code</td>
+<td>gauge</td>
+<td>Shows current listener status.</td>
+</tr>
+</tbody>
+</table>
+
+##### MQ constants mapping
+###### Channel status mapping
+<table>
+<tbody>
+<tr>
+<td><strong>MQ channel status code</strong></td>
+<td><strong>Prometheus metric value</strong></td>
+</tr>
+<tr>
+<td>RUNNING</td>
+<td>1</td>
+</tr>
+<tr>
+<td>REQUESTING</td>
+<td>0.8</td>
+</tr>
+<tr>
+<td>PAUSED</td>
+<td>0.7</td>
+</tr>
+<tr>
+<td>BINDING</td>
+<td>0.6</td>
+</tr>
+<tr>
+<td>STARTING</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>INITIALIZING</td>
+<td>0.4</td>
+</tr>
+<tr>
+<td>SWITCHING</td>
+<td>0.3</td>
+</tr>
+<tr>
+<td>STOPPING</td>
+<td>0.2</td>
+</tr>
+<tr>
+<td>RETRYING</td>
+<td>0.1</td>
+</tr>
+<tr>
+<td>STOPPED</td>
+<td>0</td>
+</tr>
+<tr>
+<td>INACTIVE</td>
+<td>-1</td>
+</tr>
+</tbody>
+</table>
+
+<b>Warning</b>: INACTIVE status correctness is not guaranteed. If channel has status INACTIVE, there is no way to retrieve it's status by PCF command (because technically channel has no status) and MQRCCF_CHL_STATUS_NOT_FOUND will be returned by queue manager. Since INACTIVE status of the channel is the most frequent reason for receiving such an error, we interpret it as INACTIVE status of the channel.
+
+###### Listener status mapping
+<table>
+<tbody>
+<tr>
+<td><strong>MQ listener status code</strong></td>
+<td><strong>Prometheus metric value</strong></td>
+</tr>
+<tr>
+<td>RUNNING</td>
+<td>1</td>
+</tr>
+<tr>
+<td>STARTING</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>STOPPING</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+
 ## Issues and Contributions
 Feel free to express your thoughts about the exporter, unexpected behaviour and\or issues. New feature suggestions are welcome, use [issue tracker](https://github.com/Cinimex-Informatica/mq-java-exporter/issues). 
 Pull requests are always welcome.
+
+## Known issues
+The following are known issues and may affect your use of exporter.
+
+* Metric mq_cpu_ram_total_estimate_megabytes may contain negative
+  values.
+  [#62](https://github.com/Cinimex-Informatica/mq-java-exporter/issues/62)
+  
+   This problem is related to this IBM
+   [APAR](https://www-01.ibm.com/support/docview.wss?uid=swg1IT24336).
+   The problem appeared during testing the exporter on MQ ver. 9.0.1.0.
+   We could not reproduce this problem on MQ ver. 9.1.0.1 (this version
+   includes fix for APAR above). Unfortunately, there is no way to fix
+   this problem on the exporter side and the only option is to wait for
+   the fix from IBM for MQ ver. 9.0.x.x.
 
 ## Warning
 The exporter is provided as-is with no guarantees. 

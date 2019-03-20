@@ -5,18 +5,21 @@ import com.ibm.mq.MQQueueManager;
 import com.ibm.mq.MQTopic;
 import com.ibm.mq.constants.CMQC;
 import com.ibm.mq.constants.MQConstants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Hashtable;
 
 /**
- * Class represents MQ connection
+ * Class represents MQ connection.
  */
 public class MQConnection {
+    private static final Logger logger = LogManager.getLogger(MQConnection.class);
     private Hashtable<String, Object> connectionProperties;
     private MQQueueManager queueManager;
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public MQConnection() {
 
@@ -26,10 +29,10 @@ public class MQConnection {
      * Method creates connection properties Hashtable from connection parameters.
      *
      * @param host     - host, where queue manager is located.
-     * @param port     - queue manager's port
-     * @param channel  - queue manager's channel
-     * @param user     - user, which has enough privilege on the queue manager (optional)
-     * @param password - password, which is required to establish connection with queue manager (optional)
+     * @param port     - queue manager's port.
+     * @param channel  - queue manager's channel.
+     * @param user     - user, which has enough privilege on the queue manager (optional).
+     * @param password - password, which is required to establish connection with queue manager (optional).
      * @param useMQCSP - flag, which indicates, if MQCSP auth should be used.
      * @return - returns prepared structure with all parameters transformed into queue manager's format.
      */
@@ -37,7 +40,7 @@ public class MQConnection {
         Hashtable<String, Object> properties = new Hashtable<String, Object>();
         properties.put(MQConstants.TRANSPORT_PROPERTY, host == null ? MQConstants.TRANSPORT_MQSERIES_BINDINGS : MQConstants.TRANSPORT_MQSERIES_CLIENT);
         if (host != null) properties.put(MQConstants.HOST_NAME_PROPERTY, host);
-        if (port != 0) properties.put(MQConstants.PORT_PROPERTY, new Integer(port));
+        if (port != 0) properties.put(MQConstants.PORT_PROPERTY, port);
         if (channel != null) properties.put(MQConstants.CHANNEL_PROPERTY, channel);
         if (user != null || password != null) {
             if (useMQCSP) properties.put(MQConstants.USE_MQCSP_AUTHENTICATION_PROPERTY, true);
@@ -58,13 +61,9 @@ public class MQConnection {
      * @param password - password, which is required to establish connection with queue manager (optional).
      * @param useMQCSP - flag, which indicates, if MQCSP auth should be used.
      */
-    public void establish(String host, int port, String channel, String qmName, String user, String password, boolean useMQCSP) {
+    public void establish(String host, int port, String channel, String qmName, String user, String password, boolean useMQCSP) throws MQException {
         connectionProperties = createMQConnectionParams(host, port, channel, user, password, useMQCSP);
-        try {
-            queueManager = new MQQueueManager(qmName, connectionProperties);
-        } catch (MQException e) {
-            System.err.println(e.getStackTrace());
-        }
+        queueManager = new MQQueueManager(qmName, connectionProperties);
     }
 
 
@@ -74,12 +73,8 @@ public class MQConnection {
      * @param qmNqme               - queue manager's name.
      * @param connectionProperties - prepared structure with all parameters transformed into queue manager's format. See {@link #createMQConnectionParams(String, int, String, String, String, boolean)} for more info.
      */
-    public void establish(String qmNqme, Hashtable<String, Object> connectionProperties) {
-        try {
-            queueManager = new MQQueueManager(qmNqme, connectionProperties);
-        } catch (MQException e) {
-            System.err.println(e.getStackTrace());
-        }
+    public void establish(String qmNqme, Hashtable<String, Object> connectionProperties) throws MQException {
+        queueManager = new MQQueueManager(qmNqme, connectionProperties);
     }
 
     /**
@@ -90,7 +85,7 @@ public class MQConnection {
             try {
                 queueManager.disconnect();
             } catch (MQException e) {
-                System.err.println(e.getStackTrace());
+                logger.error("Failed!", e);
             }
         }
     }
@@ -104,5 +99,14 @@ public class MQConnection {
      */
     public MQTopic createTopic(String topic) throws MQException {
         return queueManager.accessTopic(topic, "", CMQC.MQTOPIC_OPEN_AS_SUBSCRIPTION, CMQC.MQSO_CREATE | CMQC.MQSO_NON_DURABLE | CMQC.MQSO_MANAGED);
+    }
+
+    /**
+     * Returns MQQueueManager object.
+     *
+     * @return - MQQueueManager object.
+     */
+    public MQQueueManager getQueueManager() {
+        return this.queueManager;
     }
 }

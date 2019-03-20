@@ -1,21 +1,21 @@
 package ru.cinimex.exporter.mq;
 
 import com.ibm.mq.MQException;
-import com.ibm.mq.MQGetMessageOptions;
-import com.ibm.mq.MQMessage;
-import com.ibm.mq.MQTopic;
-import com.ibm.mq.constants.MQConstants;
-import ru.cinimex.exporter.mq.pcf.PCFDataParser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.mq.pcf.PCFElement;
-import ru.cinimex.exporter.prometheus.metrics.GaugeManager;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class is used to manage work of all subscribers.
  */
 public class MQSubscriberManager {
-
+    private static final Logger logger = LogManager.getLogger(MQSubscriberManager.class);
     private Hashtable<String, Object> connectionProperties;
     private String queueManagerName;
     private ArrayList<Thread> subscribers;
@@ -37,93 +37,112 @@ public class MQSubscriberManager {
     }
 
     /**
-     * Creates subscribers and starts them.
+     * Creates pool with subscribers and starts them.
      *
-     * @param elements          - all elements, retrieved from target queue manager.
-     * @param monitoringObjects - all monitoring objects.
+     * @param elements        - elements, received via MQ monitoring topics.
+     * @param objects         - objects, retrieved from configuration file.
+     * @param sendPCFCommands - this flag indicates, if we should send additional PCF commands (To get queues max depth, channels and listeners statuses).
+     * @param usePCFWildcards - this flag indicates, if we should use wildcards (uses only 1 connection per MQObject type, but longer response processing).
+     * @param interval        - interval in seconds, at which additional PCF commands are sent.
      */
-    public void runSubscribers(ArrayList<PCFElement> elements, ArrayList<String> monitoringObjects) {
+    public void runSubscribers(ArrayList<PCFElement> elements, ArrayList<MQObject> objects, boolean sendPCFCommands, boolean usePCFWildcards, int interval) {
+        logger.info("Launching subscribers...");
         subscribers = new ArrayList<>();
         int i = 0;
         for (PCFElement element : elements) {
             if (!element.requiresMQObject()) {
-                subscribers.add(i, new Thread(new Subscriber(element, queueManagerName)));
-                subscribers.get(i).start();
-                i++;
-            } else {
-                for (String object : monitoringObjects) {
-                    PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
-                    objElement.formatTopicString(object);
-                    subscribers.add(i, new Thread(new Subscriber(objElement, queueManagerName, object)));
+                try {
+                    subscribers.add(i, new Thread(new MQTopicSubscriber(element, queueManagerName, connectionProperties, queueManagerName)));
+                    logger.debug("Starting subscriber for {}...", element.getTopicString());
                     subscribers.get(i).start();
+                    logger.debug("Subscriber for {} was started.", element.getTopicString());
                     i++;
+                } catch (MQException e) {
+                    logger.error("Error during creating topic subscriber: ", e);
                 }
-            }
-        }
-    }
-
-    /**
-     * Subscriber is used to subscribe to specific topic.
-     */
-    class Subscriber implements Runnable {
-        private MQTopic topic;
-        private PCFElement element;
-        private MQConnection connection;
-        private String[] labels;
-
-        /**
-         * Subscriber constructor
-         *
-         * @param element - PCF message data, which is required for parsing statistics.
-         * @param labels  - labels array, which should be used for metrics.
-         */
-        public Subscriber(PCFElement element, String... labels) {
-            this.element = element;
-            if (connection == null) {
-                connection = new MQConnection();
-                connection.establish(queueManagerName, connectionProperties);
-            }
-            this.labels = labels;
-        }
-
-        /**
-         * Starts subscriber.
-         */
-        public void run() {
-            try {
-                topic = connection.createTopic(element.getTopicString());
-                MQGetMessageOptions gmo = new MQGetMessageOptions();
-                gmo.options = MQConstants.MQGMO_WAIT | MQConstants.MQGMO_COMPLETE_MSG;
-                gmo.waitInterval = 12000;
-                while (true) {
-                    try {
-                        MQMessage msg = new MQMessage();
-                        topic.get(msg, gmo);
-                        HashMap<Integer, Double> receivedMetrics = PCFDataParser.getParsedData(PCFDataParser.convertToPCF(msg));
-                        Iterator<Map.Entry<Integer, Double>> it = receivedMetrics.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Map.Entry<Integer, Double> pair = it.next();
-                            //TODO: There is some exception during startup. Need do define, why it occurs (there is unmapped id)
-                            GaugeManager.updateMetric(PCFDataParser.getMetricName(element.getMetricDescription(pair.getKey()), element.requiresMQObject()), pair.getValue(), labels);
-                            it.remove();
+            } else {
+                for (MQObject object : objects) {
+                    if (object.getType() == MQObject.MQType.QUEUE) {
+                        PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
+                        objElement.formatTopicString(object.getName());
+                        try {
+                            subscribers.add(i, new Thread(new MQTopicSubscriber(objElement, queueManagerName, connectionProperties, queueManagerName, object.getName())));
+                            logger.debug("Starting subscriber for {}...", objElement.getTopicString());
+                            subscribers.get(i).start();
+                            logger.debug("Subscriber for {} was started.", objElement.getTopicString());
+                            i++;
+                        } catch (MQException e) {
+                            logger.error("Error during creating topic subscriber: ", e);
                         }
-                    } catch (MQException e) {
-                        if (e.getReason() == 2033) System.out.println("No messages in " + element.getTopicString());
-                    }
-                }
-            } catch (MQException e) {
-                System.out.println("An error occured while trying to get queue object " + element.getTopicString());
-                System.err.println(e.getStackTrace());
-            } finally {
-                if (topic != null && topic.isOpen()) {
-                    try {
-                        topic.close();
-                        connection.close();
-                    } catch (MQException e) {
-                        System.err.println(e.getStackTrace());
                     }
                 }
             }
         }
+
+        if (sendPCFCommands) {
+            int corePoolSize = usePCFWildcards ? MQObject.MQType.values().length : objects.size();
+            ScheduledExecutorService executor = Executors.newScheduledThreadPool(corePoolSize);
+            if (usePCFWildcards) {
+                ArrayList<MQObject> queues = new ArrayList<MQObject>();
+                ArrayList<MQObject> channels = new ArrayList<MQObject>();
+                ArrayList<MQObject> listeners = new ArrayList<MQObject>();
+                for (MQObject object : objects) {
+                    switch (object.getType()) {
+                        case QUEUE:
+                            queues.add(object);
+                            logger.debug("Queue {} was added for additional monitoring.", object.getName());
+                            break;
+                        case CHANNEL:
+                            channels.add(object);
+                            logger.debug("Channel {} was added for additional monitoring.", object.getName());
+                            break;
+                        case LISTENER:
+                            listeners.add(object);
+                            logger.debug("Listener {} was added for additional monitoring.", object.getName());
+                            break;
+                        default:
+                            logger.error("Error during parsing objects list: Unknown object type! Make sure it is one of: {}", MQObject.MQType.values());
+                    }
+                }
+
+                if (queues.size() > 0) {
+                    MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, queues);
+                    subscribers.add(i++, new Thread(subscriber));
+                    logger.debug("Starting subscriber for sending direct PCF commands about queues max depth...");
+                    executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
+                    logger.debug("Subscriber for sending direct PCF commands about queues max depth successfully " + "started.");
+                }
+                if (channels.size() > 0) {
+                    MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, channels);
+                    subscribers.add(i++, new Thread(subscriber));
+                    logger.debug("Starting subscriber for sending direct PCF commands about channels statuses...");
+                    executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
+                    logger.debug("Subscriber for sending direct PCF commands about channels statuses successfully " + "started.");
+                }
+                if (listeners.size() > 0) {
+                    MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, listeners);
+                    subscribers.add(i++, new Thread(subscriber));
+                    logger.debug("Starting subscriber for sending direct PCF commands about listeners statuses...");
+                    executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
+                    logger.debug("Subscriber for sending direct PCF commands about listeners statuses successfully " + "started.");
+                }
+            } else {
+                for (MQObject object : objects) {
+                    MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, object);
+                    subscribers.add(i++, new Thread(subscriber));
+                    logger.debug("Starting subscriber for sending direct PCF commands to retrieve statistics about " + "object with type {} and name {}.", object.getType().name(), object.getName());
+                    executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
+                    logger.debug("Subscriber for sending direct PCF commands to retrieve statistics about " + "object with type {} and name {} successfully started.", object.getType().name(), object.getName());
+                }
+            }
+        }
+        if (subscribers.size() > 0) {
+            logger.info("Successfully launched {} subscribers!", subscribers.size());
+        } else {
+            logger.warn("Didn't launch any subscriber. Exporter finishes it's work!", subscribers.size());
+            System.exit(1);
+        }
+
     }
+
 }
