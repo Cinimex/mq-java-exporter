@@ -40,14 +40,19 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
        - [Channel status mapping](#channel-status-mapping)
        - [Listener status mapping](#listener-status-mapping)
 3. [Issues and Contributions](#issues-and-contributions)
-4. [Warning](#warning)
-5. [License](#license)
+4. [Known issues](#known-issues)
+5. [Warning](#warning)
+6. [License](#license)
 
 ## Getting Started
 
 #### Compatibility
 
-Support [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm) version 9.0.x.x.
+Supports IBM
+MQ(https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
+version 9.0.x.x and above. 
+
+Was tested on MQ ver.9.0.x.x and MQ ver. 9.1.x.x.
 
 #### Prerequisites
 - [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
@@ -1185,6 +1190,21 @@ These metrics are collected via sending direct PCF commands to queue manager.
 ## Issues and Contributions
 Feel free to express your thoughts about the exporter, unexpected behaviour and\or issues. New feature suggestions are welcome, use [issue tracker](https://github.com/Cinimex-Informatica/mq-java-exporter/issues). 
 Pull requests are always welcome.
+
+## Known issues
+The following are known issues and may affect your use of exporter.
+
+* Metric mq_cpu_ram_total_estimate_megabytes may contain negative
+  values.
+  [#62](https://github.com/Cinimex-Informatica/mq-java-exporter/issues/62)
+  
+   This problem is related to this IBM
+   [APAR](https://www-01.ibm.com/support/docview.wss?uid=swg1IT24336).
+   The problem appeared during testing the exporter on MQ ver. 9.0.1.0.
+   We could not reproduce this problem on MQ ver. 9.1.0.1 (this version
+   includes fix for APAR above). Unfortunately, there is no way to fix
+   this problem on the exporter side and the only option is to wait for
+   the fix from IBM for MQ ver. 9.0.x.x.
 
 ## Warning
 The exporter is provided as-is with no guarantees. 
