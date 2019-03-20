@@ -9,6 +9,9 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
    - [Dependencies](#dependencies)
    - [Configuration](#configuration)
    - [Build](#build)
+   - [Run](#run)
+     - [Running exporter as mq service](#running-exporter-as-mq-service)
+     - [Running exporter as standalone java application](#running-exporter-as-standalone-java-application)
 2. [Metrics](#metrics)
    - [Metrics naming convention](#metrics-naming-convention)
      - [Understanding metrics names](#understanding-metrics-names)
@@ -41,7 +44,8 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
        - [MQ constants mapping](#mq-constants-mapping)
          - [Channel status mapping](#channel-status-mapping)
          - [Listener status mapping](#listener-status-mapping)
-4. [Issues and Contributions](#issues-and-contributions)
+3. [Issues and Contributions](#issues-and-contributions)
+4. [Known issues](#known-issues)
 5. [Warning](#warning)
 6. [License](#license)
 
@@ -49,7 +53,11 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
 
 #### Compatibility
 
-Support [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm) version 9.0.x.x.
+Supports IBM
+MQ(https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
+version 9.0.x.x and above. 
+
+Was tested on MQ ver.9.0.x.x and MQ ver. 9.1.x.x.
 
 #### Prerequisites
 - [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
@@ -124,9 +132,46 @@ channels:
 mvn package
 ```
 
-4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and webspheremq_exporter.jar should appear there. 
-5. To run exporter, dependency-jars directory (and all jars in it) and mq_exporter.jar should be located in the same folder.
-6. To run exporter execute the following command: 
+4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and mq_exporter.jar should appear there.
+
+#### Run
+ 
+To run exporter, dependency-jars directory (and all jars in it) and
+mq_exporter.jar should be located in the same folder.
+
+##### Running exporter as mq service
+
+It is recommended way of running the exporter. **Note**: all commands
+ should be executed via MQ CLI. More info can be found [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q083460_.htm).
+ 
+ Define queue manager service with the following command: 
+ 
+ ```mq
+  DEFINE SERVICE(MQEXPORTER) CONTROL(QMGR) SERVTYPE(SERVER) +
+  STARTCMD('/opt/mqm/java/jre64/jre/bin/java')              +
+  STARTARG('-Dlog4j.configurationFile=/opt/mq_exporter/log4j2.properties -jar /opt/mq_exporter/mq_exporter.jar /opt/mq_exporter/exporter_config.yaml') +
+  STOPCMD('/usr/bin/kill ' ) STOPARG(+MQ_SERVER_PID+)       +
+  STDOUT('/opt/mq_exporter/mq_prometheus.out')              +
+  STDERR('/opt/mq_exporter/mq_prometheus.out')              +
+  DESCR('MQ exporter for Prometheus')
+ ```
+ More information about this command can be found
+ [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q085740_.htm).
+  
+ To start exporter, execute the following command:
+ 
+ ```mq
+  START SERVICE(MQEXPORTER)
+ ```
+ 
+ To stop exporter, execute the following command:
+ 
+  ```mq
+   STOP SERVICE(MQEXPORTER)
+  ```
+##### Running exporter as standalone java application
+
+ To run exporter execute the following command:
 
 ```shell
  java -jar mq_exporter.jar /opt/mq_exporter/exporter_config.yaml
@@ -406,7 +451,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_cpu_user_cpu_time_estimate_percentage</td>
@@ -437,7 +482,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_disk_trace_file_system_in_use_megabytes</td>
@@ -479,7 +524,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_disk_file_system_in_use_megabytes</td>
@@ -503,7 +548,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_rlog_log_bytes_in_use_bytes</td>
@@ -558,7 +603,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_mqconn_mqconnx_count_totalcalls</td>
@@ -594,7 +639,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_mqopen_mqopen_count_totalcalls</td>
@@ -630,7 +675,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_mqinq_mqinq_count_totalcalls</td>
@@ -666,7 +711,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_put_interval_total_mqput_mqput1_count_totalcalls</td>
@@ -744,7 +789,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 </tr>
 <tr>
@@ -859,7 +904,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 </tr>
 <tr>
@@ -884,7 +929,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 </tr>
 <tr>
@@ -981,7 +1026,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mq_publish_topic_mqput_mqput1_interval_total_totalmessages</td>
@@ -1036,7 +1081,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mqobject_mqopen_mqopen_count_totalcalls</td>
@@ -1060,7 +1105,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <td>mqobject_mqinq_mqinq_count_totalcalls</td>
 <td>counter</td>
@@ -1083,7 +1128,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mqobject_put_mqput_mqput1_count_totalcalls</td>
@@ -1161,7 +1206,7 @@ All metrics have predefined structure: domain, subdomain, name, units:
 <td><strong>Prometheus metric name</strong></td>
 <td><strong>Metric type</strong></td>
 <td><strong>Short description</strong></td>
-<td><strong>MQ metric elemen</strong></td>
+<td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
 <td>mqobject_get_mqget_count_totalcalls</td>
@@ -1360,6 +1405,21 @@ These metrics are collected via sending direct PCF commands to queue manager.
 ## Issues and Contributions
 Feel free to express your thoughts about the exporter, unexpected behaviour and\or issues. New feature suggestions are welcome, use [issue tracker](https://github.com/Cinimex-Informatica/mq-java-exporter/issues). 
 Pull requests are always welcome.
+
+## Known issues
+The following are known issues and may affect your use of exporter.
+
+* Metric mq_cpu_ram_total_estimate_megabytes may contain negative
+  values.
+  [#62](https://github.com/Cinimex-Informatica/mq-java-exporter/issues/62)
+  
+   This problem is related to this IBM
+   [APAR](https://www-01.ibm.com/support/docview.wss?uid=swg1IT24336).
+   The problem appeared during testing the exporter on MQ ver. 9.0.1.0.
+   We could not reproduce this problem on MQ ver. 9.1.0.1 (this version
+   includes fix for APAR above). Unfortunately, there is no way to fix
+   this problem on the exporter side and the only option is to wait for
+   the fix from IBM for MQ ver. 9.0.x.x.
 
 ## Warning
 The exporter is provided as-is with no guarantees. 

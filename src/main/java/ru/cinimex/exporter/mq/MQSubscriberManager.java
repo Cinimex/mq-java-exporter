@@ -90,12 +90,15 @@ public class MQSubscriberManager {
                     switch (object.getType()) {
                         case QUEUE:
                             queues.add(object);
+                            logger.debug("Queue {} was added for additional monitoring.", object.getName());
                             break;
                         case CHANNEL:
                             channels.add(object);
+                            logger.debug("Channel {} was added for additional monitoring.", object.getName());
                             break;
                         case LISTENER:
                             listeners.add(object);
+                            logger.debug("Listener {} was added for additional monitoring.", object.getName());
                             break;
                         default:
                             logger.error("Error during parsing objects list: Unknown object type! Make sure it is one of: {}", MQObject.MQType.values());
