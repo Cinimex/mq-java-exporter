@@ -29,9 +29,6 @@ public class PCFElement {
         this.topicString = topicString;
         this.rows = rows;
         this.mqObjectRequired = topicString.contains("%s");
-        if (topicString == null) {
-            logger.warn("Topic string is empty: ", this.toString());
-        }
     }
 
 
