@@ -85,7 +85,7 @@ qmgrConnectionParams:
   qmgrChannel: SYSTEM.DEF.SVRCONN
 # Username, which will be used for connection (optional).
 # User must have permission to subscribe to the topic $SYS/MQ/INFO/QMGR/QM/Monitor/ and all subtopics.
-# User also must have permission to inquire  channels, queues and listeners listed below! 
+# User also must have permission to inquire  channels, queues and listeners listed below in Monitoring objects section! 
   user: mqm
 # Password, which will be used for connection (optional).
   password: mqm
