@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Class is used for parsing config file.
@@ -81,11 +82,11 @@ public class Config {
         return usePCFWildcards;
     }
 
-    public ArrayList<String> getChannels() {
+    public List<String> getChannels() {
         return channels;
     }
 
-    public ArrayList<String> getListeners() {
+    public List<String> getListeners() {
         return listeners;
     }
 
@@ -121,7 +122,7 @@ public class Config {
         return endpURL;
     }
 
-    public ArrayList<String> getQueues() {
+    public List<String> getQueues() {
         return queues;
     }
 

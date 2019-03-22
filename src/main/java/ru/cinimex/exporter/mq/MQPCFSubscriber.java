@@ -13,6 +13,7 @@ import ru.cinimex.exporter.prometheus.metrics.MetricsReference;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  * MQPCFSubscriber is technically not a subscriber, but a runnable object, which sends PCFCommands every n seconds to
@@ -24,7 +25,7 @@ public class MQPCFSubscriber implements Runnable {
     private String queueManagerName;
     private MQObject object;
     private PCFMessageAgent agent;
-    private ArrayList<MQObject> objects;
+    private List<MQObject> objects;
 
     /**
      * MQPCFSubscriber constructor which is used, when exporter is configured to use 1 MQPCFSubscriber per 1 MQObject.
@@ -43,9 +44,9 @@ public class MQPCFSubscriber implements Runnable {
      *
      * @param queueManagerName     - queue manager name.
      * @param connectionProperties - connection properties.
-     * @param objects              - Array with all MQObjects.
+     * @param objects              - List with all MQObjects.
      */
-    public MQPCFSubscriber(String queueManagerName, Hashtable<String, Object> connectionProperties, ArrayList<MQObject> objects) {
+    public MQPCFSubscriber(String queueManagerName, Hashtable<String, Object> connectionProperties, List<MQObject> objects) {
         establishMQConnection(queueManagerName, connectionProperties);
         this.objects = objects;
         this.object = new MQObject("*", objects.get(0).getType());
@@ -90,8 +91,8 @@ public class MQPCFSubscriber implements Runnable {
     private void updateMetricsWithWildcards(PCFMessage[] pcfResponse) {
         ArrayList<String> objectNames = new ArrayList<>();
         //copy all objects names to temporary array
-        for (MQObject object : objects) {
-            objectNames.add(object.getName());
+        for (MQObject monitoredObject : objects) {
+            objectNames.add(monitoredObject.getName());
         }
         for (PCFMessage response : pcfResponse) {
             String objectName = (String) response.getParameterValue(MQObject.objectNameCode(object.getType()));
@@ -99,34 +100,36 @@ public class MQPCFSubscriber implements Runnable {
             //if temporary array contains metric, then remove it from temporary array and update metric
             if (objectNames.contains(objectName)) {
                 objectNames.remove(objectName);
-                Object result = response.getParameterValue(object.getPCFHeader());
-                double prometheusValue = MetricsReference.getMetricValue(object.getType(), (Integer) result);
-                MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), prometheusValue, queueManagerName, objectName);
+                updateMetricWithoutWildcards(response, objectName);
             }
         }
-
-        //There are some objects in temporary array? It means that "*" wildcard didn't return all values.
+        //Are there any objects left in temporary array? It means that "*" wildcard didn't return all values.
         //There are multiple reasons why it could happen. For example, MQ channel has status "inactive".
         //Then we send direct PCF command for specific object. If some error occurs, we have custom processing for it.
-        if (objectNames.size() > 0) {
-            for (String objectName : objectNames) {
-                MQObject directObject = new MQObject(objectName, object.getType());
-                try {
-                    PCFMessage[] directPCFResponse = agent.send(directObject.getPCFCmd());
-                    updateMetricWithoutWildcards(directPCFResponse[0], objectName);
-                } catch (PCFException e) {
-                    //This error means, that channel has status "inactive".
-                    if (object.getType() == MQObject.MQType.CHANNEL && e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
-                        MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQCHS_INACTIVE), queueManagerName, objectName);
-                        logger.warn("Channel {} is possibly inactive.", objectName);
-                    }
-                    if (object.getType() == MQObject.MQType.LISTENER && e.reasonCode == MQConstants.MQRC_UNKNOWN_OBJECT_NAME) {
-                        MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQSVC_STATUS_STOPPED), queueManagerName, objectName);
-                        logger.warn("Listener {} is possibly stopped.", objectName);
-                    }
-                } catch (IOException | MQException e) {
+        updateWithDirectPCFCommand(objectNames);
+    }
+
+    /**
+     * Retrieves info about all objects from input array via direct pcf commands.
+     *
+     * @param objectNames - input array with objects.
+     */
+    private void updateWithDirectPCFCommand(ArrayList<String> objectNames) {
+        for (String objectName : objectNames) {
+            MQObject directObject = new MQObject(objectName, object.getType());
+            try {
+                PCFMessage[] directPCFResponse = agent.send(directObject.getPcfCmd());
+                updateMetricWithoutWildcards(directPCFResponse[0], objectName);
+            } catch (PCFException e) {
+                //This error means, that channel has status "inactive".
+                if (e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
+                    logger.warn("Channel {} is possibly inactive.", objectName);
+                    MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQCHS_INACTIVE), queueManagerName, objectName);
+                } else {
                     logger.error("Error occurred during sending PCF command: ", e);
                 }
+            } catch (IOException | MQException e) {
+                logger.error("Error occurred during sending PCF command: ", e);
             }
         }
     }
@@ -135,7 +138,7 @@ public class MQPCFSubscriber implements Runnable {
     public void run() {
         try {
             logger.debug("Sending PCF command for object type {} with name {}...", object.getType(), object.getName());
-            PCFMessage[] pcfResponse = agent.send(object.getPCFCmd());
+            PCFMessage[] pcfResponse = agent.send(object.getPcfCmd());
             if (!objects.isEmpty()) {
                 updateMetricsWithWildcards(pcfResponse);
             } else {
