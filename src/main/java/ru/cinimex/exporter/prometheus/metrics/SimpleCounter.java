@@ -39,5 +39,6 @@ public class SimpleCounter implements MetricInterface {
 
     @Override
     public void notifyWasScraped() {
+        //There is no need to do any work after counter was scraped.
     }
 }

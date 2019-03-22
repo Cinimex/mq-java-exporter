@@ -8,6 +8,7 @@ import ru.cinimex.exporter.mq.pcf.PCFElementRow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Class is used to manage work of all metrics.
@@ -22,9 +23,9 @@ public class MetricsManager {
      * @param elements - Array, which contains all PCFElements, retrieved from queue manager.
      * @param types    - Array, which contains all MQObject types, which should be monitored via direct PCFCommands.
      */
-    public static void initMetrics(ArrayList<PCFElement> elements, ArrayList<MQObject.MQType> types) {
+    public static void initMetrics(List<PCFElement> elements, List<MQObject.MQType> types) {
         logger.debug("Preparing to initialize metrics. {} metrics will be received from MQ topics and {} metrics will be received via direct PCF commands.", elements.size(), types.size());
-        metrics = new HashMap<String, MetricInterface>();
+        metrics = new HashMap<>();
         for (PCFElement element : elements) {
             for (PCFElementRow row : element.getRows()) {
                 String metricName = MetricsReference.getMetricName(row.getRowDesc(), element.requiresMQObject(), row.getRowDatatype());
@@ -36,22 +37,22 @@ public class MetricsManager {
                     labels.add(Labels.MQ_OBJECT_NAME.name());
                 }
                 switch (metricType) {
-                    case SimpleGauge:
+                    case SIMPLE_GAUGE:
                         metric = new SimpleGauge(metricName, row.getRowDesc(), labels.stream().toArray(String[]::new));
                         metrics.put(metricName, metric);
                         logger.trace("New gauge created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);
                         break;
-                    case SimpleCounter:
+                    case SIMPLE_COUNTER:
                         metric = new SimpleCounter(metricName, row.getRowDesc(), labels.stream().toArray(String[]::new));
                         metrics.put(metricName, metric);
                         logger.trace("New counter created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);
                         break;
-                    case ExtremeGaugeMax:
+                    case EXTREME_GAUGE_MAX:
                         metric = new ExtremeGauge(metricName, row.getRowDesc(), true, labels.stream().toArray(String[]::new));
                         metrics.put(metricName, metric);
                         logger.trace("New extreme gauge created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);
                         break;
-                    case ExtremeGaugeMin:
+                    case EXTREME_GAUGE_MIN:
                         metric = new ExtremeGauge(metricName, row.getRowDesc(), false, labels.stream().toArray(String[]::new));
                         metrics.put(metricName, metric);
                         logger.trace("New extreme gauge created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);

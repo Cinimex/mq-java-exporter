@@ -15,15 +15,7 @@ import java.util.Hashtable;
  */
 public class MQConnection {
     private static final Logger logger = LogManager.getLogger(MQConnection.class);
-    private Hashtable<String, Object> connectionProperties;
     private MQQueueManager queueManager;
-
-    /**
-     * Default constructor.
-     */
-    public MQConnection() {
-
-    }
 
     /**
      * Method creates connection properties Hashtable from connection parameters.
@@ -37,7 +29,7 @@ public class MQConnection {
      * @return - returns prepared structure with all parameters transformed into queue manager's format.
      */
     protected static Hashtable<String, Object> createMQConnectionParams(String host, int port, String channel, String user, String password, boolean useMQCSP) {
-        Hashtable<String, Object> properties = new Hashtable<String, Object>();
+        Hashtable<String, Object> properties = new Hashtable<>();
         properties.put(MQConstants.TRANSPORT_PROPERTY, host == null ? MQConstants.TRANSPORT_MQSERIES_BINDINGS : MQConstants.TRANSPORT_MQSERIES_CLIENT);
         if (host != null) properties.put(MQConstants.HOST_NAME_PROPERTY, host);
         if (port != 0) properties.put(MQConstants.PORT_PROPERTY, port);
@@ -62,10 +54,9 @@ public class MQConnection {
      * @param useMQCSP - flag, which indicates, if MQCSP auth should be used.
      */
     public void establish(String host, int port, String channel, String qmName, String user, String password, boolean useMQCSP) throws MQException {
-        connectionProperties = createMQConnectionParams(host, port, channel, user, password, useMQCSP);
+        Hashtable<String, Object> connectionProperties = createMQConnectionParams(host, port, channel, user, password, useMQCSP);
         queueManager = new MQQueueManager(qmName, connectionProperties);
     }
-
 
     /**
      * Method establishes connection with queue manager.

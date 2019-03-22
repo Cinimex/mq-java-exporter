@@ -50,7 +50,7 @@ public class HTTPServer {
         for (String encodingHeader : encodingHeaders) {
             String[] encodings = encodingHeader.split(",");
             for (String encoding : encodings) {
-                if (encoding.trim().toLowerCase().equals("gzip")) {
+                if (encoding.trim().equalsIgnoreCase("gzip")) {
                     return true;
                 }
             }
@@ -59,11 +59,11 @@ public class HTTPServer {
     }
 
     protected static Set<String> parseQuery(String query) throws IOException {
-        Set<String> names = new HashSet<String>();
+        Set<String> names = new HashSet<>();
         if (query != null) {
             String[] pairs = query.split("&");
             for (String pair : pairs) {
-                int idx = pair.indexOf("=");
+                int idx = pair.indexOf('=');
                 if (idx != -1 && URLDecoder.decode(pair.substring(0, idx), "UTF-8").equals("name[]")) {
                     names.add(URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
                 }
@@ -79,12 +79,7 @@ public class HTTPServer {
         if (daemon == Thread.currentThread().isDaemon()) {
             server.start();
         } else {
-            FutureTask<Void> startTask = new FutureTask<Void>(new Runnable() {
-
-                public void run() {
-                    server.start();
-                }
-            }, null);
+            FutureTask<Void> startTask = new FutureTask<>(server::start, null);
             NamedDaemonThreadFactory.defaultThreadFactory(daemon).newThread(startTask).start();
             try {
                 startTask.get();
@@ -108,6 +103,7 @@ public class HTTPServer {
     }
 
     private static class LocalByteArray extends ThreadLocal<ByteArrayOutputStream> {
+        @Override
         protected ByteArrayOutputStream initialValue() {
             return new ByteArrayOutputStream(1 << 20);
         }
@@ -126,26 +122,26 @@ public class HTTPServer {
             logger.debug("Received request from Prometheus.");
             String query = t.getRequestURI().getRawQuery();
 
-            ByteArrayOutputStream response = this.response.get();
-            response.reset();
-            OutputStreamWriter osw = new OutputStreamWriter(response);
+            ByteArrayOutputStream streamResponse = this.response.get();
+            streamResponse.reset();
+            OutputStreamWriter osw = new OutputStreamWriter(streamResponse);
             TextFormat.write004(osw, registry.filteredMetricFamilySamples(parseQuery(query)));
             osw.flush();
             osw.close();
-            response.flush();
-            response.close();
+            streamResponse.flush();
+            streamResponse.close();
 
             t.getResponseHeaders().set("Content-Type", TextFormat.CONTENT_TYPE_004);
             if (shouldUseCompression(t)) {
                 t.getResponseHeaders().set("Content-Encoding", "gzip");
                 t.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
                 final GZIPOutputStream os = new GZIPOutputStream(t.getResponseBody());
-                response.writeTo(os);
+                streamResponse.writeTo(os);
                 os.close();
             } else {
-                t.getResponseHeaders().set("Content-Length", String.valueOf(response.size()));
-                t.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.size());
-                response.writeTo(t.getResponseBody());
+                t.getResponseHeaders().set("Content-Length", String.valueOf(streamResponse.size()));
+                t.sendResponseHeaders(HttpURLConnection.HTTP_OK, streamResponse.size());
+                streamResponse.writeTo(t.getResponseBody());
             }
             t.close();
             logger.debug("Data was sent to Prometheus.");

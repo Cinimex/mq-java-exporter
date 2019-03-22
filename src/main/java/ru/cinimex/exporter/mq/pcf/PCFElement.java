@@ -1,17 +1,13 @@
 package ru.cinimex.exporter.mq.pcf;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class represents PCFMessage parameter, which could be received from
  * $SYS/MQ/INFO/QMGR/{QMGR_NAME}/Monitor/{CLASS}/{TYPE} MQ topic.
  */
 public class PCFElement {
-    private static final Logger logger = LogManager.getLogger(PCFElement.class);
-    private final ArrayList<PCFElementRow> rows;
+    private final List<PCFElementRow> rows;
     private String sourceTopicString;
     private String topicString;
     private boolean mqObjectRequired;
@@ -25,7 +21,7 @@ public class PCFElement {
      * @param topicString - MQ topic, where  final metric is published (each element has it's own topic)
      * @param rows        - Array, which contains detailed information about published statistics
      */
-    public PCFElement(String topicString, ArrayList<PCFElementRow> rows) {
+    public PCFElement(String topicString, List<PCFElementRow> rows) {
         this.topicString = topicString;
         this.rows = rows;
         this.mqObjectRequired = topicString.contains("%s");
@@ -66,7 +62,7 @@ public class PCFElement {
     /**
      * Method returns description of exact row by it's id.
      *
-     * @param rowId - row identifier (extracted from PCFElementRow object)
+     * @param rowId - row identifier (extracted from PCFElementRow object).
      * @return - description for exact row.
      */
     public String getMetricDescription(int rowId) {
@@ -78,6 +74,12 @@ public class PCFElement {
         return null;
     }
 
+    /**
+     * Method returns type of exact row by it's id.
+     *
+     * @param rowId - row identifier (extracted from PCFElementRow object).
+     * @return - type for exact row.
+     */
     public int getRowDatatype(int rowId) {
         for (PCFElementRow row : rows) {
             if (row.getRowId() == rowId) {
@@ -90,7 +92,7 @@ public class PCFElement {
     /**
      * @return - returns all rows, which contain ids, descriptions and datatypes.
      */
-    public ArrayList<PCFElementRow> getRows() {
+    public List<PCFElementRow> getRows() {
         return rows;
     }
 
