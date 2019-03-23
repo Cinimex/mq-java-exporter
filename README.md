@@ -1468,6 +1468,7 @@ Feel free to express your thoughts about the exporter, unexpected behaviour and\
 Pull requests are always welcome.
 
 ## Known issues
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 The following are known issues and may affect your use of exporter.
 
 * Metric mq_ram_ram_total_estimate_megabytes may contain negative
