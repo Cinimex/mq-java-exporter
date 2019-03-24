@@ -333,7 +333,7 @@ This section provides a description of domains and subdomains and reflects their
 </tr>
 </tbody>
 </table>
-   
+    
 #### Units
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metric units.<br/>
@@ -351,7 +351,7 @@ This section provides a description of metric units.<br/>
 </tr>
 <tr>
 <td>hundredths</td>
-<td>Shows amount of hundredths. For example, "370 hundredths equal" to "3.70". It is used to reflect system's load average.</td>
+<td>Shows amount of hundredths. For example, "370 hundredths" equals to "3.70". It is used to reflect system's load average and LISTENER\CHANNEL status codes.</td>
 </tr>
 <tr>
 <td>megabytes</td>
@@ -484,7 +484,7 @@ This section provides a description of CPU metrics of a running queue manager.
 <td>User CPU time - percentage estimate for queue manager</td>
 </tr>
 <tr>
-<td>mq_cpu_system_cpu_time_estimat_percentage</td>
+<td>mq_cpu_system_cpu_time_estimate_percentage</td>
 <td>gauge</td>
 <td>Estimates the percentage of CPU use in system state for processes that are related to the queue managers that are being monitored</td>
 <td>System CPU time - percentage estimate for queue manager</td>
@@ -650,7 +650,7 @@ This section provides a description of metrics related to MQCONN and MQDISC call
 <td>Failed MQCONN/MQCONNX count</td>
 </tr>
 <tr>
-<td>mq_mqconn_concurrent_connections_high_water_mark_totalconnections</td>
+<td>mq_mqconn_concurrent_connections_high_water_mark_connections</td>
 <td>gauge</td>
 <td>Shows the maximum number of concurrent connections in the current statistics interval.</td>
 <td>Concurrent connections - high water mark</td>
@@ -800,13 +800,13 @@ This section provides a description of metrics related to MQPUT, MQPUT1 and MQST
 <td>Failed MQPUT1 count</td>
 </tr>
 <tr>
-<td>mq_put_put_non_persistent_messages_byte_count_totalmessages</td>
+<td>mq_put_put_non_persistent_messages_byte_count_totalbytes</td>
 <td>counter</td>
 <td>Shows the number of bytes put in non-persistent messages.</td>
 <td>Put non-persistent messages - byte count</td>
 </tr>
 <tr>
-<td>mq_put_put_persistent_messages_byte_count_totalmessages</td>
+<td>mq_put_put_persistent_messages_byte_count_totalbytes</td>
 <td>counter</td>
 <td>Shows the number of bytes put in persistent messages.</td>
 <td>Put persistent messages - byte count</td>
@@ -911,7 +911,7 @@ This section provides a description of metrics related to MQGET, MQCB and MQCTL 
 <td>Expired message count</td>
 </tr>
 <tr>
-<td>mq_get_purged_queue_count_totalmessages</td>
+<td>mq_queue_purged_queue_count_totalqueues</td>
 <td>counter</td>
 <td>Shows a count of queues that have been purged.</td>
 <td>Purged queue count</td>
@@ -1093,7 +1093,7 @@ This section provides a description of metrics related to publications  of a que
 <td>Published to subscribers - message count</td>
 </tr>
 <tr>
-<td>mq_publish_published_to_subscribers_byte_count_totalmessages</td>
+<td>mq_publish_published_to_subscribers_byte_count_totalbytes</td>
 <td>counter</td>
 <td>Shows the byte count of messages that are published to subscribers.</td>
 <td>Published to subscribers - byte count</td>
@@ -1366,12 +1366,12 @@ This section provides a description of metrics of queues, channels and listeners
 <td>Shows maximum number of messages that are allowed on the queue.</td>
 </tr>
 <tr>
-<td>mqobject_channel_channel_status_code</td>
+<td>mqobject_channel_channel_status_hundredths</td>
 <td>gauge</td>
 <td>Shows current channel status. Mapping of channel statuses to prometheus metric values can be found <a href="#channel-status-mapping">here</a>.</td>
 </tr>
 <tr>
-<td>mqobject_listener_listener_status_code</td>
+<td>mqobject_listener_listener_status_hundredths</td>
 <td>gauge</td>
 <td>Shows current listener status. Mapping of listener statuses to prometheus metric values can be found <a href="#listener-status-mapping">here</a>.</td>
 </tr>
@@ -1390,47 +1390,47 @@ This section provides a mapping between MQ channel statuses and metric values, t
 </tr>
 <tr>
 <td>RUNNING</td>
-<td>1</td>
+<td>100</td>
 </tr>
 <tr>
 <td>REQUESTING</td>
-<td>0.8</td>
+<td>90</td>
 </tr>
 <tr>
 <td>PAUSED</td>
-<td>0.7</td>
+<td>80</td>
 </tr>
 <tr>
 <td>BINDING</td>
-<td>0.6</td>
+<td>70</td>
 </tr>
 <tr>
 <td>STARTING</td>
-<td>0.5</td>
+<td>60</td>
 </tr>
 <tr>
 <td>INITIALIZING</td>
-<td>0.4</td>
+<td>50</td>
 </tr>
 <tr>
 <td>SWITCHING</td>
-<td>0.3</td>
+<td>40</td>
 </tr>
 <tr>
 <td>STOPPING</td>
-<td>0.2</td>
+<td>30</td>
 </tr>
 <tr>
 <td>RETRYING</td>
-<td>0.1</td>
+<td>20</td>
 </tr>
 <tr>
 <td>STOPPED</td>
-<td>0</td>
+<td>10</td>
 </tr>
 <tr>
 <td>INACTIVE</td>
-<td>-1</td>
+<td>0</td>
 </tr>
 </tbody>
 </table>
@@ -1448,15 +1448,15 @@ This section provides a mapping between MQ listener statuses and metric values, 
 </tr>
 <tr>
 <td>RUNNING</td>
-<td>1</td>
+<td>100</td>
 </tr>
 <tr>
 <td>STARTING</td>
-<td>0.75</td>
+<td>75</td>
 </tr>
 <tr>
 <td>STOPPING</td>
-<td>0.5</td>
+<td>50</td>
 </tr>
 <tr>
 <td>STOPPED</td>
