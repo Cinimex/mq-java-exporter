@@ -225,8 +225,8 @@ This section provides a description of domains and subdomains and reflects their
 <td>Disk usage metrics</td>
 </tr>
 <tr>
-<td rowspan="16">mq</td>
-<td rowspan="16">MQ manager wide metrics</td>
+<td rowspan="17">mq</td>
+<td rowspan="17">MQ manager wide metrics</td>
 <td>cpu</td>
 <td>CPU metrics of a running queue manager</td>
 </tr>
@@ -272,6 +272,10 @@ This section provides a description of domains and subdomains and reflects their
 <tr>
 <td>get</td>
 <td>Metrics related to MQGET, MQCB and MQCTL calls to a queue manager</td>
+</tr>
+<tr>
+<td>queue</td>
+<td>QM-wide queue metrics </td>
 </tr>
 <tr>
 <td>commit</td>
