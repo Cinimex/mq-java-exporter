@@ -34,7 +34,7 @@ public class MetricsReference {
         metrics.put("RAM free percentage", new Metric("system_ram_ram_free_percentage", Metric.Type.SIMPLE_GAUGE));
         metrics.put("RAM total bytes", new Metric("system_ram_ram_total_megabytes", Metric.Type.SIMPLE_GAUGE));
         metrics.put("User CPU time - percentage estimate for queue manager", new Metric("mq_cpu_user_cpu_time_estimate_percentage", Metric.Type.SIMPLE_GAUGE));
-        metrics.put("System CPU time - percentage estimate for queue manager", new Metric("mq_cpu_system_cpu_time_estimate_percentage", Metric.Type.SIMPLE_GAUGE));
+        metrics.put("System CPU time - percentage estimate for queue manager", new Metric("mq_cpu_system_cpu_time_estimat_percentage", Metric.Type.SIMPLE_GAUGE));
         metrics.put("RAM total bytes - estimate for queue manager", new Metric("mq_ram_ram_total_estimate_megabytes", Metric.Type.SIMPLE_GAUGE));
         metrics.put("MQ trace file system - bytes in use", new Metric("system_disk_trace_file_system_in_use_megabytes", Metric.Type.SIMPLE_GAUGE));
         metrics.put("MQ trace file system - free space", new Metric("system_disk_trace_file_system_free_space_percentage", Metric.Type.SIMPLE_GAUGE));
@@ -52,7 +52,7 @@ public class MetricsReference {
         metrics.put("Log - write latency", new Metric("mq_rlog_log_write_latency_microseconds", Metric.Type.SIMPLE_GAUGE));
         metrics.put("MQCONN/MQCONNX count", new Metric("mq_mqconn_mqconnx_count_totalcalls", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Failed MQCONN/MQCONNX count", new Metric("mq_mqconn_failed_mqconn_mqconnx_count_totalcalls", Metric.Type.SIMPLE_COUNTER));
-        metrics.put("Concurrent connections - high water mark", new Metric("mq_mqconn_concurrent_connections_high_water_mark_connections", Metric.Type.SIMPLE_GAUGE));
+        metrics.put("Concurrent connections - high water mark", new Metric("mq_mqconn_concurrent_connections_high_water_mark_totalconnections", Metric.Type.SIMPLE_GAUGE));
         metrics.put("MQDISC count", new Metric("mq_mqdisc_mqdisc_count_totalcalls", Metric.Type.SIMPLE_COUNTER));
         metrics.put("MQOPEN count", new Metric("mq_mqopen_mqopen_count_totalcalls", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Failed MQOPEN count", new Metric("mq_mqopen_failed_mqopen_count_totalcalls", Metric.Type.SIMPLE_COUNTER));
@@ -70,8 +70,8 @@ public class MetricsReference {
         metrics.put("Non-persistent message MQPUT1 count", new Metric("mq_put_non_persistent_message_mqput1_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Persistent message MQPUT1 count", new Metric("mq_put_persistent_message_mqput1_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Failed MQPUT1 count", new Metric("mq_put_failed_mqput1_count_totalcalls", Metric.Type.SIMPLE_COUNTER));
-        metrics.put("Put non-persistent messages - byte count", new Metric("mq_put_put_non_persistent_messages_byte_count_totalbytes", Metric.Type.SIMPLE_COUNTER));
-        metrics.put("Put persistent messages - byte count", new Metric("mq_put_put_persistent_messages_byte_count_totalbytes", Metric.Type.SIMPLE_COUNTER));
+        metrics.put("Put non-persistent messages - byte count", new Metric("mq_put_put_non_persistent_messages_byte_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
+        metrics.put("Put persistent messages - byte count", new Metric("mq_put_put_persistent_messages_byte_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("MQSTAT count", new Metric("mq_put_mqstat_count_totalcalls", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Interval total destructive get- count", new Metric("mq_get_interval_total_destructive_get_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Interval total destructive get - byte count", new Metric("mq_get_interval_total_destructive_get_byte_count_totalbytes", Metric.Type.SIMPLE_COUNTER));
@@ -86,7 +86,7 @@ public class MetricsReference {
         metrics.put("Non-persistent message browse - byte count", new Metric("mq_get_non_persistent_message_browse_byte_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Persistent message browse - byte count", new Metric("mq_get_persistent_message_browse_byte_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Expired message count", new Metric("mq_get_expired_message_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
-        metrics.put("Purged queue count", new Metric("mq_queue_purged_queue_count_totalqueues", Metric.Type.SIMPLE_COUNTER));
+        metrics.put("Purged queue count", new Metric("mq_get_purged_queue_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("MQCB count", new Metric("mq_get_mqcb_count_totalcalls", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Failed MQCB count", new Metric("mq_get_failed_mqcb_count_totalcalls", Metric.Type.SIMPLE_COUNTER));
         metrics.put("MQCTL count", new Metric("mq_get_mqctl_count_totalcalls", Metric.Type.SIMPLE_COUNTER));
@@ -109,7 +109,7 @@ public class MetricsReference {
         metrics.put("Topic MQPUT/MQPUT1 interval total", new Metric("mq_publish_topic_mqput_mqput1_interval_total_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Interval total topic bytes put", new Metric("mq_publish_interval_total_topic_bytes_put_totalbytes", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Published to subscribers - message count", new Metric("mq_publish_published_to_subscribers_message_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
-        metrics.put("Published to subscribers - byte count", new Metric("mq_publish_published_to_subscribers_byte_count_totalbytes", Metric.Type.SIMPLE_COUNTER));
+        metrics.put("Published to subscribers - byte count", new Metric("mq_publish_published_to_subscribers_byte_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Non-persistent - topic MQPUT/MQPUT1 count", new Metric("mq_publish_non_persistent_topic_mqput_mqput1_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Persistent - topic MQPUT/MQPUT1 count", new Metric("mq_publish_persistent_topic_mqput_mqput1_count_totalmessages", Metric.Type.SIMPLE_COUNTER));
         metrics.put("Failed topic MQPUT/MQPUT1 count", new Metric("mq_publish_failed_topic_mqput_mqput1_count_totalattempts", Metric.Type.SIMPLE_COUNTER));
@@ -124,8 +124,8 @@ public class MetricsReference {
     private static EnumMap<MQObject.MQType, AdditionalMetric> getMqObjectAdditionalMetricsReference() {
         EnumMap<MQObject.MQType, AdditionalMetric> metrics = new EnumMap<>(MQObject.MQType.class);
         metrics.put(MQObject.MQType.QUEUE, new AdditionalMetric("mqobject_queue_queue_max_depth_messages", "The maximum number of messages that are allowed on the queue"));
-        metrics.put(MQObject.MQType.CHANNEL, new AdditionalMetric("mqobject_channel_channel_status_hundredths", "The status of the channel"));
-        metrics.put(MQObject.MQType.LISTENER, new AdditionalMetric("mqobject_listener_listener_status_hundredths", "The status of the listener"));
+        metrics.put(MQObject.MQType.CHANNEL, new AdditionalMetric("mqobject_channel_channel_status_code", "The status of the channel"));
+        metrics.put(MQObject.MQType.LISTENER, new AdditionalMetric("mqobject_listener_listener_status_code", "The status of the listener"));
         return metrics;
     }
 
@@ -175,17 +175,17 @@ public class MetricsReference {
      */
     private static HashMap<Integer, Double> getChannelStatuses() {
         HashMap<Integer, Double> statuses = new HashMap<>();
-        statuses.put(MQConstants.MQCHS_RUNNING, 100d);
-        statuses.put(MQConstants.MQCHS_REQUESTING, 90d);
-        statuses.put(MQConstants.MQCHS_PAUSED, 80d);
-        statuses.put(MQConstants.MQCHS_BINDING, 70d);
-        statuses.put(MQConstants.MQCHS_STARTING, 60d);
-        statuses.put(MQConstants.MQCHS_INITIALIZING, 50d);
-        statuses.put(MQConstants.MQCHS_SWITCHING, 40d);
-        statuses.put(MQConstants.MQCHS_STOPPING, 30d);
-        statuses.put(MQConstants.MQCHS_RETRYING, 20d);
-        statuses.put(MQConstants.MQCHS_STOPPED, 10d);
-        statuses.put(MQConstants.MQCHS_INACTIVE, 0d);
+        statuses.put(MQConstants.MQCHS_RUNNING, (double) 1);
+        statuses.put(MQConstants.MQCHS_REQUESTING, 0.8);
+        statuses.put(MQConstants.MQCHS_PAUSED, 0.7);
+        statuses.put(MQConstants.MQCHS_BINDING, 0.6);
+        statuses.put(MQConstants.MQCHS_STARTING, 0.5);
+        statuses.put(MQConstants.MQCHS_INITIALIZING, 0.4);
+        statuses.put(MQConstants.MQCHS_SWITCHING, 0.3);
+        statuses.put(MQConstants.MQCHS_STOPPING, 0.2);
+        statuses.put(MQConstants.MQCHS_RETRYING, 0.1);
+        statuses.put(MQConstants.MQCHS_STOPPED, (double) 0);
+        statuses.put(MQConstants.MQCHS_INACTIVE, (double) -1);
         return statuses;
     }
 
@@ -196,10 +196,10 @@ public class MetricsReference {
      */
     private static HashMap<Integer, Double> getListenerStatuses() {
         HashMap<Integer, Double> statuses = new HashMap<>();
-        statuses.put(MQConstants.MQSVC_STATUS_RUNNING, 100d);
-        statuses.put(MQConstants.MQSVC_STATUS_STARTING, 75d);
-        statuses.put(MQConstants.MQSVC_STATUS_STOPPING, 50d);
-        statuses.put(MQConstants.MQSVC_STATUS_STOPPED, 0d);
+        statuses.put(MQConstants.MQSVC_STATUS_RUNNING, 1.0);
+        statuses.put(MQConstants.MQSVC_STATUS_STARTING, 0.75);
+        statuses.put(MQConstants.MQSVC_STATUS_STOPPING, 0.5);
+        statuses.put(MQConstants.MQSVC_STATUS_STOPPED, 0.0);
         return statuses;
     }
 
