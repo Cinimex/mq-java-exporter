@@ -12,7 +12,6 @@ import ru.cinimex.exporter.mq.pcf.PCFElement;
 import ru.cinimex.exporter.prometheus.metrics.MetricsManager;
 import ru.cinimex.exporter.prometheus.metrics.MetricsReference;
 
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -43,6 +42,35 @@ public class MQTopicSubscriber implements Runnable {
     }
 
     /**
+     * Get MQ metric and update them for Prometheus.
+     *
+     * @param gmo - get message options, required to retrieve data from MQ.
+     */
+    private void scrapeMetrics(MQGetMessageOptions gmo) {
+        try {
+            MQMessage msg = new MQMessage();
+            logger.debug("Waiting for message on {} ...", element.getTopicString());
+            topic.get(msg, gmo);
+            logger.debug("Message received on {}", element.getTopicString());
+            Map<Integer, Double> receivedMetrics = PCFDataParser.getParsedData(PCFDataParser.convertToPCF(msg));
+            Iterator<Map.Entry<Integer, Double>> it = receivedMetrics.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<Integer, Double> pair = it.next();
+                int id = pair.getKey();
+                double value = PCFDataParser.getExactValue(pair.getValue(), element.getRowDatatype(id));
+                MetricsManager.updateMetric(MetricsReference.getMetricName(element.getMetricDescription(id), element.requiresMQObject(), element.getRowDatatype(id)), value, labels);
+                it.remove();
+            }
+        } catch (MQException e) {
+            if (e.getReason() == MQConstants.MQRC_NO_MSG_AVAILABLE) {
+                logger.warn("No messages found in {}", element.getTopicString());
+            } else {
+                logger.error("Error occurred during retrieving message from {}: ", element.getTopicString(), e);
+            }
+        }
+    }
+
+    /**
      * Starts subscriber.
      */
     public void run() {
@@ -52,26 +80,7 @@ public class MQTopicSubscriber implements Runnable {
             gmo.options = MQConstants.MQGMO_WAIT | MQConstants.MQGMO_COMPLETE_MSG;
             gmo.waitInterval = 12000;
             while (true) {
-                try {
-                    MQMessage msg = new MQMessage();
-                    logger.debug("Waiting for message on {} ...", element.getTopicString());
-                    topic.get(msg, gmo);
-                    logger.debug("Message received on {}", element.getTopicString());
-                    HashMap<Integer, Double> receivedMetrics = PCFDataParser.getParsedData(PCFDataParser.convertToPCF(msg));
-                    Iterator<Map.Entry<Integer, Double>> it = receivedMetrics.entrySet().iterator();
-                    while (it.hasNext()) {
-                        Map.Entry<Integer, Double> pair = it.next();
-                        int id = pair.getKey();
-                        double value = PCFDataParser.getExactValue(pair.getValue(), element.getRowDatatype(id));
-                        MetricsManager.updateMetric(MetricsReference.getMetricName(element.getMetricDescription(id), element.requiresMQObject(), element.getRowDatatype(id)), value, labels);
-                        it.remove();
-                    }
-                } catch (MQException e) {
-                    if (e.getReason() == MQConstants.MQRC_NO_MSG_AVAILABLE)
-                        logger.warn("No messages found in {}", element.getTopicString());
-                    else
-                        logger.error("Error occurred during retrieving message from {}: ", element.getTopicString(), e);
-                }
+                scrapeMetrics(gmo);
             }
         } catch (MQException e) {
             logger.error("Error occurred during establishing connection with topic {}", element.getTopicString(), e);

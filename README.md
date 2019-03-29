@@ -13,56 +13,63 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API of IBM MQ and syste
      - [Running exporter as mq service](#running-exporter-as-mq-service)
      - [Running exporter as standalone java application](#running-exporter-as-standalone-java-application)
 2. [Metrics](#metrics)
-   - [Platform central processing units](#platform-central-processing-units)
-     - [CPU performance - platform wide](#cpu-performance---platform-wide)
-     - [CPU performance - running queue manager](#cpu-performance---running-queue-manager)
-   - [Platform persistent data stores](#platform-persistent-data-stores)
-     - [Disk usage - platform wide](#disk-usage---platform-wide)
-     - [Disk usage - running queue managers](#disk-usage---running-queue-managers)
-     - [Disk usage - queue manager recovery log](#disk-usage---queue-manager-recovery-log)
-   - [API usage statistics](#api-usage-statistics)
-     - [MQCONN and MQDISC](#mqconn-and-mqdisc)
-     - [MQOPEN and MQCLOSE](#mqopen-and-mqclose)
-     - [MQINQ and MQSET](#mqinq-and-mqset)
-     - [MQPUT](#mqput)
-     - [MQGET](#mqget)
-     - [Commit and rollback](#commit-and-rollback)
-     - [Subscribe](#subscribe)
-     - [Publish](#publish)
-   - [API per-queue usage statistics](#api-per-queue-usage-statistics)
-     - [MQOPEN and MQCLOSE](#mqopen-and-mqclose-1)
-     - [MQINQ and MQSET](#mqinq-and-mqset-1)
-     - [MQPUT and MQPUT1](#mqput-and-mqput1)
-     - [MQGET](#mqget-1)
-   - [MQ PCF API specific statistics](#mq-pcf-api-specific-statistics)
-     - [PCF requests](#pcf-requests)
-     - [MQ constants mapping](#mq-constants-mapping)
-       - [Channel status mapping](#channel-status-mapping)
-       - [Listener status mapping](#listener-status-mapping)
+   - [Metrics naming convention](#metrics-naming-convention)
+     - [Understanding metrics names](#understanding-metrics-names)
+     - [Domains and subdomains](#domains-and-subdomains)
+     - [Units](#units)
+   - [Metrics list](#metrics-list)
+     - [CPU metrics](#cpu-metrics)
+       - [CPU performance metrics - platform wide](#cpu-performance-metrics---platform-wide)
+       - [CPU performance metrics - running queue manager](#cpu-performance-metrics---running-queue-manager)
+     - [Platform persistent data store related metrics](#platform-persistent-data-store-related-metrics)
+       - [Disk usage metrics - platform wide](#disk-usage-metrics---platform-wide)
+       - [Disk usage metrics - running queue managers](#disk-usage-metrics---running-queue-managers)
+       - [Disk usage metrics - queue manager recovery log](#disk-usage-metrics---queue-manager-recovery-log)
+     - [API usage metrics](#api-usage-metrics)
+       - [MQCONN and MQDISC metrics](#mqconn-and-mqdisc-metrics)
+       - [MQOPEN and MQCLOSE metrics](#mqopen-and-mqclose-metrics)
+       - [MQINQ and MQSET metrics](#mqinq-and-mqset-metrics)
+       - [MQPUT metrics](#mqput-metrics)
+       - [MQGET metrics](#mqget-metrics)
+       - [Commit and rollback metrics](#commit-and-rollback-metrics)
+       - [Subscription metrics](#subscription-metrics)
+       - [Publication metrics](#publication-metrics)
+     - [API per-queue usage metrics](#api-per-queue-usage-metrics)
+       - [MQOPEN and MQCLOSE metrics](#mqopen-and-mqclose-metrics-1)
+       - [MQINQ and MQSET metrics](#mqinq-and-mqset-metrics-1)
+       - [MQPUT and MQPUT1 metrics](#mqput-and-mqput1-metrics)
+       - [MQGET metrics](#mqget-metrics-1)
+     - [MQ PCF API specific metrics](#mq-pcf-api-specific-metrics)
+       - [Metrics obtained by PCF commands](#metrics-obtained-by-pcf-commands)
+       - [MQ constants mapping](#mq-constants-mapping)
+         - [Channel status mapping](#channel-status-mapping)
+         - [Listener status mapping](#listener-status-mapping)
 3. [Issues and Contributions](#issues-and-contributions)
 4. [Known issues](#known-issues)
 5. [Warning](#warning)
 6. [License](#license)
 
 ## Getting Started
-
 #### Compatibility
-
-Supports IBM
-MQ(https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
-version 9.0.x.x and above. 
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+Supports [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm) version 9.0.x.x and above.
 
 Was tested on MQ ver.9.0.x.x and MQ ver. 9.1.x.x.
 
 #### Prerequisites
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+List of prerequisites:
 - [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
 -	[Maven](https://maven.apache.org/)
 
 #### Dependencies
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+List of dependencies:
 -	[Prometheus](https://prometheus.io)
 -	[IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 
 #### Configuration
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 All connection and monitoring settings have to be set in exporter_config.yaml file.
 Below is an example of a filled configuration file with all possible fields:
 ```yaml
@@ -77,6 +84,8 @@ qmgrConnectionParams:
 # Queue manager connection channel.
   qmgrChannel: SYSTEM.DEF.SVRCONN
 # Username, which will be used for connection (optional).
+# User must have permission to subscribe to the topic $SYS/MQ/INFO/QMGR/QM/Monitor/ and all subtopics.
+# User also must have permission to inquire  channels, queues and listeners listed below in Monitoring objects section! 
   user: mqm
 # Password, which will be used for connection (optional).
   password: mqm
@@ -97,6 +106,7 @@ prometheusEndpointParams:
 # under "MQ PCF API specific statistics" section.   
 PCFParameters:
 # Collect additional metrics? If false, all settings in this section below are ignored. 
+# If yes, additional metrics will be collected for all queues, channels and listeners listed below. 
   sendPCFCommands: true
 # Use wildcards? If yes, only one PCF command will be send, matching all objects on queue manager. Otherwise, each 
 # object will be monitored by separate PCF command.  
@@ -118,7 +128,8 @@ channels:
  - MANAGEMENT.CHANNEL
 ```
 #### Build
-
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+Steps, that need to be taken to build the exporter:
 1. Download current repository.
 2. Install [Maven](https://maven.apache.org/).
 3. Go to mq-java-exporter root folder (where pom.xml is located) and run: 
@@ -130,12 +141,12 @@ mvn package
 4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and mq_exporter.jar should appear there.
 
 #### Run
- 
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 To run exporter, dependency-jars directory (and all jars in it) and
 mq_exporter.jar should be located in the same folder.
 
 ##### Running exporter as mq service
-
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 It is recommended way of running the exporter. **Note**: all commands
  should be executed via MQ CLI. More info can be found [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q083460_.htm).
  
@@ -165,8 +176,8 @@ It is recommended way of running the exporter. **Note**: all commands
    STOP SERVICE(MQEXPORTER)
   ```
 ##### Running exporter as standalone java application
-
- To run exporter execute the following command:
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+To run exporter execute the following command:
 
 ```shell
  java -jar mq_exporter.jar /opt/mq_exporter/exporter_config.yaml
@@ -174,8 +185,234 @@ It is recommended way of running the exporter. **Note**: all commands
 The only input parameter is the path to your configuration file.
 
 ## Metrics
-#### Platform central processing units
-###### CPU performance - platform wide
+### Metrics naming convention
+#### Understanding metrics names
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+All metrics have predefined structure: domain, subdomain, name, units:
+
+<img src="/docs/images/metric_naming_example_1.png" data-canonical-src="/docs/images/metric_naming_example_1.png" width="554" height="120" />
+
+- **Domain** - the first single-word prefix that represents a metric type. The examples of domain-level prefixes are: system, mq, mqobject and etc. More information can be found in ["Domains and subdomains" section](#domains-and-subdomains).
+- **Subdomain** - second single-word prefix representation of a metric type. It provides more specific information about metric type and helps to differentiate metrics in a single domain. The examples of subdomain-level prefixes are: cpu, ram, put, subscribe, get and etc. More information can be found in ["Domains and subdomains" section](#domains-and-subdomains).
+- **Units** - single-word suffix describing the metric's unit, in plural form. Note that an accumulating count has "total" as the first part of a suffix. The examples of unit suffixes are: percentage, hundredths, messages, totalmessages and etc. More information can be found in ["Units" section](#units).
+- **Name** - represents metric meaning. The examples of a metric name are: cpu_time, cpu_load_fifteen_minute_average, failed_mqget_count and etc. Note that the amount of words in a metric name can vary:
+ 
+<img src="/docs/images/metric_naming_example_2.png" data-canonical-src="/docs/images/metric_naming_example_2.png" width="899" height="120" />
+
+#### Domains and subdomains
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of domains and subdomains and reflects their relations.
+<table>
+<tbody>
+<tr>
+<td><strong>Domain</strong></td>
+<td><strong>Domain description</strong></td>
+<td><strong>Subdomain</strong></td>
+<td><strong>Subdomain description</strong></td>
+</tr>
+<tr>
+<td rowspan="3">system</td>
+<td rowspan="3">Platform wide system metrics</td>
+<td>cpu</td>
+<td>CPU-related performance metrics</td>
+</tr>
+<tr>
+<td>ram</td>
+<td>RAM-related performance metrics</td>
+</tr>
+<tr>
+<td>disk</td>
+<td>Disk usage metrics</td>
+</tr>
+<tr>
+<td rowspan="17">mq</td>
+<td rowspan="17">MQ manager wide metrics</td>
+<td>cpu</td>
+<td>CPU metrics of a running queue manager</td>
+</tr>
+<td>ram</td>
+<td>RAM-related metrics, related to a running queue manager</td>
+</tr>
+<tr>
+<td>disk</td>
+<td>Disk usage metrics, related to a running queue manager</td>
+</tr>
+<tr>
+<td>rlog</td>
+<td>Queue manager recovery log metrics</td>
+</tr>
+<tr>
+<td>mqconn</td>
+<td>Metrics related to MQCONN calls to a queue manager</td>
+</tr>
+<tr>
+<td>mqdisc</td>
+<td>Metrics related to MQDISC calls to a queue manager</td>
+</tr>
+<tr>
+<td>mqopen</td>
+<td>Metrics related to MQOPEN calls to a queue manager</td>
+</tr>
+<tr>
+<td>mqclose</td>
+<td>Metrics related to MQCLOSE calls to a queue manager</td>
+</tr>
+<tr>
+<td>mqinq</td>
+<td>Metrics related to MQINQ calls to a queue manager</td>
+</tr>
+<tr>
+<td>mqset</td>
+<td>Metrics related to MQSET calls to a queue manager</td>
+</tr>
+<tr>
+<td>put</td>
+<td>Metrics related to MQPUT, MQPUT1 and MQSTAT calls to a queue manager</td>
+</tr>
+<tr>
+<td>get</td>
+<td>Metrics related to MQGET, MQCB and MQCTL calls to a queue manager</td>
+</tr>
+<tr>
+<td>queue</td>
+<td>QM-wide queue metrics </td>
+</tr>
+<tr>
+<td>commit</td>
+<td>Metrics related to MQCMIT calls to a queue manager</td>
+</tr>
+<tr>
+<td>rollback</td>
+<td>Metrics related to MQBACK calls to a queue manager</td>
+</tr>
+<tr>
+<td>subscribe</td>
+<td>Metrics related to subscriptions of a queue manager</td>
+</tr>
+<tr>
+<td>publish</td>
+<td>Metrics related to publications of a queue manager</td>
+</tr>   
+<tr>
+<td rowspan="9">mqobject</td>
+<td rowspan="9">Metrics for specific objects of a queue manager: for a queue, for a channel, for a listener</td>
+<td>mqopen</td>
+<td>Metrics related to MQOPEN calls to a specific queue</td>
+</tr>
+<tr>
+<td>mqclose</td>
+<td>Metrics related to MQCLOSE calls to a specific queue</td>
+</tr>
+<tr>
+<td>mqinq</td>
+<td>Metrics related to MQINQ calls to a specific queue</td>
+</tr>
+<tr>
+<td>mqset</td>
+<td>Metrics related to MQSET calls to a specific queue</td>
+</tr>
+<tr>
+<td>put</td>
+<td>Metrics related to MQPUT and MQPUT1 calls to a specific queue</td>
+</tr>
+<tr>
+<td>get</td>
+<td>Metrics related to MQGET calls to a specific queue</td>
+</tr>   
+<tr>
+<td>queue</td>
+<td>Metrics related to a specific queue</td>
+</tr>
+<tr>
+<td>channel</td>
+<td>Metrics related to a specific channel</td>
+</tr>
+<tr>
+<td>listener</td>
+<td>Metrics related to a specific listener</td>
+</tr>
+</tbody>
+</table>
+    
+#### Units
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metric units.<br/>
+["Metric and label naming"](https://prometheus.io/docs/practices/naming/#metric-and-label-naming) article by Prometheus states that metrics "...should use base units (e.g. seconds, bytes, meters - not milliseconds, megabytes, kilometers)". But it is not usefull for using IBM MQ exporter. So the exporter has following list of units:
+
+<table>
+<tbody>
+<tr>
+<td><strong>Unit</strong></td>
+<td><strong>Unit description</strong></td>
+</tr>
+<tr>
+<td>percentage</td>
+<td>Shows %</td>
+</tr>
+<tr>
+<td>hundredths</td>
+<td>Shows amount of hundredths. For example, "370 hundredths" equals to "3.70". It is used to reflect system's load average and LISTENER\CHANNEL status codes.</td>
+</tr>
+<tr>
+<td>megabytes</td>
+<td>Shows amount of megabytes</td>
+</tr>
+<tr>
+<td>files</td>
+<td>Shows amount of files</td>
+</tr>
+<tr>
+<td>bytes</td>
+<td>Shows amount of bytes</td>
+</tr>
+<tr>
+<td>microseconds</td>
+<td>Shows amount of microseconds.</td>
+</tr>
+<tr>
+<td>totalcalls</td>
+<td>Shows amount of calls. An accumulating count has "total" as the first part of a suffix.</td>
+</tr>
+<tr>
+<td>totalconnections</td>
+<td>Shows amount of connections. An accumulating count has "total" as the first part of a suffix.</td>
+</tr>
+<tr>
+<td>totalmessages</td>
+<td>Shows amount of messages. An accumulating count has "total" as the first part of a suffix.</td>
+</tr>
+<tr>
+<td>totalbytes</td>
+<td>Shows amount of bytes. An accumulating count has "total" as the first part of a suffix.</td>
+</tr>
+<tr>
+<td>totalbrowses</td>
+<td>Shows amount of browses. An accumulating count has "total" as the first part of a suffix.</td>
+</tr>
+<tr>
+<td>subscriptions</td>
+<td>Shows amount of subscriptions.</td>
+</tr>
+<tr>
+<td>totalattempts</td>
+<td>Shows amount of attempts. An accumulating count has "total" as the first part of a suffix.</td>
+</tr>
+<tr>
+<td>totalqueues</td>
+<td>Shows amount of queues. An accumulating count has "total" as the first part of a suffix.</td>
+</tr>
+<tr>
+<td>messages</td>
+<td>Shows amount of messages.</td>
+</tr>
+</tbody>
+</table>
+
+### Metrics list
+#### CPU metrics
+###### CPU performance metrics - platform wide
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of CPU- and RAM-related metrics.
 <table>
 <tbody>
 <tr>
@@ -229,7 +466,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### CPU performance - running queue manager
+###### CPU performance metrics - running queue manager
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of CPU metrics of a running queue manager.
 <table>
 <tbody>
 <tr>
@@ -245,13 +484,13 @@ The only input parameter is the path to your configuration file.
 <td>User CPU time - percentage estimate for queue manager</td>
 </tr>
 <tr>
-<td>mq_cpu_system_cpu_time_estimat_percentage</td>
+<td>mq_cpu_system_cpu_time_estimate_percentage</td>
 <td>gauge</td>
 <td>Estimates the percentage of CPU use in system state for processes that are related to the queue managers that are being monitored</td>
 <td>System CPU time - percentage estimate for queue manager</td>
 </tr>
 <tr>
-<td>mq_cpu_ram_total_estimate_megabytes</td>
+<td>mq_ram_ram_total_estimate_megabytes</td>
 <td>gauge</td>
 <td>Estimates the total bytes of RAM in use by the queue managers that are being monitored.</td>
 <td>RAM total bytes - estimate for queue manager</td>
@@ -259,8 +498,10 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-#### Platform persistent data stores
-###### Disk usage - platform wide
+#### Platform persistent data store related metrics
+###### Disk usage metrics - platform wide
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of disk usage metrics.
 <table>
 <tbody>
 <tr>
@@ -270,31 +511,31 @@ The only input parameter is the path to your configuration file.
 <td><strong>MQ metric element</strong></td>
 </tr>
 <tr>
-<td>mq_disk_trace_file_system_in_use_megabytes</td>
+<td>system_disk_trace_file_system_in_use_megabytes</td>
 <td>gauge</td>
 <td>Shows the number of bytes of disk storage that are being used by the trace file system.</td>
 <td>MQ trace file system - bytes in use</td>
 </tr>
 <tr>
-<td>mq_disk_trace_file_system_free_space_percentage</td>
+<td>system_disk_trace_file_system_free_space_percentage</td>
 <td>gauge</td>
 <td>Shows the disk storage that is reserved for the trace file system that is free.</td>
 <td>MQ trace file system - free space</td>
 </tr>
 <tr>
-<td>mq_disk_errors_file_system_in_use_megabytes</td>
+<td>system_disk_errors_file_system_in_use_megabytes</td>
 <td>gauge</td>
 <td>Shows the number of bytes of disk storage that is being used by error data.</td>
 <td>MQ errors file system - bytes in use</td>
 </tr>
 <tr>
-<td>mq_disk_errors_file_system_free_space_percentage</td>
+<td>system_disk_errors_file_system_free_space_percentage</td>
 <td>gauge</td>
 <td>Shows the disk storage that is reserved for error data that is free.</td>
 <td>MQ errors file system - free space</td>
 </tr>
 <tr>
-<td>mq_disk_fdc_file_count_files</td>
+<td>system_disk_fdc_file_count_files</td>
 <td>gauge</td>
 <td>Shows the current number of FDC files.</td>
 <td>MQ FDC file count</td>
@@ -302,7 +543,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### Disk usage - running queue managers
+###### Disk usage metrics - running queue managers
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of disk usage metrics, related to a running queue manager.
 <table>
 <tbody>
 <tr>
@@ -326,7 +569,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### Disk usage - queue manager recovery log
+###### Disk usage metrics - queue manager recovery log
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of disk usage metrics, related to queue manager recovery log.
 <table>
 <tbody>
 <tr>
@@ -380,8 +625,10 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-#### API usage statistics
-###### MQCONN and MQDISC
+#### API usage metrics
+###### MQCONN and MQDISC metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQCONN and MQDISC calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -403,7 +650,7 @@ The only input parameter is the path to your configuration file.
 <td>Failed MQCONN/MQCONNX count</td>
 </tr>
 <tr>
-<td>mq_mqconn_concurrent_connections_high_water_mark_totalconnections</td>
+<td>mq_mqconn_concurrent_connections_high_water_mark_connections</td>
 <td>gauge</td>
 <td>Shows the maximum number of concurrent connections in the current statistics interval.</td>
 <td>Concurrent connections - high water mark</td>
@@ -417,7 +664,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### MQOPEN and MQCLOSE
+###### MQOPEN and MQCLOSE metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQOPEN and MQCLOSE calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -453,7 +702,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### MQINQ and MQSET
+###### MQINQ and MQSET metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQINQ and MQSET calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -489,7 +740,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### MQPUT
+###### MQPUT metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQPUT, MQPUT1 and MQSTAT calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -547,13 +800,13 @@ The only input parameter is the path to your configuration file.
 <td>Failed MQPUT1 count</td>
 </tr>
 <tr>
-<td>mq_put_put_non_persistent_messages_byte_count_totalmessages</td>
+<td>mq_put_put_non_persistent_messages_byte_count_totalbytes</td>
 <td>counter</td>
 <td>Shows the number of bytes put in non-persistent messages.</td>
 <td>Put non-persistent messages - byte count</td>
 </tr>
 <tr>
-<td>mq_put_put_persistent_messages_byte_count_totalmessages</td>
+<td>mq_put_put_persistent_messages_byte_count_totalbytes</td>
 <td>counter</td>
 <td>Shows the number of bytes put in persistent messages.</td>
 <td>Put persistent messages - byte count</td>
@@ -567,7 +820,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### MQGET
+###### MQGET metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQGET, MQCB and MQCTL calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -656,7 +911,7 @@ The only input parameter is the path to your configuration file.
 <td>Expired message count</td>
 </tr>
 <tr>
-<td>mq_get_purged_queue_count_totalmessages</td>
+<td>mq_queue_purged_queue_count_totalqueues</td>
 <td>counter</td>
 <td>Shows a count of queues that have been purged.</td>
 <td>Purged queue count</td>
@@ -682,7 +937,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### Commit and rollback
+###### Commit and rollback metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQCMIT and MQBACK calls to a queue manager.
 <table>
 <tbody>
 <tr>
@@ -707,7 +964,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### Subscribe
+###### Subscription metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to subscriptions of a queue manager.
 <table>
 <tbody>
 <tr>
@@ -804,7 +1063,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### Publish
+###### Publication metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to publications  of a queue manager.
 <table>
 <tbody>
 <tr>
@@ -832,7 +1093,7 @@ The only input parameter is the path to your configuration file.
 <td>Published to subscribers - message count</td>
 </tr>
 <tr>
-<td>mq_publish_published_to_subscribers_byte_count_totalmessages</td>
+<td>mq_publish_published_to_subscribers_byte_count_totalbytes</td>
 <td>counter</td>
 <td>Shows the byte count of messages that are published to subscribers.</td>
 <td>Published to subscribers - byte count</td>
@@ -858,8 +1119,10 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-#### API per-queue usage statistics
-###### MQOPEN and MQCLOSE
+#### API per-queue usage metrics
+###### MQOPEN and MQCLOSE metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQOPEN and MQCLOSE calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -883,7 +1146,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### MQINQ and MQSET
+###### MQINQ and MQSET metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQINQ and MQSET calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -906,7 +1171,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### MQPUT and MQPUT1
+###### MQPUT and MQPUT1 metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQPUT and MQPUT1 calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -984,7 +1251,9 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-###### MQGET
+###### MQGET metrics
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics related to MQGET calls to a specific queue.
 <table>
 <tbody>
 <tr>
@@ -1054,25 +1323,25 @@ The only input parameter is the path to your configuration file.
 <td>MQGET browse persistent byte count</td>
 </tr>
 <tr>
-<td>mqobject_get_messages_expired_totalmessages</td>
+<td>mqobject_queue_messages_expired_totalmessages</td>
 <td>counter</td>
 <td>Shows a count of expired messages.</td>
 <td>messages expired</td>
 </tr>
 <tr>
-<td>mqobject_get_queue_purged_count_totalqueues</td>
+<td>mqobject_queue_queue_purged_count_totalqueues</td>
 <td>counter</td>
 <td>Shows a count of queues that have been purged.</td>
 <td>queue purged count</td>
 </tr>
 <tr>
-<td>mqobject_get_average_queue_time_microseconds</td>
+<td>mqobject_queue_average_queue_time_microseconds</td>
 <td>gauge</td>
 <td>Shows the average latency of messages that are retrieved from the queue.</td>
 <td>average queue time</td>
 </tr>
 <tr>
-<td>mqobject_get_queue_depth_messages</td>
+<td>mqobject_queue_queue_depth_messages</td>
 <td>gauge</td>
 <td>Shows the number of messages on the queue.</td>
 <td>Queue depth</td>
@@ -1080,9 +1349,10 @@ The only input parameter is the path to your configuration file.
 </tbody>
 </table>
 
-#### MQ PCF API specific statistics
-##### PCF requests
-These metrics are collected via sending direct PCF commands to queue manager.
+#### MQ PCF API specific metrics
+##### Metrics obtained by PCF commands
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a description of metrics of queues, channels and listeners that are collected via sending direct PCF commands to queue manager.
 <table>
 <tbody>
 <tr>
@@ -1091,25 +1361,27 @@ These metrics are collected via sending direct PCF commands to queue manager.
 <td><strong>Short description</strong></td>
 </tr>
 <tr>
-<td>mqobject_queue_max_depth_messages</td>
+<td>mqobject_queue_queue_max_depth_messages</td>
 <td>gauge</td>
 <td>Shows maximum number of messages that are allowed on the queue.</td>
 </tr>
 <tr>
-<td>mqobject_channel_status_code</td>
+<td>mqobject_channel_channel_status_hundredths</td>
 <td>gauge</td>
-<td>Shows current channel status.</td>
+<td>Shows current channel status. Mapping of channel statuses to prometheus metric values can be found <a href="#channel-status-mapping">here</a>.</td>
 </tr>
 <tr>
-<td>mqobject_listener_status_code</td>
+<td>mqobject_listener_listener_status_hundredths</td>
 <td>gauge</td>
-<td>Shows current listener status.</td>
+<td>Shows current listener status. Mapping of listener statuses to prometheus metric values can be found <a href="#listener-status-mapping">here</a>.</td>
 </tr>
 </tbody>
 </table>
 
 ##### MQ constants mapping
 ###### Channel status mapping
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a mapping between MQ channel statuses and metric values, that are sent to Prometheus.
 <table>
 <tbody>
 <tr>
@@ -1118,54 +1390,56 @@ These metrics are collected via sending direct PCF commands to queue manager.
 </tr>
 <tr>
 <td>RUNNING</td>
-<td>1</td>
+<td>100</td>
 </tr>
 <tr>
 <td>REQUESTING</td>
-<td>0.8</td>
+<td>90</td>
 </tr>
 <tr>
 <td>PAUSED</td>
-<td>0.7</td>
+<td>80</td>
 </tr>
 <tr>
 <td>BINDING</td>
-<td>0.6</td>
+<td>70</td>
 </tr>
 <tr>
 <td>STARTING</td>
-<td>0.5</td>
+<td>60</td>
 </tr>
 <tr>
 <td>INITIALIZING</td>
-<td>0.4</td>
+<td>50</td>
 </tr>
 <tr>
 <td>SWITCHING</td>
-<td>0.3</td>
+<td>40</td>
 </tr>
 <tr>
 <td>STOPPING</td>
-<td>0.2</td>
+<td>30</td>
 </tr>
 <tr>
 <td>RETRYING</td>
-<td>0.1</td>
+<td>20</td>
 </tr>
 <tr>
 <td>STOPPED</td>
-<td>0</td>
+<td>10</td>
 </tr>
 <tr>
 <td>INACTIVE</td>
-<td>-1</td>
+<td>0</td>
 </tr>
 </tbody>
 </table>
 
-<b>Warning</b>: INACTIVE status correctness is not guaranteed. If channel has status INACTIVE, there is no way to retrieve it's status by PCF command (because technically channel has no status) and MQRCCF_CHL_STATUS_NOT_FOUND will be returned by queue manager. Since INACTIVE status of the channel is the most frequent reason for receiving such an error, we interpret it as INACTIVE status of the channel.
+<b>Note</b>: If channel has status INACTIVE, there is no way to retrieve it's status by PCF command (because technically channel has no status) and MQRCCF_CHL_STATUS_NOT_FOUND will be returned by queue manager. Since INACTIVE status of the channel is the most frequent reason for receiving such an error, the exporter interprets it as INACTIVE status of the channel.
 
 ###### Listener status mapping
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
+This section provides a mapping between MQ listener statuses and metric values, that are sent to Prometheus.
 <table>
 <tbody>
 <tr>
@@ -1174,27 +1448,34 @@ These metrics are collected via sending direct PCF commands to queue manager.
 </tr>
 <tr>
 <td>RUNNING</td>
-<td>1</td>
+<td>100</td>
 </tr>
 <tr>
 <td>STARTING</td>
-<td>0.5</td>
+<td>75</td>
 </tr>
 <tr>
 <td>STOPPING</td>
+<td>50</td>
+</tr>
+<tr>
+<td>STOPPED</td>
 <td>0</td>
 </tr>
+
 </tbody>
 </table>
 
 ## Issues and Contributions
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 Feel free to express your thoughts about the exporter, unexpected behaviour and\or issues. New feature suggestions are welcome, use [issue tracker](https://github.com/Cinimex-Informatica/mq-java-exporter/issues). 
 Pull requests are always welcome.
 
 ## Known issues
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 The following are known issues and may affect your use of exporter.
 
-* Metric mq_cpu_ram_total_estimate_megabytes may contain negative
+* Metric mq_ram_ram_total_estimate_megabytes may contain negative
   values.
   [#62](https://github.com/Cinimex-Informatica/mq-java-exporter/issues/62)
   
@@ -1207,7 +1488,9 @@ The following are known issues and may affect your use of exporter.
    the fix from IBM for MQ ver. 9.0.x.x.
 
 ## Warning
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 The exporter is provided as-is with no guarantees. 
 
 ## License
+<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 The exporter and it's code is licensed under the [Apache License 2.0](https://github.com/Cinimex-Informatica/mq-java-exporter/blob/master/LICENSE).

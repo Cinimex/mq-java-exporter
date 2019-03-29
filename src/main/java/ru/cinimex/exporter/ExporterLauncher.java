@@ -22,14 +22,15 @@ import ru.cinimex.exporter.prometheus.metrics.MetricsManager;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main class of mq exporter tool. Parses config, scans topics, starts subscribers.
  */
 public class ExporterLauncher {
     private static final Logger logger = LogManager.getLogger(ExporterLauncher.class);
-    private static final String topicString = "$SYS/MQ/INFO/QMGR/%s/Monitor/METADATA/CLASSES";
-    private static final int getMsgOpt = MQConstants.MQGMO_WAIT | MQConstants.MQGMO_COMPLETE_MSG | MQConstants.MQGMO_SYNCPOINT;
+    private static final String TOPIC_STRING = "$SYS/MQ/INFO/QMGR/%s/Monitor/METADATA/CLASSES";
+    private static final int GMO = MQConstants.MQGMO_WAIT | MQConstants.MQGMO_COMPLETE_MSG | MQConstants.MQGMO_SYNCPOINT;
 
     public static void main(String[] args) {
         if (args.length == 0) {
@@ -42,19 +43,19 @@ public class ExporterLauncher {
         ArrayList<MQObject.MQType> monitoringTypes = new ArrayList<>();
         ArrayList<MQObject> objects = new ArrayList<>();
 
-        if (config.getQueues() != null && config.getQueues().size() > 0) {
+        if (config.getQueues() != null && !config.getQueues().isEmpty()) {
             monitoringTypes.add(MQObject.MQType.QUEUE);
             for (String queueName : config.getQueues()) {
                 objects.add(new MQObject(queueName, MQObject.MQType.QUEUE));
             }
         }
-        if (config.getChannels() != null && config.getChannels().size() > 0) {
+        if (config.getChannels() != null && !config.getChannels().isEmpty()) {
             monitoringTypes.add(MQObject.MQType.CHANNEL);
             for (String channelName : config.getChannels()) {
                 objects.add(new MQObject(channelName, MQObject.MQType.CHANNEL));
             }
         }
-        if (config.getListeners() != null && config.getListeners().size() > 0) {
+        if (config.getListeners() != null && !config.getListeners().isEmpty()) {
             monitoringTypes.add(MQObject.MQType.LISTENER);
             for (String listenerName : config.getListeners()) {
                 objects.add(new MQObject(listenerName, MQObject.MQType.LISTENER));
@@ -80,23 +81,23 @@ public class ExporterLauncher {
     private static ArrayList<PCFElement> getAllPublishedMetrics(Config config) {
         MQConnection connection = new MQConnection();
         MQTopic topic = null;
-        ArrayList<PCFElement> elements = new ArrayList<PCFElement>();
+        ArrayList<PCFElement> elements = new ArrayList<>();
         MQGetMessageOptions gmo = new MQGetMessageOptions();
-        gmo.options = getMsgOpt;
+        gmo.options = GMO;
         gmo.waitInterval = 30000;
         try {
             connection.establish(config.getQmgrHost(), config.getQmgrPort(), config.getQmgrChannel(), config.getQmgrName(), config.getUser(), config.getPassword(), config.useMqscp());
-            topic = connection.createTopic(String.format(topicString, config.getQmgrName()));
+            topic = connection.createTopic(String.format(TOPIC_STRING, config.getQmgrName()));
             MQMessage msg = getEmptyMessage();
             topic.get(msg, gmo);
             PCFMessage pcfResponse = new PCFMessage(msg);
-            ArrayList<PCFClass> classes = PCFDataParser.getPCFClasses(pcfResponse);
+            List<PCFClass> classes = PCFDataParser.getPCFClasses(pcfResponse);
             for (PCFClass pcfClass : classes) {
                 topic = connection.createTopic(pcfClass.getTopicString());
                 msg = getEmptyMessage();
                 topic.get(msg, gmo);
                 pcfResponse = new PCFMessage(msg);
-                ArrayList<PCFType> types = PCFDataParser.getPCFTypes(pcfResponse);
+                List<PCFType> types = PCFDataParser.getPCFTypes(pcfResponse);
                 for (PCFType type : types) {
                     topic = connection.createTopic(type.getTopicString());
                     msg = getEmptyMessage();

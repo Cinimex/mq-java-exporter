@@ -12,8 +12,8 @@ public class MQObject {
     private static final Logger logger = LogManager.getLogger(MQObject.class);
     private String name;
     private MQType type;
-    private PCFMessage PCFCmd;
-    private int PCFHeader;
+    private PCFMessage pcfCmd;
+    private int pcfHeader;
 
     /**
      * MQObject constructor.
@@ -29,26 +29,24 @@ public class MQObject {
  */
         switch (type) {
             case QUEUE:
-                PCFCmd = new PCFMessage(MQConstants.MQCMD_INQUIRE_Q); //if object type is queue, exporter would inquire it.
-                PCFCmd.addParameter(MQConstants.MQCA_Q_NAME, name); //PCF command would try to retrieve statistics about queue with specific name
-                PCFCmd.addParameter(MQConstants.MQIA_Q_TYPE, MQConstants.MQQT_LOCAL); // and specific type
-                PCFHeader = MQConstants.MQIA_MAX_Q_DEPTH; //the only statistics we want to know about queue is it's max depth.
+                pcfCmd = new PCFMessage(MQConstants.MQCMD_INQUIRE_Q); //if object type is queue, exporter would inquire it.
+                pcfCmd.addParameter(MQConstants.MQCA_Q_NAME, name); //PCF command would try to retrieve statistics about queue with specific name
+                pcfCmd.addParameter(MQConstants.MQIA_Q_TYPE, MQConstants.MQQT_LOCAL); // and specific type
+                pcfHeader = MQConstants.MQIA_MAX_Q_DEPTH; //the only statistics we want to know about queue is it's max depth.
                 break;
             case LISTENER:
-                PCFCmd = new PCFMessage(MQConstants.MQCMD_INQUIRE_LISTENER_STATUS); //if object type is listener, exporter would inquire it.
-                PCFCmd.addParameter(MQConstants.MQCACH_LISTENER_NAME, name);//PCF command would try to retrieve statistics about listener with specific name
-                PCFHeader = MQConstants.MQIACH_LISTENER_STATUS;//the only statistics we want to know about listener is it's status.
+                pcfCmd = new PCFMessage(MQConstants.MQCMD_INQUIRE_LISTENER_STATUS); //if object type is listener, exporter would inquire it.
+                pcfCmd.addParameter(MQConstants.MQCACH_LISTENER_NAME, name);//PCF command would try to retrieve statistics about listener with specific name
+                pcfHeader = MQConstants.MQIACH_LISTENER_STATUS;//the only statistics we want to know about listener is it's status.
                 break;
             case CHANNEL:
-                PCFCmd = new PCFMessage(MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS); //if object type is channel, exporter would inquire it.
-                PCFCmd.addParameter(MQConstants.MQCACH_CHANNEL_NAME, name); //PCF command would try to retrieve statistics about channel with specific name
-                PCFHeader = MQConstants.MQIACH_CHANNEL_STATUS;//the only statistics we want to know about channel is it's status.
+                pcfCmd = new PCFMessage(MQConstants.MQCMD_INQUIRE_CHANNEL_STATUS); //if object type is channel, exporter would inquire it.
+                pcfCmd.addParameter(MQConstants.MQCACH_CHANNEL_NAME, name); //PCF command would try to retrieve statistics about channel with specific name
+                pcfHeader = MQConstants.MQIACH_CHANNEL_STATUS;//the only statistics we want to know about channel is it's status.
                 break;
-            default: {
+            default:
                 logger.error("Unknown type for MQObject: {}", type.name());
                 throw new RuntimeException("Unable to create new MQObject. Received unexpected MQObject type: " + type.name());
-            }
-
         }
     }
 
@@ -90,7 +88,7 @@ public class MQObject {
      * @return - MQConstant integer code.
      */
     public int getPCFHeader() {
-        return PCFHeader;
+        return pcfHeader;
     }
 
     /**
@@ -107,8 +105,8 @@ public class MQObject {
      *
      * @return - prepared PCF command object.
      */
-    public PCFMessage getPCFCmd() {
-        return PCFCmd;
+    public PCFMessage getPcfCmd() {
+        return pcfCmd;
     }
 
     /**

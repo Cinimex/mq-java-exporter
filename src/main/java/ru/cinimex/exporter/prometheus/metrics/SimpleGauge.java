@@ -39,5 +39,6 @@ public class SimpleGauge implements MetricInterface {
 
     @Override
     public void notifyWasScraped() {
+        //There is no need to do any work after gauge was scraped.
     }
 }
