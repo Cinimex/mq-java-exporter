@@ -64,7 +64,8 @@ public class ExporterLauncher {
 
         MetricsManager.initMetrics(elements, monitoringTypes);
         MQSubscriberManager manager = new MQSubscriberManager(config.getQmgrHost(), config.getQmgrPort(), config.getQmgrChannel(), config.getQmgrName(), config.getUser(), config.getPassword(), config.useMqscp());
-        manager.runSubscribers(elements, objects, config.sendPCFCommands(), config.usePCFWildcards(), config.getScrapeInterval());
+        manager.runSubscribers(elements, objects, config.sendPCFCommands(), config.usePCFWildcards(),
+                config.getScrapeInterval(), config.getConnTimeout());
         try {
             new HTTPServer(new InetSocketAddress("0.0.0.0", config.getEndpPort()), config.getEndpURL(), Registry.getRegistry(), false);
         } catch (IOException e) {
