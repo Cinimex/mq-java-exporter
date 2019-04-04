@@ -17,7 +17,8 @@ public class MQSubscriberManager {
     private static final Logger logger = LogManager.getLogger(MQSubscriberManager.class);
     private Hashtable<String, Object> connectionProperties;
     private String queueManagerName;
-    private ArrayList<Thread> subscribers;
+    private ArrayList<MQSubscriber> subscribers;
+    private ScheduledExecutorService executor;
 
     /**
      * Constructor sets params for connecting to target queue manager.
@@ -56,7 +57,7 @@ public class MQSubscriberManager {
                 addPCFSubscribers(objects, interval);
             }
         }
-        for (Thread subscriber : subscribers) {
+        for (MQSubscriber subscriber : subscribers) {
             subscriber.start();
         }
         if (!subscribers.isEmpty()) {
@@ -66,6 +67,15 @@ public class MQSubscriberManager {
             System.exit(1);
         }
 
+    }
+
+    public void stopSubscribers() {
+        if (executor != null) {
+            executor.shutdown();
+        }
+        for (MQSubscriber subscriber : subscribers) {
+            subscriber.stopProcessing();
+        }
     }
 
     /**
@@ -97,7 +107,7 @@ public class MQSubscriberManager {
             PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
             objElement.formatTopicString(object.getName());
             try {
-                subscribers.add(new Thread(new MQTopicSubscriber(objElement, queueManagerName, connectionProperties, queueManagerName, object.getName())));
+                subscribers.add(new MQTopicSubscriber(objElement, queueManagerName, connectionProperties, queueManagerName, object.getName()));
             } catch (MQException e) {
                 logger.error("Error during creating topic subscriber: ", e);
             }
@@ -111,7 +121,7 @@ public class MQSubscriberManager {
      */
     private void addTopicSubscriber(PCFElement element) {
         try {
-            subscribers.add(new Thread(new MQTopicSubscriber(element, queueManagerName, connectionProperties, queueManagerName)));
+            subscribers.add(new MQTopicSubscriber(element, queueManagerName, connectionProperties, queueManagerName));
         } catch (MQException e) {
             logger.error("Error during creating topic subscriber: ", e);
         }
@@ -125,11 +135,11 @@ public class MQSubscriberManager {
      */
     private void addPCFSubscribers(Map<MQObject.MQType, ArrayList<MQObject>> objects, int interval) {
         int corePoolSize = MQObject.MQType.values().length;
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(corePoolSize);
+        executor = Executors.newScheduledThreadPool(corePoolSize);
         for (Map.Entry<MQObject.MQType, ArrayList<MQObject>> entry : objects.entrySet()) {
             if (!entry.getValue().isEmpty()) {
                 MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, entry.getValue());
-                subscribers.add(new Thread(subscriber));
+                subscribers.add(subscriber);
                 logger.debug("Starting subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {}.", entry.getKey().name());
                 executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
                 logger.debug("Subscriber for sending direct PCF commands for objects with type {} successfully started.", entry.getKey().name());
@@ -148,7 +158,7 @@ public class MQSubscriberManager {
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(corePoolSize);
         for (MQObject object : objects) {
             MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, object);
-            subscribers.add(new Thread(subscriber));
+            subscribers.add(subscriber);
             logger.debug("Starting subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {}.", object.getType().name(), object.getName());
             executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
             logger.debug("Subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {} successfully started.", object.getType().name(), object.getName());
