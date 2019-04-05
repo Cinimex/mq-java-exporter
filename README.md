@@ -108,8 +108,10 @@ PCFParameters:
 # Collect additional metrics? If false, all settings in this section below are ignored. 
 # If yes, additional metrics will be collected for all queues, channels and listeners listed below. 
   sendPCFCommands: true
-# Use wildcards? If yes, only one PCF command will be send, matching all objects on queue manager. Otherwise, each 
-# object will be monitored by separate PCF command.  
+# If usePCFWildcards equals "true", then all monitored objects will be grouped by object type: QUEUE, CHANNEL and LISTENER. Only one PCF command will be send for each object type. Metrics will be obtained from the PCF command response for each object one type. 
+# If usePCFWildcards equals "false", then PCF command will be send for each object.
+# PCF command are sent in one connection to MQ queue manager, so for many PCF command will be opened many connection to MQ queue manager. 
+# For example, for 100 monitoring queue will be opened 100 connection to MQ queue manager, if usePCFwildcard equals "false". 
   usePCFWildcards: true
 # Interval in seconds between sending PCF commands.
   scrapeInterval: 10
