@@ -5,7 +5,6 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API metrics of IBM MQ a
 ## Table of contents
 1. [Getting Started](#getting-started)
    - [Compatibility](#compatibility)
-   - [Prerequisites](#prerequisites)
    - [Dependencies](#dependencies)
    - [Configuration](#configuration)
    - [Build](#build)
@@ -56,15 +55,11 @@ Supports [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/co
 
 Was tested on MQ ver.9.0.x.x and MQ ver. 9.1.x.x.
 
-#### Prerequisites
-<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
-List of prerequisites:
-- [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
--	[Maven](https://maven.apache.org/)
-
 #### Dependencies
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 List of dependencies:
+-   [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
+-   [Maven](https://maven.apache.org/)
 -	[Prometheus](https://prometheus.io)
 -	[IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 
