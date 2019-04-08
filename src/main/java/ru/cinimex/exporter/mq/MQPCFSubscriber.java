@@ -112,9 +112,9 @@ public class MQPCFSubscriber implements Runnable {
     /**
      * Retrieves info about all objects from input array via direct pcf commands.
      *
-     * @param objectNames - input array with objects.
+     * @param objectNames - input list with objects.
      */
-    private void updateWithDirectPCFCommand(ArrayList<String> objectNames) {
+    private void updateWithDirectPCFCommand(List<String> objectNames) {
         for (String objectName : objectNames) {
             MQObject directObject = new MQObject(objectName, object.getType());
             try {
@@ -122,9 +122,12 @@ public class MQPCFSubscriber implements Runnable {
                 updateMetricWithoutWildcards(directPCFResponse[0], objectName);
             } catch (PCFException e) {
                 //This error means, that channel has status "inactive".
-                if (e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
+                if (object.getType() == MQObject.MQType.CHANNEL && e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
                     logger.warn("Channel {} is possibly inactive.", objectName);
                     MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQCHS_INACTIVE), queueManagerName, objectName);
+                } else if (object.getType() == MQObject.MQType.LISTENER && e.reasonCode == MQConstants.MQRC_UNKNOWN_OBJECT_NAME) {
+                    MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQSVC_STATUS_STOPPED), queueManagerName, objectName);
+                    logger.warn("Listener {} is possibly stopped.", objectName);
                 } else {
                     logger.error("Error occurred during sending PCF command: ", e);
                 }
@@ -139,7 +142,7 @@ public class MQPCFSubscriber implements Runnable {
         try {
             logger.debug("Sending PCF command for object type {} with name {}...", object.getType(), object.getName());
             PCFMessage[] pcfResponse = agent.send(object.getPcfCmd());
-            if (!objects.isEmpty()) {
+            if (objects!= null && !objects.isEmpty()) {
                 updateMetricsWithWildcards(pcfResponse);
             } else {
                 for (PCFMessage response : pcfResponse) {
@@ -148,13 +151,14 @@ public class MQPCFSubscriber implements Runnable {
             }
             logger.debug("PCF response for object type {} with name {} was processed successfully.", object.getType(), object.getName());
         } catch (PCFException e) {
-            if (e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
+            if (object.getType() == MQObject.MQType.CHANNEL && e.reasonCode == MQConstants.MQRCCF_CHL_STATUS_NOT_FOUND) {
                 logger.warn("Channel {} is possibly inactive.", object.getName());
                 MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQCHS_INACTIVE), queueManagerName, object.getName());
-            }
-            if (object.getType() == MQObject.MQType.LISTENER && e.reasonCode == MQConstants.MQRC_UNKNOWN_OBJECT_NAME) {
+            } else if (object.getType() == MQObject.MQType.LISTENER && e.reasonCode == MQConstants.MQRC_UNKNOWN_OBJECT_NAME) {
                 MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQSVC_STATUS_STOPPED), queueManagerName, object.getName());
                 logger.warn("Listener {} is possibly stopped.", object.getName());
+            } else {
+                logger.error("Error occurred during sending PCF command: ", e);
             }
         } catch (MQException | IOException e) {
             logger.error("Error occurred during sending PCF command: ", e);
