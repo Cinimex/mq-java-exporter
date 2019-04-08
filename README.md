@@ -44,7 +44,7 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API metrics of IBM MQ a
        - [MQ constants mapping](#mq-constants-mapping)
          - [Channel status mapping](#channel-status-mapping)
          - [Listener status mapping](#listener-status-mapping)
-3. [Issues and Contributions](#issues-and-contributions)
+3. [Contributions](#contributions)
 4. [Known issues](#known-issues)
 5. [Warning](#warning)
 6. [License](#license)
@@ -351,7 +351,7 @@ This section provides a description of metric units.<br/>
 </tr>
 <tr>
 <td>hundredths</td>
-<td>Shows amount of hundredths. For example, "370 hundredths" equals to "3.70". It is used to reflect system's load average and LISTENER\CHANNEL status codes.</td>
+<td>Shows amount of hundredths. For example, "370 hundredths" equal to "3.70". It is used to reflect system's load average and LISTENER\CHANNEL status codes.</td>
 </tr>
 <tr>
 <td>megabytes</td>
@@ -1466,7 +1466,7 @@ This section provides a mapping between MQ listener statuses and metric values, 
 </tbody>
 </table>
 
-## Issues and Contributions
+## Contributions
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 Feel free to express your thoughts about the exporter, unexpected behaviour and\or issues. New feature suggestions are welcome, use [issue tracker](https://github.com/Cinimex-Informatica/mq-java-exporter/issues). 
 Pull requests are always welcome.
@@ -1475,7 +1475,7 @@ Pull requests are always welcome.
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 The following are known issues and may affect your use of exporter.
 
-* Metric mq_ram_ram_total_estimate_megabytes may contain negative
+1. Metric mq_ram_ram_total_estimate_megabytes may contain negative
   values.
   [#62](https://github.com/Cinimex-Informatica/mq-java-exporter/issues/62)
   
