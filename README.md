@@ -111,7 +111,7 @@ PCFParameters:
 # If usePCFWildcards equals "true", then all monitored objects will be grouped by object type: QUEUE, CHANNEL and LISTENER. Only one PCF command will be sent for each object type. 
 # If usePCFWildcards equals "false", then PCF command will be send for each object.
 # PCF command are sent in one connection to MQ queue manager, so for many PCF command will be opened many connection to MQ queue manager. 
-# For example, for 100 monitoring queue will be opened 100 connection to MQ queue manager, if usePCFwildcard equals "false". 
+# For example, for 100 monitoring queues will be opened 100 connections to MQ queue manager, if usePCFwildcard equals "false". 
   usePCFWildcards: true
 # Interval in seconds between sending PCF commands.
   scrapeInterval: 10
