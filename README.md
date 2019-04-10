@@ -141,11 +141,11 @@ Steps, that need to be taken to build the exporter:
 mvn package
 ```
 
-4. After processing is completed, go to mq-java-exporter/target. dependency-jars directory and mq_exporter.jar should appear there.
+4. After processing is completed, go to mq-java-exporter/target. lib directory and mq_exporter.jar should appear there.
 
 #### Run
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
-To run exporter, dependency-jars directory (and all jars in it) and
+To run exporter, lib directory (and all jars in it) and
 mq_exporter.jar should be located in the same folder.
 
 ##### Running exporter as mq service

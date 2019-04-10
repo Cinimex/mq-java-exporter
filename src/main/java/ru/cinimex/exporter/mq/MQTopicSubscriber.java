@@ -19,13 +19,14 @@ import java.util.Map;
 /**
  * MQTopicSubscriber is used to subscribe to specific topic.
  */
-public class MQTopicSubscriber implements Runnable {
+public class MQTopicSubscriber extends MQSubscriber {
     private static final Logger logger = LogManager.getLogger(MQTopicSubscriber.class);
     private MQTopic topic;
     private PCFElement element;
     private MQConnection connection;
     private String[] labels;
     private int timeout;
+    private boolean isRunning;
 
     /**
      * Subscriber constructor
@@ -74,6 +75,13 @@ public class MQTopicSubscriber implements Runnable {
     }
 
     /**
+     * Stops subscriber.
+     */
+    public void stopProcessing() {
+        isRunning = false;
+    }
+
+    /**
      * Starts subscriber.
      */
     public void run() {
@@ -82,19 +90,21 @@ public class MQTopicSubscriber implements Runnable {
             MQGetMessageOptions gmo = new MQGetMessageOptions();
             gmo.options = MQConstants.MQGMO_WAIT | MQConstants.MQGMO_COMPLETE_MSG;
             gmo.waitInterval = timeout;
-            while (true) {
+            isRunning = true;
+            while (isRunning) {
                 scrapeMetrics(gmo);
             }
         } catch (MQException e) {
             logger.error("Error occurred during establishing connection with topic {}", element.getTopicString(), e);
         } finally {
-            if (topic != null && topic.isOpen()) {
-                try {
+            System.out.println("Finishing topic work!");
+            try {
+                if (topic != null && topic.isOpen()) {
                     topic.close();
-                    connection.close();
-                } catch (MQException e) {
-                    logger.error("Error occurred during disconnecting from topic {}. Error: ", topic.toString(), e);
                 }
+                connection.close();
+            } catch (MQException e) {
+                logger.error("Error occurred during disconnecting from topic {}. Error: ", topic.toString(), e);
             }
         }
     }

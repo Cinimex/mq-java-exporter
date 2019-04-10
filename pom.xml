@@ -8,24 +8,32 @@
     <packaging>jar</packaging>
     <properties>
         <jdk.version>1.8</jdk.version>
-        <mq.allclient.version>9.0.0.1</mq.allclient.version>
+        <mq.allclient.version>9.1.2.0</mq.allclient.version>
         <snakeyaml.version>1.23</snakeyaml.version>
         <prometheus.version>0.6.0</prometheus.version>
         <log4j.version>2.11.2</log4j.version>
-        <mq.allclient.jar.path>/lib/com.ibm.mq.allclient.jar</mq.allclient.jar.path>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <dependencies>
-        <!--When patch from IBM would appear - we will use latest version from Maven repo -->
-        <!-- <dependency><groupId>com.ibm.mq</groupId><artifactId>com.ibm.mq.allclient</artifactId><version>9.0.5.0</version></dependency>-->
-        <!-- <dependency><groupId>com.ibm.mq</groupId><artifactId>com.ibm.mq.allclient</artifactId><version>${mq.allclient.version}</version><scope>system</scope></dependency>-->
         <dependency>
             <groupId>com.ibm.mq</groupId>
             <artifactId>com.ibm.mq.allclient</artifactId>
             <version>${mq.allclient.version}</version>
-            <scope>system</scope>
-            <systemPath>${basedir}${mq.allclient.jar.path}</systemPath>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcpkix-jdk15on</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>javax.jms-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -81,7 +89,7 @@
                             <!-- Jar file entry point -->
                             <addClasspath>true</addClasspath>
                             <mainClass>ru.cinimex.exporter.ExporterLauncher</mainClass>
-                            <classpathPrefix>dependency-jars/</classpathPrefix>
+                            <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                     </archive>
                 </configuration>
@@ -99,7 +107,7 @@
                         </goals>
                         <configuration>
                             <includeScope>runtime</includeScope>
-                            <outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
+                            <outputDirectory>${project.build.directory}/lib/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
