@@ -5,7 +5,6 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API metrics of IBM MQ a
 ## Table of contents
 1. [Getting Started](#getting-started)
    - [Compatibility](#compatibility)
-   - [Prerequisites](#prerequisites)
    - [Dependencies](#dependencies)
    - [Configuration](#configuration)
    - [Build](#build)
@@ -44,7 +43,7 @@ Prometheus exporter for IBM MQ, written in Java. Exposes API metrics of IBM MQ a
        - [MQ constants mapping](#mq-constants-mapping)
          - [Channel status mapping](#channel-status-mapping)
          - [Listener status mapping](#listener-status-mapping)
-3. [Issues and Contributions](#issues-and-contributions)
+3. [Contributions](#contributions)
 4. [Known issues](#known-issues)
 5. [Warning](#warning)
 6. [License](#license)
@@ -56,15 +55,11 @@ Supports [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/co
 
 Was tested on MQ ver.9.0.x.x and MQ ver. 9.1.x.x.
 
-#### Prerequisites
-<sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
-List of prerequisites:
-- [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
--	[Maven](https://maven.apache.org/)
-
 #### Dependencies
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 List of dependencies:
+-   [IBM JRE 8 or higher](https://developer.ibm.com/javasdk/downloads/sdk8/) \ [Oracle JRE 8 or higher](https://www.oracle.com/technetwork/java/javase/downloads/index.html) \ [OpenJDK JRE 8 or higher](https://jdk.java.net/java-se-ri/8)
+-   [Maven](https://maven.apache.org/)
 -	[Prometheus](https://prometheus.io)
 -	[IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.helphome.v90.doc/WelcomePagev9r0.htm)
 
@@ -344,7 +339,7 @@ This section provides a description of domains and subdomains and reflects their
 #### Units
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metric units.<br/>
-["Metric and label naming"](https://prometheus.io/docs/practices/naming/#metric-and-label-naming) article by Prometheus states that metrics "...should use base units (e.g. seconds, bytes, meters - not milliseconds, megabytes, kilometers)". But it is not usefull for using IBM MQ exporter. So the exporter has following list of units:
+["Metric and label naming"](https://prometheus.io/docs/practices/naming/#metric-and-label-naming) article by Prometheus states that metrics "...should use base units (e.g. seconds, bytes, meters - not milliseconds, megabytes, kilometers)". There was an attempt to find a balance between MQ metrics and Prometheus metrics (according to the Prometheus conventions), but it was decided to change the metrics from MQ as little as possible, since some metrics do not fit the description in the article. Conversion of values for certain metrics can lead to a distortion of actual values (e.g. integer amount megabytes) and increasing in disk space, occupied by the metric. So the exporter has following list of units:
 
 <table>
 <tbody>
@@ -1473,7 +1468,7 @@ This section provides a mapping between MQ listener statuses and metric values, 
 </tbody>
 </table>
 
-## Issues and Contributions
+## Contributions
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 Feel free to express your thoughts about the exporter, unexpected behaviour and\or issues. New feature suggestions are welcome, use [issue tracker](https://github.com/Cinimex-Informatica/mq-java-exporter/issues). 
 Pull requests are always welcome.
@@ -1482,7 +1477,7 @@ Pull requests are always welcome.
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 The following are known issues and may affect your use of exporter.
 
-* Metric mq_ram_ram_total_estimate_megabytes may contain negative
+1. Metric mq_ram_ram_total_estimate_megabytes may contain negative
   values.
   [#62](https://github.com/Cinimex-Informatica/mq-java-exporter/issues/62)
   
