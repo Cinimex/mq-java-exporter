@@ -332,7 +332,7 @@ This section provides a description of domains and subdomains and reflects their
 #### Units
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metric units.<br/>
-["Metric and label naming"](https://prometheus.io/docs/practices/naming/#metric-and-label-naming) article by Prometheus states that metrics "...should use base units (e.g. seconds, bytes, meters - not milliseconds, megabytes, kilometers)". But it is not usefull for using IBM MQ exporter. So the exporter has following list of units:
+["Metric and label naming"](https://prometheus.io/docs/practices/naming/#metric-and-label-naming) article by Prometheus states that metrics "...should use base units (e.g. seconds, bytes, meters - not milliseconds, megabytes, kilometers)". There was an attempt to find a balance between MQ metrics and Prometheus metrics (according to the Prometheus conventions), but it was decided to change the metrics from MQ as little as possible, since some metrics do not fit the description in the article. Conversion of values for certain metrics can lead to a distortion of actual values (e.g. integer amount megabytes) and increasing in disk space, occupied by the metric. So the exporter has following list of units:
 
 <table>
 <tbody>
