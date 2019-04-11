@@ -346,7 +346,7 @@ This section provides a description of metric units.<br/>
 </tr>
 <tr>
 <td>hundredths</td>
-<td>Shows amount of hundredths. For example, "370 hundredths" equal to "3.70". It is used to reflect system's load average and LISTENER\CHANNEL status codes.</td>
+<td>Shows amount of hundredths. For example, "370 hundredths" equals to "3.70". It is used to reflect system's load average and LISTENER\CHANNEL status codes.</td>
 </tr>
 <tr>
 <td>megabytes</td>
