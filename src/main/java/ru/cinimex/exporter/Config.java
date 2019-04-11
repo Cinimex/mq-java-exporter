@@ -25,6 +25,7 @@ public class Config {
     private String user;
     private String password;
     private boolean mqscp;
+    private int connTimeout;
     private int endpPort;
     private String endpURL;
     private ArrayList<String> queues;
@@ -55,6 +56,7 @@ public class Config {
         this.user = (String) qmgrConnectionParams.get("user");
         this.password = (String) qmgrConnectionParams.get("password");
         this.mqscp = (boolean) qmgrConnectionParams.get("mqscp");
+        this.connTimeout = (Integer) qmgrConnectionParams.get("connTimeout");
         queues = (ArrayList<String>) config.get("queues");
         listeners = (ArrayList<String>) config.get("listeners");
         channels = (ArrayList<String>) config.get("channels");
@@ -112,6 +114,10 @@ public class Config {
 
     public String getPassword() {
         return password;
+    }
+
+    public int getConnTimeout() {
+        return connTimeout;
     }
 
     public int getEndpPort() {

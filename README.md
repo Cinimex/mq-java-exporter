@@ -91,6 +91,9 @@ qmgrConnectionParams:
   password: mqm
 # Use MQCSP for connection?
   mqscp: false
+# How long to wait until metrics are published by queue manager (milliseconds).
+# Value must be at least 10000 (periodicity with which metrics are published by MQ).
+  connTimeout: 12000
 
 # Prometheus connection information -------------------------------
 prometheusEndpointParams:

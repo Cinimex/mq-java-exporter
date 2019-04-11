@@ -44,11 +44,12 @@ public class MQSubscriberManager {
      * @param sendPCFCommands - this flag indicates, if we should send additional PCF commands (To get queues max depth, channels and listeners statuses).
      * @param usePCFWildcards - this flag indicates, if we should use wildcards (uses only 1 connection per MQObject type, but longer response processing).
      * @param interval        - interval in seconds, at which additional PCF commands are sent.
+     * @param timeout         - timeout for MQGET operation (milliseconds).
      */
-    public void runSubscribers(List<PCFElement> elements, List<MQObject> objects, boolean sendPCFCommands, boolean usePCFWildcards, int interval) {
+    public void runSubscribers(List<PCFElement> elements, List<MQObject> objects, boolean sendPCFCommands, boolean usePCFWildcards, int interval, int timeout) {
         logger.info("Launching subscribers...");
         subscribers = new ArrayList<>();
-        addTopicSubscribers(elements, objects);
+        addTopicSubscribers(elements, objects, timeout);
         if (sendPCFCommands) {
             if (usePCFWildcards) {
                 EnumMap<MQObject.MQType, ArrayList<MQObject>> groups = groupMQObjects(objects);
@@ -83,15 +84,16 @@ public class MQSubscriberManager {
      *
      * @param elements - list with PCFElements, received from MQ.
      * @param objects  - list with monitored MQ objects.
+     * @param timeout  - timeout for MQGET operation (milliseconds).
      */
-    private void addTopicSubscribers(List<PCFElement> elements, List<MQObject> objects) {
+    private void addTopicSubscribers(List<PCFElement> elements, List<MQObject> objects, int timeout) {
         for (PCFElement element : elements) {
             if (element.requiresMQObject()) {
                 for (MQObject object : objects) {
-                    addTopicSubscriber(object, element);
+                    addTopicSubscriber(object, element, timeout);
                 }
             } else {
-                addTopicSubscriber(element);
+                addTopicSubscriber(element, timeout);
             }
         }
     }
@@ -101,13 +103,14 @@ public class MQSubscriberManager {
      *
      * @param object  - monitored MQ object.
      * @param element - PCFElement, received from MQ.
+     * @param timeout - timeout for MQGET operation (milliseconds).
      */
-    private void addTopicSubscriber(MQObject object, PCFElement element) {
+    private void addTopicSubscriber(MQObject object, PCFElement element, int timeout) {
         if (object.getType().equals(MQObject.MQType.QUEUE)) {
             PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
             objElement.formatTopicString(object.getName());
             try {
-                subscribers.add(new MQTopicSubscriber(objElement, queueManagerName, connectionProperties, queueManagerName, object.getName()));
+                subscribers.add(new MQTopicSubscriber(objElement, queueManagerName, connectionProperties, timeout, queueManagerName, object.getName()));
             } catch (MQException e) {
                 logger.error("Error during creating topic subscriber: ", e);
             }
@@ -118,10 +121,11 @@ public class MQSubscriberManager {
      * Adds topic subscriber
      *
      * @param element - PCFElement, received from MQ.
+     * @param timeout - timeout for MQGET operation (milliseconds).
      */
-    private void addTopicSubscriber(PCFElement element) {
+    private void addTopicSubscriber(PCFElement element, int timeout) {
         try {
-            subscribers.add(new MQTopicSubscriber(element, queueManagerName, connectionProperties, queueManagerName));
+            subscribers.add(new MQTopicSubscriber(element, queueManagerName, connectionProperties, timeout, queueManagerName));
         } catch (MQException e) {
             logger.error("Error during creating topic subscriber: ", e);
         }

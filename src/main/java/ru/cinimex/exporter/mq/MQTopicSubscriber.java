@@ -25,20 +25,23 @@ public class MQTopicSubscriber extends MQSubscriber {
     private PCFElement element;
     private MQConnection connection;
     private String[] labels;
+    private int timeout;
     private boolean isRunning;
 
     /**
      * Subscriber constructor
      *
-     * @param element - PCF message data, which is required for parsing statistics.
-     * @param labels  - labels array, which should be used for metrics.
+     * @param element              - PCF message data, which is required for parsing statistics.
+     * @param queueManagerName     - queue manager name.
+     * @param connectionProperties - structure, filled with connection properties.
+     * @param timeout              - timeout for MQGET operation (milliseconds).
+     * @param labels               - labels array, which should be used for metrics.
      */
-    public MQTopicSubscriber(PCFElement element, String queueManagerName, Hashtable<String, Object> connectionProperties, String... labels) throws MQException {
+    public MQTopicSubscriber(PCFElement element, String queueManagerName, Hashtable<String, Object> connectionProperties, int timeout, String... labels) throws MQException {
         this.element = element;
-        if (connection == null) {
-            connection = new MQConnection();
-            connection.establish(queueManagerName, connectionProperties);
-        }
+        this.timeout = timeout;
+        this.connection = new MQConnection();
+        this.connection.establish(queueManagerName, connectionProperties);
         this.labels = labels;
     }
 
@@ -86,7 +89,7 @@ public class MQTopicSubscriber extends MQSubscriber {
             topic = connection.createTopic(element.getTopicString());
             MQGetMessageOptions gmo = new MQGetMessageOptions();
             gmo.options = MQConstants.MQGMO_WAIT | MQConstants.MQGMO_COMPLETE_MSG;
-            gmo.waitInterval = 12000;
+            gmo.waitInterval = timeout;
             isRunning = true;
             while (isRunning) {
                 scrapeMetrics(gmo);
