@@ -7,8 +7,24 @@ import com.ibm.mq.constants.CMQC;
 import com.ibm.mq.constants.MQConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.cinimex.exporter.Config;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Class represents MQ connection.
@@ -20,42 +36,55 @@ public class MQConnection {
     /**
      * Method creates connection properties Hashtable from connection parameters.
      *
-     * @param host     - host, where queue manager is located.
-     * @param port     - queue manager's port.
-     * @param channel  - queue manager's channel.
-     * @param user     - user, which has enough privilege on the queue manager (optional).
-     * @param password - password, which is required to establish connection with queue manager (optional).
-     * @param useMQCSP - flag, which indicates, if MQCSP auth should be used.
+     * @param config     - config.
      * @return - returns prepared structure with all parameters transformed into queue manager's format.
      */
-    protected static Hashtable<String, Object> createMQConnectionParams(String host, int port, String channel, String user, String password, boolean useMQCSP) {
-        Hashtable<String, Object> properties = new Hashtable<>();
-        properties.put(MQConstants.TRANSPORT_PROPERTY, host == null ? MQConstants.TRANSPORT_MQSERIES_BINDINGS : MQConstants.TRANSPORT_MQSERIES_CLIENT);
-        if (host != null) properties.put(MQConstants.HOST_NAME_PROPERTY, host);
-        if (port != 0) properties.put(MQConstants.PORT_PROPERTY, port);
-        if (channel != null) properties.put(MQConstants.CHANNEL_PROPERTY, channel);
-        if (user != null || password != null) {
-            if (useMQCSP) properties.put(MQConstants.USE_MQCSP_AUTHENTICATION_PROPERTY, true);
-            if (user != null) properties.put(MQConstants.USER_ID_PROPERTY, user);
-            if (password != null) properties.put(MQConstants.PASSWORD_PROPERTY, password);
+    public static Map<String, Object> createMQConnectionParams(Config config) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(MQConstants.TRANSPORT_PROPERTY, config.getQmgrHost() == null ? MQConstants.TRANSPORT_MQSERIES_BINDINGS : MQConstants.TRANSPORT_MQSERIES_CLIENT);
+        if (config.getQmgrHost() != null) properties.put(MQConstants.HOST_NAME_PROPERTY, config.getQmgrHost());
+        if (config.getQmgrPort() != 0) properties.put(MQConstants.PORT_PROPERTY, config.getQmgrPort());
+        if (config.getQmgrChannel() != null) properties.put(MQConstants.CHANNEL_PROPERTY, config.getQmgrChannel());
+        if (config.getUser() != null || config.getPassword() != null) {
+            if (config.useMqscp()) properties.put(MQConstants.USE_MQCSP_AUTHENTICATION_PROPERTY, true);
+            if (config.getUser() != null) properties.put(MQConstants.USER_ID_PROPERTY, config.getUser());
+            if (config.getPassword() != null) properties.put(MQConstants.PASSWORD_PROPERTY, config.getPassword());
+        }
+        MQSecurityProperties mqSecurityProperties = config.getMqSecurityProperties();
+        if (mqSecurityProperties != null && mqSecurityProperties.isUseTLS()) {
+            KeyStore keyStore = getStore(mqSecurityProperties.getKeystorePath(), mqSecurityProperties.getKeystorePassword());
+            KeyStore trustStore = getStore(mqSecurityProperties.getTruststorePath(), mqSecurityProperties.getTruststorePassword());
+
+            SSLContext sslContext = null;
+            try {
+                TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                trustManagerFactory.init(trustStore);
+                keyManagerFactory.init(keyStore, mqSecurityProperties.getKeystorePassword().toCharArray());
+                sslContext = SSLContext.getInstance(mqSecurityProperties.getSslProtocol());
+                sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+            } catch (KeyStoreException | UnrecoverableKeyException | NoSuchAlgorithmException | KeyManagementException e1) {
+                logger.error("Failed!", e1);
+            }
+
+            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+
+            properties.put(MQConstants.SSL_CIPHER_SUITE_PROPERTY, mqSecurityProperties.getCipherSuite());
+            properties.put(MQConstants.SSL_SOCKET_FACTORY_PROPERTY, sslSocketFactory);
+            System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", "false");
         }
         return properties;
     }
 
-    /**
-     * Method establishes connection with queue manager.
-     *
-     * @param host     - host, where queue manager is located.
-     * @param port     - queue manager's port.
-     * @param channel  - queue manager's channel.
-     * @param qmName   - queue manager's name.
-     * @param user     - user, which has enough privilege on the queue manager (optional).
-     * @param password - password, which is required to establish connection with queue manager (optional).
-     * @param useMQCSP - flag, which indicates, if MQCSP auth should be used.
-     */
-    public void establish(String host, int port, String channel, String qmName, String user, String password, boolean useMQCSP) throws MQException {
-        Hashtable<String, Object> connectionProperties = createMQConnectionParams(host, port, channel, user, password, useMQCSP);
-        queueManager = new MQQueueManager(qmName, connectionProperties);
+    private static KeyStore getStore(String storePath, String storePassword) {
+        KeyStore keyStore = null;
+        try (FileInputStream keyStoreInput = new FileInputStream(storePath)) {
+            keyStore = KeyStore.getInstance("JKS");
+            keyStore.load(keyStoreInput, storePassword.toCharArray());
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
+            logger.error("Failed to get key or trust store: ", e);
+        }
+        return keyStore;
     }
 
     /**
@@ -64,8 +93,8 @@ public class MQConnection {
      * @param qmNqme               - queue manager's name.
      * @param connectionProperties - prepared structure with all parameters transformed into queue manager's format. See {@link #createMQConnectionParams(String, int, String, String, String, boolean)} for more info.
      */
-    public void establish(String qmNqme, Hashtable<String, Object> connectionProperties) throws MQException {
-        queueManager = new MQQueueManager(qmNqme, connectionProperties);
+    public void establish(String qmNqme, Map<String, Object> connectionProperties) throws MQException {
+        queueManager = new MQQueueManager(qmNqme, new Hashtable<>(connectionProperties));
     }
 
     /**
@@ -100,4 +129,5 @@ public class MQConnection {
     public MQQueueManager getQueueManager() {
         return this.queueManager;
     }
+
 }

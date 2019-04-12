@@ -3,6 +3,7 @@ package ru.cinimex.exporter.mq;
 import com.ibm.mq.MQException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.cinimex.exporter.Config;
 import ru.cinimex.exporter.mq.pcf.PCFElement;
 
 import java.util.*;
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MQSubscriberManager {
     private static final Logger logger = LogManager.getLogger(MQSubscriberManager.class);
-    private Hashtable<String, Object> connectionProperties;
+    private Map<String, Object> connectionProperties;
     private String queueManagerName;
     private ArrayList<MQSubscriber> subscribers;
     private ScheduledExecutorService executor;
@@ -23,17 +24,11 @@ public class MQSubscriberManager {
     /**
      * Constructor sets params for connecting to target queue manager.
      *
-     * @param host     - host, where queue manager is located.
-     * @param port     - queue manager's port.
-     * @param channel  - queue manager's channel.
-     * @param qmName   - queue manager's name.
-     * @param user     - user, which has enough privilege on the queue manager (optional).
-     * @param password - password, which is required to establish connection with queue manager (optional).
-     * @param useMQCSP - flag, which indicates, if MQCSP auth should be used.
+     * @param config     - config.
      */
-    public MQSubscriberManager(String host, int port, String channel, String qmName, String user, String password, boolean useMQCSP) {
-        connectionProperties = MQConnection.createMQConnectionParams(host, port, channel, user, password, useMQCSP);
-        queueManagerName = qmName;
+    public MQSubscriberManager(Config config) {
+        connectionProperties = MQConnection.createMQConnectionParams(config);
+        queueManagerName = config.getQmgrName();
     }
 
     /**
@@ -64,7 +59,7 @@ public class MQSubscriberManager {
         if (!subscribers.isEmpty()) {
             logger.info("Successfully launched {} subscribers!", subscribers.size());
         } else {
-            logger.warn("Didn't launch any subscriber. Exporter finishes it's work!", subscribers.size());
+            logger.warn("Didn't launch any subscriber. Exporter finishes it's work!");
             System.exit(1);
         }
 
@@ -110,7 +105,7 @@ public class MQSubscriberManager {
             PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
             objElement.formatTopicString(object.getName());
             try {
-                subscribers.add(new MQTopicSubscriber(objElement, queueManagerName, connectionProperties, timeout, queueManagerName, object.getName()));
+                subscribers.add(new MQTopicSubscriber(objElement, queueManagerName, new Hashtable<>(connectionProperties), timeout, queueManagerName, object.getName()));
             } catch (MQException e) {
                 logger.error("Error during creating topic subscriber: ", e);
             }
@@ -125,7 +120,7 @@ public class MQSubscriberManager {
      */
     private void addTopicSubscriber(PCFElement element, int timeout) {
         try {
-            subscribers.add(new MQTopicSubscriber(element, queueManagerName, connectionProperties, timeout, queueManagerName));
+            subscribers.add(new MQTopicSubscriber(element, queueManagerName, new Hashtable<>(connectionProperties), timeout, queueManagerName));
         } catch (MQException e) {
             logger.error("Error during creating topic subscriber: ", e);
         }
@@ -142,7 +137,7 @@ public class MQSubscriberManager {
         executor = Executors.newScheduledThreadPool(corePoolSize);
         for (Map.Entry<MQObject.MQType, ArrayList<MQObject>> entry : objects.entrySet()) {
             if (!entry.getValue().isEmpty()) {
-                MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, entry.getValue());
+                MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, new Hashtable<>(connectionProperties), entry.getValue());
                 subscribers.add(subscriber);
                 logger.debug("Starting subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {}.", entry.getKey().name());
                 executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
@@ -161,7 +156,7 @@ public class MQSubscriberManager {
         int corePoolSize = objects.size();
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(corePoolSize);
         for (MQObject object : objects) {
-            MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, connectionProperties, object);
+            MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, new Hashtable<>(connectionProperties), object);
             subscribers.add(subscriber);
             logger.debug("Starting subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {}.", object.getType().name(), object.getName());
             executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);

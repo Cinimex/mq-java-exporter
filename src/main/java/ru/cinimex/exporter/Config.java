@@ -3,6 +3,7 @@ package ru.cinimex.exporter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
+import ru.cinimex.exporter.mq.MQSecurityProperties;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,6 +35,7 @@ public class Config {
     private boolean sendPCFCommands;
     private boolean usePCFWildcards;
     private int scrapeInterval;
+    private MQSecurityProperties mqSecurityProperties;
 
     public Config(String path) {
         Yaml file = new Yaml();
@@ -65,6 +67,17 @@ public class Config {
         this.sendPCFCommands = (boolean) pcfParameters.get("sendPCFCommands");
         this.usePCFWildcards = (boolean) pcfParameters.get("usePCFWildcards");
         this.scrapeInterval = (Integer) pcfParameters.get("scrapeInterval");
+        boolean useTLS = (boolean) qmgrConnectionParams.get("useTLS");
+        if (useTLS)
+            mqSecurityProperties = new MQSecurityProperties(
+                    useTLS,
+                    (String) qmgrConnectionParams.get("keystorePath"),
+                    (String) qmgrConnectionParams.get("keystorePassword"),
+                    (String) qmgrConnectionParams.get("truststorePath"),
+                    (String) qmgrConnectionParams.get("truststorePassword"),
+                    (String) qmgrConnectionParams.get("sslProtocol"),
+                    (String) qmgrConnectionParams.get("cipherSuite")
+            );
         logger.info("Successfully parsed configuration file!");
     }
 
@@ -132,4 +145,7 @@ public class Config {
         return queues;
     }
 
+    public MQSecurityProperties getMqSecurityProperties() {
+        return mqSecurityProperties;
+    }
 }
