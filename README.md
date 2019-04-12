@@ -89,7 +89,21 @@ qmgrConnectionParams:
 # How long to wait until metrics are published by queue manager (milliseconds).
 # Value must be at least 10000 (periodicity with which metrics are published by MQ).
   connTimeout: 12000
-
+# Use TLS connection to queue manager?
+  useTLS: true
+# Path to keystore file
+  keystorePath: /opt/mq_exporter/keystores/keystore.jks
+# keystore password
+  keystorePassword: testpass2
+# path to truststore file
+  truststorePath: /opt/mq_exporter/keystores/truststore.jks
+# truststore password
+  truststorePassword: testpass2
+# SSL protocol
+  sslProtocol: TLSv1.2
+# cipherSuite
+  cipherSuite: TLS_RSA_WITH_AES_256_CBC_SHA256
+  
 # Prometheus connection information -------------------------------
 prometheusEndpointParams:
 # URL and port which will be used to expose metrics for Prometheus.
