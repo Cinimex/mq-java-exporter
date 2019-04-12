@@ -24,7 +24,7 @@ public class MQSubscriberManager {
     /**
      * Constructor sets params for connecting to target queue manager.
      *
-     * @param config     - config.
+     * @param config     - object containing different properties
      */
     public MQSubscriberManager(Config config) {
         connectionProperties = MQConnection.createMQConnectionParams(config);
@@ -154,12 +154,12 @@ public class MQSubscriberManager {
      */
     private void addPCFSubscribers(List<MQObject> objects, int interval) {
         int corePoolSize = objects.size();
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(corePoolSize);
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(corePoolSize);
         for (MQObject object : objects) {
             MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, new Hashtable<>(connectionProperties), object);
             subscribers.add(subscriber);
             logger.debug("Starting subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {}.", object.getType().name(), object.getName());
-            executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
+            scheduledExecutorService.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
             logger.debug("Subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {} successfully started.", object.getType().name(), object.getName());
         }
     }

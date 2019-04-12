@@ -84,6 +84,7 @@ public class MQTopicSubscriber extends MQSubscriber {
     /**
      * Starts subscriber.
      */
+    @Override
     public void run() {
         try {
             topic = connection.createTopic(element.getTopicString());

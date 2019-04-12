@@ -24,7 +24,6 @@ import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Class represents MQ connection.
@@ -36,7 +35,7 @@ public class MQConnection {
     /**
      * Method creates connection properties Hashtable from connection parameters.
      *
-     * @param config     - config.
+     * @param config     - object containing different properties.
      * @return - returns prepared structure with all parameters transformed into queue manager's format.
      */
     public static Map<String, Object> createMQConnectionParams(Config config) {
@@ -52,28 +51,34 @@ public class MQConnection {
         }
         MQSecurityProperties mqSecurityProperties = config.getMqSecurityProperties();
         if (mqSecurityProperties != null && mqSecurityProperties.isUseTLS()) {
-            KeyStore keyStore = getStore(mqSecurityProperties.getKeystorePath(), mqSecurityProperties.getKeystorePassword());
-            KeyStore trustStore = getStore(mqSecurityProperties.getTruststorePath(), mqSecurityProperties.getTruststorePassword());
-
-            SSLContext sslContext = null;
-            try {
-                TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-                KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-                trustManagerFactory.init(trustStore);
-                keyManagerFactory.init(keyStore, mqSecurityProperties.getKeystorePassword().toCharArray());
-                sslContext = SSLContext.getInstance(mqSecurityProperties.getSslProtocol());
-                sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
-            } catch (KeyStoreException | UnrecoverableKeyException | NoSuchAlgorithmException | KeyManagementException e1) {
-                logger.error("Failed!", e1);
-            }
-
-            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
             properties.put(MQConstants.SSL_CIPHER_SUITE_PROPERTY, mqSecurityProperties.getCipherSuite());
-            properties.put(MQConstants.SSL_SOCKET_FACTORY_PROPERTY, sslSocketFactory);
+            properties.put(MQConstants.SSL_SOCKET_FACTORY_PROPERTY, getSslSocketFactory(mqSecurityProperties));
             System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", "false");
         }
         return properties;
+    }
+
+    /**
+     * Method creates SSLSocketFactory from connection parameters.
+     *
+     * @param mqSecurityProperties     - object containing security properties.
+     * @return - returns prepared SSLSocketFactory.
+     */
+    private static SSLSocketFactory getSslSocketFactory(MQSecurityProperties mqSecurityProperties) {
+        KeyStore keyStore = getStore(mqSecurityProperties.getKeystorePath(), mqSecurityProperties.getKeystorePassword());
+        KeyStore trustStore = getStore(mqSecurityProperties.getTruststorePath(), mqSecurityProperties.getTruststorePassword());
+        SSLContext sslContext = null;
+        try {
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init(trustStore);
+            keyManagerFactory.init(keyStore, mqSecurityProperties.getKeystorePassword().toCharArray());
+            sslContext = SSLContext.getInstance(mqSecurityProperties.getSslProtocol());
+            sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+        } catch (KeyStoreException | UnrecoverableKeyException | NoSuchAlgorithmException | KeyManagementException e1) {
+            logger.error("Failed!", e1);
+        }
+        return sslContext.getSocketFactory();
     }
 
     private static KeyStore getStore(String storePath, String storePassword) {
@@ -91,7 +96,7 @@ public class MQConnection {
      * Method establishes connection with queue manager.
      *
      * @param qmNqme               - queue manager's name.
-     * @param connectionProperties - prepared structure with all parameters transformed into queue manager's format. See {@link #createMQConnectionParams(String, int, String, String, String, boolean)} for more info.
+     * @param connectionProperties - prepared structure with all parameters transformed into queue manager's format. See {@link #createMQConnectionParams(Config config)} for more info.
      */
     public void establish(String qmNqme, Map<String, Object> connectionProperties) throws MQException {
         queueManager = new MQQueueManager(qmNqme, new Hashtable<>(connectionProperties));
