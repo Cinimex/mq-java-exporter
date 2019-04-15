@@ -69,7 +69,7 @@ public class Config {
         this.scrapeInterval = (Integer) pcfParameters.get("scrapeInterval");
         boolean useTLS = (boolean) qmgrConnectionParams.get("useTLS");
         if (useTLS) {
-            logger.info("secured connection to queue manager will be used");
+            logger.debug("Secured connection to queue manager will be used");
             mqSecurityProperties = new MQSecurityProperties(
                     useTLS,
                     (String) qmgrConnectionParams.get("keystorePath"),
@@ -80,7 +80,7 @@ public class Config {
                     (String) qmgrConnectionParams.get("cipherSuite")
             );
         } else {
-            logger.info("unsecured connection to queue manager will be used");
+            logger.debug("Unsecured connection to queue manager will be used");
         }
         logger.info("Successfully parsed configuration file!");
     }
