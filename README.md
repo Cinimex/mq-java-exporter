@@ -950,6 +950,24 @@ This section provides a description of metrics related to MQGET, MQCB and MQCTL 
 <td>Shows the number of calls to MQCTL.</td>
 <td>MQCTL count</td>
 </tr>
+<tr>
+<td>mqobject_get_average_destructive_mqget_persistent_message_size_bytes</td>
+<td>gauge</td>
+<td>Shows a average amount of bytes per persistent message that are returned to MQGET.</td>
+<td>destructive MQGET persistent average message byte count</td>
+</tr>
+<tr>
+<td>mqobject_get_average_destructive_mqget_non_persistent_message_size_bytes</td>
+<td>gauge</td>
+<td>Shows a average amount of bytes per non-persistent message that are returned to MQGET.</td>
+<td>destructive MQGET non-persistent average message byte count</td>
+</tr>
+<tr>
+<td>mqobject_get_average_destructive_mqget_persistent_and_non_persistent_message_size_bytes</td>
+<td>gauge</td>
+<td>Shows a average amount of bytes per persistent and non-persistent messages that are returned to MQGET.</td>
+<td>destructive MQGET persistent and non-persistent average message byte count</td>
+</tr>
 </tbody>
 </table>
 
