@@ -96,7 +96,7 @@ public class UpdateMetricUtils {
     }
 
     /**
-     * @param parsedQuery - parameter, needed for getting metric in special family metrics
+     * @param parsedQuery       - parameter, needed for getting metric in special family metrics
      * @param updatedMetricName - metric name, than will be updated
      * @return map with label list as key and double parameter list used for conversion function as value
      */
