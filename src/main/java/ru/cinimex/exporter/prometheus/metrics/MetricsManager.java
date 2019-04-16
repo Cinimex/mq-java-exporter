@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static ru.cinimex.exporter.prometheus.metrics.MetricsReference.getAdditionalMqObjectMetricsReference;
-import static ru.cinimex.exporter.prometheus.metrics.UpdateMetricUtils.*;
+import static ru.cinimex.exporter.prometheus.metrics.MetricManagerUtils.*;
 
 /**
  * Class is used to manage work of all metrics.

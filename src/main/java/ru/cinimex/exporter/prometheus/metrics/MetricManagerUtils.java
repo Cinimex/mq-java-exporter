@@ -19,8 +19,8 @@ import static java.util.stream.Collectors.toMap;
 /**
  * Util class is used to update metrics.
  */
-public class UpdateMetricUtils {
-    private UpdateMetricUtils() {
+public class MetricManagerUtils {
+    private MetricManagerUtils() {
     }
 
 
@@ -71,11 +71,11 @@ public class UpdateMetricUtils {
         switch (updatedMetricName) {
             case "mqobject_get_average_destructive_mqget_persistent_message_size_bytes":
             case "mqobject_get_average_destructive_mqget_non_persistent_message_size_bytes":
-                return UpdateMetricUtils::division;
+                return MetricManagerUtils::division;
             case "mqobject_get_average_destructive_mqget_persistent_and_non_persistent_message_size_bytes":
-                return UpdateMetricUtils::averageSum;
+                return MetricManagerUtils::averageSum;
             default:
-                return UpdateMetricUtils::defaultConversion;
+                return MetricManagerUtils::defaultConversion;
         }
     }
 
