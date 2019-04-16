@@ -7,6 +7,7 @@ import ru.cinimex.exporter.mq.MQObject;
 
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
 
 public class MetricsReference {
     private static final Logger logger = LogManager.getLogger(MetricsReference.class);
@@ -168,6 +169,13 @@ public class MetricsReference {
         return metrics;
     }
 
+    public static Map<String, Metric> getAdditionalMqObjectMetricsReference() {
+        Map<String, Metric> metrics = new HashMap<>();
+        metrics.put("destructive MQGET persistent average message byte count", new Metric("mqobject_get_average_destructive_mqget_persistent_message_size_bytes", Metric.Type.SIMPLE_GAUGE));
+        metrics.put("destructive MQGET non-persistent average message byte count", new Metric("mqobject_get_average_destructive_mqget_non_persistent_message_size_bytes", Metric.Type.SIMPLE_GAUGE));
+        metrics.put("destructive MQGET persistent and non-persistent average message byte count", new Metric("mqobject_get_average_destructive_mqget_persistent_and_non_persistent_message_size_bytes", Metric.Type.SIMPLE_GAUGE));
+        return metrics;
+    }
     /**
      * Method is used to initialize ChannelStatuses.
      *
