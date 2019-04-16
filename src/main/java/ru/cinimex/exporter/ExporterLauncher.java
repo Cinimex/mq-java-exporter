@@ -63,7 +63,7 @@ public class ExporterLauncher {
         }
 
         MetricsManager.initMetrics(elements, monitoringTypes);
-        MQSubscriberManager manager = new MQSubscriberManager(config.getQmgrHost(), config.getQmgrPort(), config.getQmgrChannel(), config.getQmgrName(), config.getUser(), config.getPassword(), config.useMqscp());
+        MQSubscriberManager manager = new MQSubscriberManager(config);
         manager.runSubscribers(elements, objects, config.sendPCFCommands(), config.usePCFWildcards(),
                 config.getScrapeInterval(), config.getConnTimeout());
         try {
@@ -87,7 +87,7 @@ public class ExporterLauncher {
         gmo.options = GMO;
         gmo.waitInterval = 30000;
         try {
-            connection.establish(config.getQmgrHost(), config.getQmgrPort(), config.getQmgrChannel(), config.getQmgrName(), config.getUser(), config.getPassword(), config.useMqscp());
+            connection.establish(config.getQmgrName(), MQConnection.createMQConnectionParams(config));
             topic = connection.createTopic(String.format(TOPIC_STRING, config.getQmgrName()));
             MQMessage msg = getEmptyMessage();
             topic.get(msg, gmo);
@@ -107,7 +107,8 @@ public class ExporterLauncher {
                     elements.addAll(PCFDataParser.getPCFElements(pcfResponse));
                 }
             }
-        } catch (MQException | IOException e) {
+        } catch (MQException |
+                IOException e) {
             logger.error("Failed!", e);
         } finally {
             try {
