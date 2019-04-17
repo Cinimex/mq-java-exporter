@@ -7,8 +7,14 @@ import ru.cinimex.exporter.mq.pcf.PCFElement;
 import ru.cinimex.exporter.mq.pcf.PCFElementRow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static ru.cinimex.exporter.prometheus.metrics.MetricsReference.getAdditionalMqObjectMetricsReference;
+import static ru.cinimex.exporter.prometheus.metrics.MetricManagerUtils.*;
 
 /**
  * Class is used to manage work of all metrics.
@@ -25,6 +31,7 @@ public class MetricsManager {
      */
     public static void initMetrics(List<PCFElement> elements, List<MQObject.MQType> types) {
         logger.debug("Preparing to initialize metrics. {} metrics will be received from MQ topics and {} metrics will be received via direct PCF commands.", elements.size(), types.size());
+        String logString = " created! Name: {}, description: {}, labels: {}.";
         metrics = new HashMap<>();
         for (PCFElement element : elements) {
             for (PCFElementRow row : element.getRows()) {
@@ -33,32 +40,32 @@ public class MetricsManager {
                 ArrayList<String> labels = new ArrayList<>();
                 labels.add(Labels.QMGR_NAME.name());
                 MetricInterface metric;
-                if (element.requiresMQObject()) {
-                    labels.add(Labels.MQ_OBJECT_NAME.name());
-                }
+                if (element.requiresMQObject()) labels.add(Labels.MQ_OBJECT_NAME.name());
                 switch (metricType) {
                     case SIMPLE_GAUGE:
-                        metric = new SimpleGauge(metricName, row.getRowDesc(), labels.stream().toArray(String[]::new));
+                        metric = new SimpleGauge(metricName, row.getRowDesc(), labels.toArray(new String[0]));
                         metrics.put(metricName, metric);
-                        logger.trace("New gauge created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);
+                        logger.trace("New " + "gauge" + logString, metricName, row.getRowDesc(), labels);
                         break;
                     case SIMPLE_COUNTER:
-                        metric = new SimpleCounter(metricName, row.getRowDesc(), labels.stream().toArray(String[]::new));
+                        metric = new SimpleCounter(metricName, row.getRowDesc(), labels.toArray(new String[0]));
                         metrics.put(metricName, metric);
-                        logger.trace("New counter created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);
+                        logger.trace("New counter " + logString, metricName, row.getRowDesc(), labels);
                         break;
                     case EXTREME_GAUGE_MAX:
-                        metric = new ExtremeGauge(metricName, row.getRowDesc(), true, labels.stream().toArray(String[]::new));
+                        metric = new ExtremeGauge(metricName, row.getRowDesc(), true, labels.toArray(new String[0]));
                         metrics.put(metricName, metric);
-                        logger.trace("New extreme gauge created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);
+                        logger.trace("New extreme gauge" + logString, metricName, row.getRowDesc(), labels);
                         break;
                     case EXTREME_GAUGE_MIN:
-                        metric = new ExtremeGauge(metricName, row.getRowDesc(), false, labels.stream().toArray(String[]::new));
+                        metric = new ExtremeGauge(metricName, row.getRowDesc(), false, labels.toArray(new String[0]));
                         metrics.put(metricName, metric);
-                        logger.trace("New extreme gauge created! Name: {}, description: {}, labels: {}.", metricName, row.getRowDesc(), labels);
+                        logger.trace("New extreme gauge" + logString, metricName, row.getRowDesc(), labels);
                         break;
                     default:
-                        logger.error("Error during metrics initialization: Unknown metric type! Make sure it is one " + "of: {}", MetricsReference.Metric.Type.values());
+                        logger.error(
+                                "Error during metrics initialization: Unknown metric type! Make sure it is one " + "of: {}",
+                                (Object[]) MetricsReference.Metric.Type.values());
                 }
             }
         }
@@ -67,7 +74,17 @@ public class MetricsManager {
             metrics.put(metricName, new SimpleGauge(metricName, MetricsReference.getMetricHelp(type), Labels.QMGR_NAME.name(), Labels.MQ_OBJECT_NAME.name()));
             logger.trace("New gauge created! Name: {}, description: {}, labels: {}.", metricName, MetricsReference.getMetricHelp(type), Labels.MQ_OBJECT_NAME.name());
         }
+        initAdditionalMetrics();
+
         logger.info("Successfully initialized {} metrics!", metrics.size());
+    }
+
+    private static void initAdditionalMetrics() {
+        getAdditionalMqObjectMetricsReference().forEach((metricInfo, metric) -> {
+            List<String> labels = Arrays.asList(Labels.QMGR_NAME.name(), Labels.MQ_OBJECT_NAME.name());
+            metrics.put(metric.name, new SimpleGauge(metric.name, metricInfo, labels.toArray(new String[0])));
+            logger.trace("New gauge created! Name: {}, description: {}, labels: {}.", metric.name, metricInfo, labels);
+        });
     }
 
     /**
@@ -82,12 +99,32 @@ public class MetricsManager {
     }
 
     /**
+     * Updates additional metrics, for which need special conversion
+     *
+     * @param parsedQuery - parameter, needed for getting metric in special family metrics
+     */
+    public static void updateAdditionalMetrics(Set<String> parsedQuery) {
+        getUpdatedMetricNames().forEach(updatedMetricName -> complexUpdateMetrics(
+                getMetricsUsedToUpdate(
+                        parsedQuery,
+                        updatedMetricName),
+                updatedMetricName));
+        logger.trace("Additional metrics was updated");
+    }
+
+    private static void complexUpdateMetrics(
+            Map<List<String>, List<Double>> metricsUsedToUpdate,
+            String updatedMetricName) {
+        metricsUsedToUpdate.forEach((k, l) -> updateMetric(
+                updatedMetricName, getConversionFunction(updatedMetricName).apply(l), k.toArray(new String[0])));
+        logger.trace("Additional metrics {} was updated", updatedMetricName);
+    }
+
+    /**
      * Notifies all metrics after each Prometheus scrape.
      */
     public static void notifyMetricsWereScraped() {
-        for (MetricInterface metric : metrics.values()) {
-            metric.notifyWasScraped();
-        }
+        metrics.values().forEach(MetricInterface::notifyWasScraped);
     }
 
     /**

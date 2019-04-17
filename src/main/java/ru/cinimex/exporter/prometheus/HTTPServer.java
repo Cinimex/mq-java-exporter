@@ -18,7 +18,11 @@ import java.net.URLDecoder;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPOutputStream;
 
@@ -125,6 +129,7 @@ public class HTTPServer {
             ByteArrayOutputStream streamResponse = this.response.get();
             streamResponse.reset();
             OutputStreamWriter osw = new OutputStreamWriter(streamResponse);
+            MetricsManager.updateAdditionalMetrics(parseQuery(query));
             TextFormat.write004(osw, registry.filteredMetricFamilySamples(parseQuery(query)));
             osw.flush();
             osw.close();
