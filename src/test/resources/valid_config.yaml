@@ -1,0 +1,70 @@
+# MQ connection information -------------------------------
+qmgrConnectionParams:
+# Queue manager name.
+  qmgrName: QM
+# Queue manager host.
+  qmgrHost: hostname
+# Queue manager connection port.
+  qmgrPort: 1414
+# Queue manager connection channel.
+  qmgrChannel: SYSTEM.DEF.SVRCONN
+# Username, which will be used for connection (optional).
+# User must have permission to subscribe to the topic $SYS/MQ/INFO/QMGR/QM/Monitor/ and all subtopics.
+# User also must have permission to inquire  channels, queues and listeners listed below in Monitoring objects section! 
+  user: mqm
+# Password, which will be used for connection (optional).
+  password: mqmpass
+# Use MQCSP for connection?
+  mqscp: true
+# How long to wait until metrics are published by queue manager (milliseconds).
+# Value must be at least 10000 (periodicity with which metrics are published by MQ).
+  connTimeout: 12000
+# Use TLS connection to queue manager? If useTLS equals "false" than all connection parameters below will be ignored.
+  useTLS: true
+# Path to keystore file
+  keystorePath: src/test/resources/keystores/keystore.jks
+# Keystore password
+  keystorePassword: testpass2
+# Path to truststore file
+  truststorePath: src/test/resources/keystores/truststore.jks
+# Truststore password
+  truststorePassword: testpass2
+# SSL protocol
+  sslProtocol: TLSv1.2
+# CipherSuite
+  cipherSuite: TLS_RSA_WITH_AES_256_CBC_SHA256
+
+# Prometheus connection information -------------------------------
+prometheusEndpointParams:
+# URL and port which will be used to expose metrics for Prometheus.
+  url: /metrics
+  port: 8080
+
+
+# Monitoring objects ----------------------------------
+# This block refers to collecting of additional metrics.
+# If there are any queues, channels or listeners in the config file below,
+# these metrics may be useful for you. (More info about additional metrics is located 
+# under "MQ PCF API specific statistics" section.   
+PCFParameters:
+# Collect additional metrics? If false, all settings in this section below are ignored. 
+# If yes, additional metrics will be collected for all queues, channels and listeners listed below. 
+  sendPCFCommands: true
+# Use wildcards? If yes, only one PCF command will be send, matching all objects on queue manager. Otherwise, each 
+# object will be monitored by separate PCF command.  
+  usePCFWildcards: true
+# Interval in seconds between sending PCF commands.
+  scrapeInterval: 10
+
+# Monitored queues.
+queues:
+  - QUEUE1
+  - QUEUE2
+
+# Monitored listeners.
+listeners:
+  - LISTENER01
+ 
+# Monitored channels.
+channels:
+ - MANAGEMENT.CHANNEL
