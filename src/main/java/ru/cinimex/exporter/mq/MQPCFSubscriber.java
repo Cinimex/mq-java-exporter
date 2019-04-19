@@ -146,8 +146,12 @@ public class MQPCFSubscriber extends MQSubscriber {
     public void stopProcessing() {
         isRunning = false;
         try {
-            agent.disconnect();
-            connection.close();
+            if (agent != null) {
+                agent.disconnect();
+            }
+            if (connection != null) {
+                connection.close();
+            }
         } catch (MQException e) {
             logger.error("Error occurred during stopping PCF subscriber: ", e);
         }

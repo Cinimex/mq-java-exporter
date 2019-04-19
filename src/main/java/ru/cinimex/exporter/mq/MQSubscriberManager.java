@@ -20,6 +20,7 @@ public class MQSubscriberManager {
     private String queueManagerName;
     private ArrayList<MQSubscriber> subscribers;
     private ScheduledExecutorService executor;
+    private int timeout;
 
     /**
      * Constructor sets params for connecting to target queue manager.
@@ -44,6 +45,7 @@ public class MQSubscriberManager {
     public void runSubscribers(List<PCFElement> elements, List<MQObject> objects, boolean sendPCFCommands, boolean usePCFWildcards, int interval, int timeout) {
         logger.info("Launching subscribers...");
         subscribers = new ArrayList<>();
+        this.timeout = timeout;
         addTopicSubscribers(elements, objects, timeout);
         if (sendPCFCommands) {
             if (usePCFWildcards) {
@@ -65,12 +67,19 @@ public class MQSubscriberManager {
 
     }
 
-    public void stopSubscribers() {
+    /**
+     * Stops all running subscribers in managed mode. All connections will be closed, all threads will be finished.
+     * @throws InterruptedException
+     */
+    public void stopSubscribers() throws InterruptedException {
         if (executor != null) {
             executor.shutdown();
         }
         for (MQSubscriber subscriber : subscribers) {
             subscriber.stopProcessing();
+        }
+        for (MQSubscriber subscriber : subscribers) {
+            subscriber.join(timeout);
         }
     }
 
