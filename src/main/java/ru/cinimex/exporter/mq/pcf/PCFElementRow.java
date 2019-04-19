@@ -1,5 +1,7 @@
 package ru.cinimex.exporter.mq.pcf;
 
+import com.ibm.mq.constants.MQConstants;
+
 /**
  * This class represents part of the PCF message, which could be received from
  * $SYS/MQ/INFO/QMGR/{QMGR_NAME}/Monitor/{CLASS}/{TYPE} MQ topic.
@@ -44,5 +46,10 @@ public class PCFElementRow {
      */
     public String getRowDesc() {
         return rowDesc;
+    }
+
+    @Override
+    public String toString() {
+        return "PCFElementRow{rowId='" + rowId + "', rowDatatype='" + MQConstants.lookup(rowDatatype, "MQIAMO_MONITOR.*") + "', rowDesc='" + rowDesc + "'}";
     }
 }

@@ -97,7 +97,7 @@ public class MetricManagerUtils {
 
     /**
      * @param parsedQuery       - parameter, needed for getting metric in special family metrics
-     * @param updatedMetricName - metric name, than will be updated
+     * @param updatedMetricName - metric name, that will be updated
      * @return map with label list as key and double parameter list used for conversion function as value
      */
     public static Map<List<String>, List<Double>> getMetricsUsedToUpdate(Set<String> parsedQuery, String updatedMetricName) {
