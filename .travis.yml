@@ -1,0 +1,10 @@
+language: java
+jdk:
+- oraclejdk8
+- openjdk8
+notifications:
+  slack:
+    on_success: always
+    on_failure: always
+    on_pull_requests: true
+    secure: NNp4q6j7OWrqxBD6PwN6LRlVY4W/KOo0JdKTgRpY/TjlPRWupTmr/NdYXr5JlEDAyKZS/19LZPZDhQv5IHmIxwz63II9j+Sj6PH/wDCnCKOJbPLuyDrgUz8shNA+nFjLnJmfLEpHgzgCBMFTb5GJlUEt1AyX/c2V2P6iofpaPIj2V1aq/eFLWgBc5CCwH1Obr0ObaUESZAKjwm+ps715qn8pQjChP4ZEU4+KSvvqM9u+yPXPuNHCVrYHG8b8M8BB52eH1vY1eWfG4JLE1rPQbS6j5gdLVZ2MbUNgjvegQiFWa83Y1WGuAtwIHwq3W+DzjOFoJeSKG5fBD5GcF/pHQmUJof7AXhIOfnimOxdpbU3S8dwy/5aYLJCWsEd8HXCe2WciX/kmYA/Yvz+FH+XgXJ6FX6hpbgZMbkmYgNLXuxU5abZK2Vw+IRSpo2K6iE5km5o8LkKaHZtr66gLZmZJ/R7Ey2ZtQ3lYwH7k0AEBftz/HIhYF35Au24pOOO6YvNY5Yo3eGVWPB1DHOeaA/iJs8Aye7m5U6b7PILNsVIUETU/UDyea4Kf3WtHijLtK7HD3EpY14s5Mafxr+eVqJX9ajw3XFUxxjclfgpAI50KTBi04BRNkqd6mS8McQGmO8KIGGfIenAt38MQ98vMTDILJypTAmbz+D5l+8P3Oyj5/ZE=
