@@ -31,6 +31,8 @@ public class ExporterLauncher {
     private static final Logger logger = LogManager.getLogger(ExporterLauncher.class);
     private static final String TOPIC_STRING = "$SYS/MQ/INFO/QMGR/%s/Monitor/METADATA/CLASSES";
     private static final int GMO = MQConstants.MQGMO_WAIT | MQConstants.MQGMO_COMPLETE_MSG | MQConstants.MQGMO_SYNCPOINT;
+    private static  MQSubscriberManager manager;
+    private static HTTPServer server;
 
     public static void main(String[] args) {
         if (args.length == 0) {
@@ -39,6 +41,7 @@ public class ExporterLauncher {
         }
         Config config = new Config(args[0]);
 
+        createShutdownHook();
         ArrayList<PCFElement> elements = getAllPublishedMetrics(config);
         ArrayList<MQObject.MQType> monitoringTypes = new ArrayList<>();
         ArrayList<MQObject> objects = new ArrayList<>();
@@ -63,11 +66,11 @@ public class ExporterLauncher {
         }
 
         MetricsManager.initMetrics(elements, monitoringTypes);
-        MQSubscriberManager manager = new MQSubscriberManager(config);
+        manager = new MQSubscriberManager(config);
         manager.runSubscribers(elements, objects, config.sendPCFCommands(), config.usePCFWildcards(),
                 config.getScrapeInterval(), config.getConnTimeout());
         try {
-            new HTTPServer(new InetSocketAddress("0.0.0.0", config.getEndpPort()), config.getEndpURL(), Registry.getRegistry(), false);
+            server = new HTTPServer(new InetSocketAddress("0.0.0.0", config.getEndpPort()), config.getEndpURL(), Registry.getRegistry(), false);
         } catch (IOException e) {
             logger.error("Error occurred during expanding endpoint for Prometheus: ", e);
         }
@@ -121,6 +124,27 @@ public class ExporterLauncher {
             }
         }
         return elements;
+    }
+
+    private static void createShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            logger.info("Exporter finishes all activities...");
+            if (manager != null) {
+                try {
+                    logger.debug("Stopping subscribers... (it may take some time, please, be patient)");
+                    manager.stopSubscribers();
+                } catch (InterruptedException e) {
+                    logger.error("Error occurred during stopping subscribers: ", e);
+                }
+            }
+
+            if (server != null) {
+                logger.debug("Stopping HTTP server...");
+                server.stop();
+            }
+            logger.info("Goodbye!");
+            LogManager.shutdown();
+        }));
     }
 
     private static MQMessage getEmptyMessage() {

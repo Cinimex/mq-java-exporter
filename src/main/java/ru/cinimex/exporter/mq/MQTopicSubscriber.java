@@ -98,7 +98,6 @@ public class MQTopicSubscriber extends MQSubscriber {
         } catch (MQException e) {
             logger.error("Error occurred during establishing connection with topic {}", element.getTopicString(), e);
         } finally {
-            System.out.println("Finishing topic work!");
             try {
                 if (topic != null && topic.isOpen()) {
                     topic.close();
