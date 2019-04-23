@@ -27,8 +27,8 @@ class MetricsReferenceTest {
     void getMetricNameByType() {
         Assertions.assertAll(
                 () -> assertEquals("mqobject_queue_queue_max_depth_messages", MetricsReference.getMetricName(MQObject.MQType.QUEUE)),
-                () -> assertEquals("mqobject_channel_channel_status_hundredths", MetricsReference.getMetricName(MQObject.MQType.CHANNEL)),
-                () -> assertEquals("mqobject_listener_listener_status_hundredths", MetricsReference.getMetricName(MQObject.MQType.LISTENER)));
+                () -> assertEquals("mqobject_channel_channel_status_untyped", MetricsReference.getMetricName(MQObject.MQType.CHANNEL)),
+                () -> assertEquals("mqobject_listener_listener_status_untyped", MetricsReference.getMetricName(MQObject.MQType.LISTENER)));
     }
 
     @Test
