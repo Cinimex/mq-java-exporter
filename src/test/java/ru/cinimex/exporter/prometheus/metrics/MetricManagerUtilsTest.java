@@ -16,7 +16,7 @@ class MetricManagerUtilsTest {
         updatedMetricNames.add("mqobject_get_average_destructive_mqget_persistent_message_size_bytes");
         updatedMetricNames.add("mqobject_get_average_destructive_mqget_non_persistent_message_size_bytes");
         updatedMetricNames.add("mqobject_get_average_destructive_mqget_persistent_and_non_persistent_message_size_bytes");
-        updatedMetricNames.add("mqobject_get_queue_queue_fill_percentage");
+        updatedMetricNames.add("mqobject_queue_queue_fill_percentage");
     }
 
     @Test
@@ -47,8 +47,8 @@ class MetricManagerUtilsTest {
         assertEquals(listWithNames, MetricManagerUtils.getMetricsNamesUsedToUpdate(updatedMetricNames.get(2)));
 
         listWithNames = new ArrayList<>();
-        listWithNames.add("mqobject_get_queue_depth_messages");
-        listWithNames.add("mqobject_queue_max_depth_messages");
+        listWithNames.add("mqobject_queue_queue_depth_messages");
+        listWithNames.add("mqobject_queue_queue_max_depth_messages");
 
         assertEquals(listWithNames, MetricManagerUtils.getMetricsNamesUsedToUpdate(updatedMetricNames.get(3)));
     }
