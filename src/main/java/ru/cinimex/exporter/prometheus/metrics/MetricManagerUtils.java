@@ -32,6 +32,7 @@ public class MetricManagerUtils {
         updatedMetricNames.add("mqobject_get_average_destructive_mqget_persistent_message_size_bytes");
         updatedMetricNames.add("mqobject_get_average_destructive_mqget_non_persistent_message_size_bytes");
         updatedMetricNames.add("mqobject_get_average_destructive_mqget_persistent_and_non_persistent_message_size_bytes");
+        updatedMetricNames.add("mqobject_queue_queue_fill_percentage");
         return updatedMetricNames;
     }
 
@@ -57,6 +58,10 @@ public class MetricManagerUtils {
                 listWithNames.add("mqobject_get_destructive_mqget_persistent_message_count_totalmessages");
                 listWithNames.add("mqobject_get_destructive_mqget_non_persistent_message_count_totalmessages");
                 break;
+            case "mqobject_queue_queue_fill_percentage":
+                listWithNames.add("mqobject_queue_queue_depth_messages");
+                listWithNames.add("mqobject_queue_queue_max_depth_messages");
+                break;
             default:
                 break;
         }
@@ -74,6 +79,8 @@ public class MetricManagerUtils {
                 return MetricManagerUtils::division;
             case "mqobject_get_average_destructive_mqget_persistent_and_non_persistent_message_size_bytes":
                 return MetricManagerUtils::averageSum;
+            case "mqobject_get_queue_queue_fill_percentage":
+                return MetricManagerUtils::divisionInPercentage;
             default:
                 return MetricManagerUtils::defaultConversion;
         }
@@ -89,6 +96,12 @@ public class MetricManagerUtils {
         Objects.requireNonNull(params);
         if (params.size() != 2) throw new IllegalArgumentException();
         return params.get(1) == 0.0 ? 0.0 : params.get(0) / params.get(1);
+    }
+
+    private static Double divisionInPercentage(List<Double> params) {
+        Objects.requireNonNull(params);
+        if (params.size() != 2) throw new IllegalArgumentException();
+        return params.get(1) == 0.0 ? 0.0 : params.get(0) / (params.get(1) * 100);
     }
 
     private static Double defaultConversion(List<Double> params) {
