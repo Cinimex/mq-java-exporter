@@ -210,9 +210,9 @@ All metrics have predefined structure: domain, subdomain, name, units:
 
 - **Domain** - the first single-word prefix that represents a metric type. The examples of domain-level prefixes are: system, mq, mqobject and etc. More information can be found in ["Domains and subdomains" section](#domains-and-subdomains).
 - **Subdomain** - second single-word prefix representation of a metric type. It provides more specific information about metric type and helps to differentiate metrics in a single domain. The examples of subdomain-level prefixes are: cpu, ram, put, subscribe, get and etc. More information can be found in ["Domains and subdomains" section](#domains-and-subdomains).
-- **Units** - single-word suffix describing the metric's unit, in plural form. Note that an accumulating count has "total" as the first part of a suffix. The examples of unit suffixes are: percentage, hundredths, messages, totalmessages and etc. More information can be found in ["Units" section](#units).
+- **Units** - single-word suffix describing the metric's unit, in plural form. Note that an accumulating count has "total" as the first part of a suffix. The examples of unit suffixes are: percentage, messages, totalmessages and etc. More information can be found in ["Units" section](#units).
 - **Name** - represents metric meaning. The examples of a metric name are: cpu_time, cpu_load_fifteen_minute_average, failed_mqget_count and etc. Note that the amount of words in a metric name can vary:
- 
+
 <img src="/docs/images/metric_naming_example_2.png" data-canonical-src="/docs/images/metric_naming_example_2.png" width="899" height="120" />
 
 #### Domains and subdomains
@@ -366,10 +366,6 @@ This section provides a description of metric units.<br/>
 <td>Shows %</td>
 </tr>
 <tr>
-<td>hundredths</td>
-<td>Shows amount of hundredths. For example, "370 hundredths" equals to "3.70". It is used to reflect system's load average and LISTENER\CHANNEL status codes.</td>
-</tr>
-<tr>
 <td>megabytes</td>
 <td>Shows amount of megabytes</td>
 </tr>
@@ -421,8 +417,14 @@ This section provides a description of metric units.<br/>
 <td>messages</td>
 <td>Shows amount of messages.</td>
 </tr>
+<tr>
+<td>untyped</td>
+<td>If it's not obvious, what the type of metric is, then this type is used (for example, it is used, to reflect system's load average and LISTENER\CHANNEL status codes). </td>
+</tr>
 </tbody>
 </table>
+
+
 
 ### Metrics list
 #### CPU metrics
@@ -450,19 +452,19 @@ This section provides a description of CPU- and RAM-related metrics.
 <td>System CPU time percentage</td>
 </tr>
 <tr>
-<td>system_cpu_cpu_load_one_minute_average_hundredths</td>
+<td>system_cpu_cpu_load_one_minute_average_untyped</td>
 <td>gauge</td>
 <td>Shows the load average over 1 minute.</td>
 <td>CPU load - one minute average</td>
 </tr>
 <tr>
-<td>system_cpu_cpu_load_five_minute_average_hundredths</td>
+<td>system_cpu_cpu_load_five_minute_average_untyped</td>
 <td>gauge</td>
 <td>Shows the load average over 5 minutes.</td>
 <td>CPU load - five minute average</td>
 </tr>
 <tr>
-<td>system_cpu_cpu_load_fifteen_minute_average_hundredths</td>
+<td>system_cpu_cpu_load_fifteen_minute_average_untyped</td>
 <td>gauge</td>
 <td>Shows the load average over fifteen minutes.&nbsp;</td>
 <td>CPU load - fifteen minute average</td>
@@ -1405,12 +1407,12 @@ This section provides a description of metrics of queues, channels and listeners
 <td>Shows queue fill percentage.</td>
 </tr>
 <tr>
-<td>mqobject_channel_channel_status_hundredths</td>
+<td>mqobject_channel_channel_status_untyped</td>
 <td>gauge</td>
 <td>Shows current channel status. Mapping of channel statuses to prometheus metric values can be found <a href="#channel-status-mapping">here</a>.</td>
 </tr>
 <tr>
-<td>mqobject_listener_listener_status_hundredths</td>
+<td>mqobject_listener_listener_status_untyped</td>
 <td>gauge</td>
 <td>Shows current listener status. Mapping of listener statuses to prometheus metric values can be found <a href="#listener-status-mapping">here</a>.</td>
 </tr>

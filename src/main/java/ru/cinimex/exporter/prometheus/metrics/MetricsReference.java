@@ -29,9 +29,9 @@ public class MetricsReference {
         HashMap<String, Metric> metrics = new HashMap<>();
         metrics.put("User CPU time percentage", new Metric("system_cpu_user_cpu_time_percentage", Metric.Type.SIMPLE_GAUGE));
         metrics.put("System CPU time percentage", new Metric("system_cpu_cpu_time_percentage", Metric.Type.SIMPLE_GAUGE));
-        metrics.put("CPU load - one minute average", new Metric("system_cpu_cpu_load_one_minute_average_hundredths", Metric.Type.SIMPLE_GAUGE));
-        metrics.put("CPU load - five minute average", new Metric("system_cpu_cpu_load_five_minute_average_hundredths", Metric.Type.SIMPLE_GAUGE));
-        metrics.put("CPU load - fifteen minute average", new Metric("system_cpu_cpu_load_fifteen_minute_average_hundredths", Metric.Type.SIMPLE_GAUGE));
+        metrics.put("CPU load - one minute average", new Metric("system_cpu_cpu_load_one_minute_average_untyped", Metric.Type.SIMPLE_GAUGE));
+        metrics.put("CPU load - five minute average", new Metric("system_cpu_cpu_load_five_minute_average_untyped", Metric.Type.SIMPLE_GAUGE));
+        metrics.put("CPU load - fifteen minute average", new Metric("system_cpu_cpu_load_fifteen_minute_average_untyped", Metric.Type.SIMPLE_GAUGE));
         metrics.put("RAM free percentage", new Metric("system_ram_ram_free_percentage", Metric.Type.SIMPLE_GAUGE));
         metrics.put("RAM total bytes", new Metric("system_ram_ram_total_megabytes", Metric.Type.SIMPLE_GAUGE));
         metrics.put("User CPU time - percentage estimate for queue manager", new Metric("mq_cpu_user_cpu_time_estimate_percentage", Metric.Type.SIMPLE_GAUGE));
@@ -125,8 +125,8 @@ public class MetricsReference {
     private static EnumMap<MQObject.MQType, AdditionalMetric> getMqObjectAdditionalMetricsReference() {
         EnumMap<MQObject.MQType, AdditionalMetric> metrics = new EnumMap<>(MQObject.MQType.class);
         metrics.put(MQObject.MQType.QUEUE, new AdditionalMetric("mqobject_queue_queue_max_depth_messages", "The maximum number of messages that are allowed on the queue"));
-        metrics.put(MQObject.MQType.CHANNEL, new AdditionalMetric("mqobject_channel_channel_status_hundredths", "The status of the channel"));
-        metrics.put(MQObject.MQType.LISTENER, new AdditionalMetric("mqobject_listener_listener_status_hundredths", "The status of the listener"));
+        metrics.put(MQObject.MQType.CHANNEL, new AdditionalMetric("mqobject_channel_channel_status_untyped", "The status of the channel"));
+        metrics.put(MQObject.MQType.LISTENER, new AdditionalMetric("mqobject_listener_listener_status_untyped", "The status of the listener"));
         return metrics;
     }
 
