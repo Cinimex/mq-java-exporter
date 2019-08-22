@@ -1402,6 +1402,11 @@ This section provides a description of metrics of queues, channels and listeners
 <td>Shows maximum number of messages that are allowed on the queue.</td>
 </tr>
 <tr>
+<td>mqobject_queue_queue_fill_percentage</td>
+<td>gauge</td>
+<td>Shows queue fill percentage.</td>
+</tr>
+<tr>
 <td>mqobject_channel_channel_status_untyped</td>
 <td>gauge</td>
 <td>Shows current channel status. Mapping of channel statuses to prometheus metric values can be found <a href="#channel-status-mapping">here</a>.</td>
