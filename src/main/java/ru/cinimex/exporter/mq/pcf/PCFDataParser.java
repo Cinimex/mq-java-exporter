@@ -95,7 +95,7 @@ public class PCFDataParser {
                             topicString = groupParam.getStringValue();
                             break;
                         default:
-                            logger.warn("Unknown parameter type was found while parsing PCFType! Will be ignored. {} = {}", groupParam.getParameterName(), groupParam.getStringValue());
+                            logger.debug("Unknown parameter type was found while parsing PCFType! Will be ignored. {} = {}", groupParam.getParameterName(), groupParam.getStringValue());
                             break;
                     }
 

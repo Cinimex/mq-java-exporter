@@ -39,7 +39,6 @@
                 <configuration>
                     <excludes>
                         <exclude>**/exporter_config.yaml</exclude>
-                        <exclude>**/log4j2.properties</exclude>
                     </excludes>
                     <archive>
                         <manifest>
