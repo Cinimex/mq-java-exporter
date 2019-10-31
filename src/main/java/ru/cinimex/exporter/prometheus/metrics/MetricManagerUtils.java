@@ -2,14 +2,7 @@ package ru.cinimex.exporter.prometheus.metrics;
 
 import io.prometheus.client.CollectorRegistry;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -79,7 +72,7 @@ public class MetricManagerUtils {
                 return MetricManagerUtils::division;
             case "mqobject_get_average_destructive_mqget_persistent_and_non_persistent_message_size_bytes":
                 return MetricManagerUtils::averageSum;
-            case "mqobject_get_queue_queue_fill_percentage":
+            case "mqobject_queue_queue_fill_percentage":
                 return MetricManagerUtils::divisionInPercentage;
             default:
                 return MetricManagerUtils::defaultConversion;
@@ -124,19 +117,22 @@ public class MetricManagerUtils {
             if (!arrayListDoubleMap.isEmpty()) mapWithValues.put(metricFamilySamples.name, arrayListDoubleMap);
         });
 
-        List<Map<List<String>, Double>> listWithValues = metricsNamesUsedToUpdate.stream()
-                .map(mapWithValues::get)
-                .collect(Collectors.toList());
         Map<List<String>, List<Double>> params = new HashMap<>();
-        listWithValues.forEach(l -> l.forEach((k, v) -> {
-                    if (!params.containsKey(k)) params.put(k, new ArrayList<>(Collections.singletonList(v)));
-                    else {
-                        List<Double> paramList = params.get(k);
-                        paramList.add(v);
-                        params.replace(k, paramList);
+
+        if (mapWithValues.size() == metricsNamesUsedToUpdate.size()) {
+            List<Map<List<String>, Double>> listWithValues = metricsNamesUsedToUpdate.stream()
+                    .map(mapWithValues::get)
+                    .collect(Collectors.toList());
+            listWithValues.forEach(l -> l.forEach((k, v) -> {
+                        if (!params.containsKey(k)) params.put(k, new ArrayList<>(Collections.singletonList(v)));
+                        else {
+                            List<Double> paramList = params.get(k);
+                            paramList.add(v);
+                            params.replace(k, paramList);
+                        }
                     }
-                }
-        ));
+            ));
+        }
         return params;
     }
 

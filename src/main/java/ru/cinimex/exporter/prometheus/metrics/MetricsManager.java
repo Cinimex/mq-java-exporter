@@ -6,15 +6,10 @@ import ru.cinimex.exporter.mq.MQObject;
 import ru.cinimex.exporter.mq.pcf.PCFElement;
 import ru.cinimex.exporter.mq.pcf.PCFElementRow;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import static ru.cinimex.exporter.prometheus.metrics.MetricsReference.getAdditionalMqObjectMetricsReference;
 import static ru.cinimex.exporter.prometheus.metrics.MetricManagerUtils.*;
+import static ru.cinimex.exporter.prometheus.metrics.MetricsReference.getAdditionalMqObjectMetricsReference;
 
 /**
  * Class is used to manage work of all metrics.
@@ -65,7 +60,7 @@ public class MetricsManager {
                     default:
                         logger.error(
                                 "Error during metrics initialization: Unknown metric type! Make sure it is one " + "of: {}",
-                                (Object[]) MetricsReference.Metric.Type.values());
+                                MetricsReference.Metric.Type.values());
                 }
             }
         }
@@ -115,9 +110,11 @@ public class MetricsManager {
     private static void complexUpdateMetrics(
             Map<List<String>, List<Double>> metricsUsedToUpdate,
             String updatedMetricName) {
-        metricsUsedToUpdate.forEach((k, l) -> updateMetric(
-                updatedMetricName, getConversionFunction(updatedMetricName).apply(l), k.toArray(new String[0])));
-        logger.trace("Additional metrics {} was updated", updatedMetricName);
+        if (metricsUsedToUpdate != null) {
+            metricsUsedToUpdate.forEach((k, l) -> updateMetric(
+                    updatedMetricName, getConversionFunction(updatedMetricName).apply(l), k.toArray(new String[0])));
+            logger.trace("Additional metrics {} were updated", updatedMetricName);
+        }
     }
 
     /**
