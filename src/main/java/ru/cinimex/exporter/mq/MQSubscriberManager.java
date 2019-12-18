@@ -6,7 +6,10 @@ import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.Config;
 import ru.cinimex.exporter.mq.pcf.PCFElement;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,19 +19,19 @@ import java.util.concurrent.TimeUnit;
  */
 public class MQSubscriberManager {
     private static final Logger logger = LogManager.getLogger(MQSubscriberManager.class);
-    private Map<String, Object> connectionProperties;
     private String queueManagerName;
-    private ArrayList<MQSubscriber> subscribers;
+    private ArrayList<MQTopicSubscriber> subscribers;
+    private ArrayList<MQPCFSubscriber> pcfSubscribers;
     private ScheduledExecutorService executor;
     private int timeout;
+    private MQMetricQueue queue;
 
     /**
      * Constructor sets params for connecting to target queue manager.
      *
-     * @param config     - object containing different properties
+     * @param config - object containing different properties
      */
     public MQSubscriberManager(Config config) {
-        connectionProperties = MQConnection.createMQConnectionParams(config);
         queueManagerName = config.getQmgrName();
     }
 
@@ -45,6 +48,7 @@ public class MQSubscriberManager {
     public void runSubscribers(List<PCFElement> elements, List<MQObject> objects, boolean sendPCFCommands, boolean usePCFWildcards, int interval, int timeout) {
         logger.info("Launching subscribers...");
         subscribers = new ArrayList<>();
+        pcfSubscribers = new ArrayList<>();
         this.timeout = timeout;
         addTopicSubscribers(elements, objects, timeout);
         if (sendPCFCommands) {
@@ -55,13 +59,20 @@ public class MQSubscriberManager {
                 addPCFSubscribers(objects, interval);
             }
         }
-        for (MQSubscriber subscriber : subscribers) {
+        for (MQPCFSubscriber subscriber : pcfSubscribers) {
             subscriber.start();
         }
+        try {
+            this.queue = new MQMetricQueue(subscribers);
+        } catch (MQException e) {
+            logger.error("Error occurred during queue initialization: ", e);
+            System.exit(1);
+        }
+        queue.start();
         if (!subscribers.isEmpty()) {
-            logger.info("Successfully launched {} subscribers!", subscribers.size());
+            logger.info("Successfully launched {} topic subscribers!", subscribers.size());
         } else {
-            logger.warn("Didn't launch any subscriber. Exporter finishes it's work!");
+            logger.warn("Didn't launch any topic subscriber. Exporter finishes it's work!");
             System.exit(1);
         }
 
@@ -69,16 +80,25 @@ public class MQSubscriberManager {
 
     /**
      * Stops all running subscribers in managed mode. All connections will be closed, all threads will be finished.
+     *
      * @throws InterruptedException
      */
     public void stopSubscribers() throws InterruptedException {
+        if (queue != null) {
+            queue.stopProcessing();
+        }
         if (executor != null) {
             executor.shutdown();
         }
-        for (MQSubscriber subscriber : subscribers) {
+
+        for (MQTopicSubscriber subscriber : subscribers) {
             subscriber.stopProcessing();
         }
-        for (MQSubscriber subscriber : subscribers) {
+
+        for (MQPCFSubscriber subscriber : pcfSubscribers) {
+            subscriber.stopProcessing();
+        }
+        for (MQPCFSubscriber subscriber : pcfSubscribers) {
             subscriber.join(timeout);
         }
     }
@@ -94,10 +114,10 @@ public class MQSubscriberManager {
         for (PCFElement element : elements) {
             if (element.requiresMQObject()) {
                 for (MQObject object : objects) {
-                    addTopicSubscriber(object, element, timeout);
+                    addTopicSubscriber(object, element);
                 }
             } else {
-                addTopicSubscriber(element, timeout);
+                addTopicSubscriber(element);
             }
         }
     }
@@ -107,17 +127,12 @@ public class MQSubscriberManager {
      *
      * @param object  - monitored MQ object.
      * @param element - PCFElement, received from MQ.
-     * @param timeout - timeout for MQGET operation (milliseconds).
      */
-    private void addTopicSubscriber(MQObject object, PCFElement element, int timeout) {
+    private void addTopicSubscriber(MQObject object, PCFElement element) {
         if (object.getType().equals(MQObject.MQType.QUEUE)) {
             PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
             objElement.formatTopicString(object.getName());
-            try {
-                subscribers.add(new MQTopicSubscriber(objElement, queueManagerName, new Hashtable<>(connectionProperties), timeout, queueManagerName, object.getName()));
-            } catch (MQException e) {
-                logger.error("Error during creating topic subscriber: ", e);
-            }
+            subscribers.add(new MQTopicSubscriber(objElement, queueManagerName, object.getName()));
         }
     }
 
@@ -125,14 +140,9 @@ public class MQSubscriberManager {
      * Adds topic subscriber
      *
      * @param element - PCFElement, received from MQ.
-     * @param timeout - timeout for MQGET operation (milliseconds).
      */
-    private void addTopicSubscriber(PCFElement element, int timeout) {
-        try {
-            subscribers.add(new MQTopicSubscriber(element, queueManagerName, new Hashtable<>(connectionProperties), timeout, queueManagerName));
-        } catch (MQException e) {
-            logger.error("Error during creating topic subscriber: ", e);
-        }
+    private void addTopicSubscriber(PCFElement element) {
+        subscribers.add(new MQTopicSubscriber(element, queueManagerName));
     }
 
     /**
@@ -146,8 +156,8 @@ public class MQSubscriberManager {
         executor = Executors.newScheduledThreadPool(corePoolSize);
         for (Map.Entry<MQObject.MQType, ArrayList<MQObject>> entry : objects.entrySet()) {
             if (!entry.getValue().isEmpty()) {
-                MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, new Hashtable<>(connectionProperties), entry.getValue());
-                subscribers.add(subscriber);
+                MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, entry.getValue());
+                pcfSubscribers.add(subscriber);
                 logger.debug("Starting subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {}.", entry.getKey().name());
                 executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
                 logger.debug("Subscriber for sending direct PCF commands for objects with type {} successfully started.", entry.getKey().name());
@@ -165,8 +175,8 @@ public class MQSubscriberManager {
         int corePoolSize = objects.size();
         ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(corePoolSize);
         for (MQObject object : objects) {
-            MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, new Hashtable<>(connectionProperties), object);
-            subscribers.add(subscriber);
+            MQPCFSubscriber subscriber = new MQPCFSubscriber(object);
+            pcfSubscribers.add(subscriber);
             logger.debug("Starting subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {}.", object.getType().name(), object.getName());
             scheduledExecutorService.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
             logger.debug("Subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {} successfully started.", object.getType().name(), object.getName());

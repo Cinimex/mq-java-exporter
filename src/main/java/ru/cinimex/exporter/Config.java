@@ -9,10 +9,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class is used for parsing config file.
@@ -29,9 +29,9 @@ public class Config {
     private int connTimeout;
     private int endpPort;
     private String endpURL;
-    private ArrayList<String> queues;
-    private ArrayList<String> channels;
-    private ArrayList<String> listeners;
+    private Map<String, List<String>> queues;
+    private Map<String, List<String>> channels;
+    private Map<String, List<String>> listeners;
     private boolean sendPCFCommands;
     private boolean usePCFWildcards;
     private int scrapeInterval;
@@ -59,9 +59,9 @@ public class Config {
         this.password = (String) qmgrConnectionParams.get("password");
         this.mqscp = (boolean) qmgrConnectionParams.get("mqscp");
         this.connTimeout = (Integer) qmgrConnectionParams.get("connTimeout");
-        queues = (ArrayList<String>) config.get("queues");
-        listeners = (ArrayList<String>) config.get("listeners");
-        channels = (ArrayList<String>) config.get("channels");
+        this.queues = (Map<String, List<String>>) config.get("queues");
+        this.listeners = (Map<String, List<String>>) config.get("listeners");
+        this.channels = (Map<String, List<String>>) config.get("channels");
         this.endpPort = (Integer) prometheusEndpointParams.get("port");
         this.endpURL = (String) (prometheusEndpointParams.get("url"));
         this.sendPCFCommands = (boolean) pcfParameters.get("sendPCFCommands");
@@ -101,11 +101,11 @@ public class Config {
         return usePCFWildcards;
     }
 
-    public List<String> getChannels() {
+    public Map<String, List<String>> getChannels() {
         return channels;
     }
 
-    public List<String> getListeners() {
+    public Map<String, List<String>> getListeners() {
         return listeners;
     }
 
@@ -145,7 +145,7 @@ public class Config {
         return endpURL;
     }
 
-    public List<String> getQueues() {
+    public Map<String, List<String>> getQueues() {
         return queues;
     }
 

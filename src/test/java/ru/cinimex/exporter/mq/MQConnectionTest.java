@@ -30,7 +30,7 @@ class MQConnectionTest {
 
     @BeforeEach
     void setConnection() {
-        connection = new MQConnection();
+        //connection = new MQConnection();
         config = new Config("src/test/resources/valid_config.yaml");
         qmName = config.getQmgrName();
         host = config.getQmgrHost();

@@ -12,16 +12,14 @@ import ru.cinimex.exporter.prometheus.metrics.MetricsReference;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
  * MQPCFSubscriber is technically not a subscriber, but a runnable object, which sends PCFCommands every n seconds to
  * retrieve specific statistics, which couldn't be retrieved by MQTopicSubscriber.
  */
-public class MQPCFSubscriber extends MQSubscriber {
+public class MQPCFSubscriber extends Thread implements MQSubscriber {
     private static final Logger logger = LogManager.getLogger(MQPCFSubscriber.class);
-    private MQConnection connection;
     private String queueManagerName;
     private MQObject object;
     private PCFMessageAgent agent;
@@ -31,12 +29,9 @@ public class MQPCFSubscriber extends MQSubscriber {
     /**
      * MQPCFSubscriber constructor which is used, when exporter is configured to use 1 MQPCFSubscriber per 1 MQObject.
      *
-     * @param queueManagerName     - queue manager name.
-     * @param connectionProperties - connection properties.
-     * @param object               - MQObject which should be monitored.
+     * @param object - MQObject which should be monitored.
      */
-    public MQPCFSubscriber(String queueManagerName, Hashtable<String, Object> connectionProperties, MQObject object) {
-        establishMQConnection(queueManagerName, connectionProperties);
+    public MQPCFSubscriber(MQObject object) {
         this.object = object;
         this.isRunning = true;
     }
@@ -44,33 +39,18 @@ public class MQPCFSubscriber extends MQSubscriber {
     /**
      * MQPCFSubscriber constructor which is used, when exporter is configured to use 1 MQPCFSubscriber per all MQObjects of the same type.
      *
-     * @param queueManagerName     - queue manager name.
-     * @param connectionProperties - connection properties.
-     * @param objects              - List with all MQObjects.
+     * @param queueManagerName - queue manager name.
+     * @param objects          - List with all MQObjects.
      */
-    public MQPCFSubscriber(String queueManagerName, Hashtable<String, Object> connectionProperties, List<MQObject> objects) {
-        establishMQConnection(queueManagerName, connectionProperties);
+    public MQPCFSubscriber(String queueManagerName, List<MQObject> objects) {
         this.objects = objects;
+        this.queueManagerName = queueManagerName;
         this.object = new MQObject("*", objects.get(0).getType());
-        this.isRunning = true;
-    }
-
-    /**
-     * Establishes connection with queue manager.
-     *
-     * @param queueManagerName     - queue manager name.
-     * @param connectionProperties - map with all required connection params.
-     */
-    private void establishMQConnection(String queueManagerName, Hashtable<String, Object> connectionProperties) {
         try {
-            if (connection == null) {
-                connection = new MQConnection();
-                connection.establish(queueManagerName, connectionProperties);
-            }
-            this.queueManagerName = queueManagerName;
-            this.agent = new PCFMessageAgent(connection.getQueueManager());
+            this.agent = new PCFMessageAgent(MQConnection.getQueueManager());
+            this.isRunning = true;
         } catch (MQException e) {
-            logger.error("Error occurred during establishing connection with queue manager: ", e);
+            logger.error("Error occured during creating PCF subscriber: ", e);
         }
     }
 
@@ -149,11 +129,8 @@ public class MQPCFSubscriber extends MQSubscriber {
             if (agent != null) {
                 agent.disconnect();
             }
-            if (connection != null) {
-                connection.close();
-            }
         } catch (MQException e) {
-            logger.error("Error occurred during stopping PCF subscriber: ", e);
+            logger.warn("Unable to close PCF agent gracefully: {}", e.getMessage());
         }
     }
 
@@ -178,11 +155,20 @@ public class MQPCFSubscriber extends MQSubscriber {
                 } else if (object.getType() == MQObject.MQType.LISTENER && e.reasonCode == MQConstants.MQRC_UNKNOWN_OBJECT_NAME) {
                     MetricsManager.updateMetric(MetricsReference.getMetricName(object.getType()), MetricsReference.getMetricValue(object.getType(), MQConstants.MQSVC_STATUS_STOPPED), queueManagerName, object.getName());
                     logger.warn("Listener {} is possibly stopped.", object.getName());
+                } else if (e.getReason() == MQConstants.MQRC_Q_MGR_QUIESCING) {
+                    logger.error("Queue manager is quiescing: ", e.getLocalizedMessage());
+                    System.exit(1);
                 } else {
                     logger.error("Error occurred during sending PCF command: ", e);
                 }
-            } catch (MQException | IOException e) {
+            } catch (MQException e) {
+                if (e.getReason() == MQConstants.MQRC_CONNECTION_BROKEN || e.getReason() == MQConstants.MQRC_Q_MGR_QUIESCING || e.getReason() == MQConstants.MQRC_NOT_CONNECTED) {
+                    logger.error("Connection with queue manager was closed: ", e);
+                    System.exit(1);
+                }
                 logger.error("Error occurred during sending PCF command: ", e);
+            } catch (IOException e1) {
+                logger.error("Error occurred during sending PCF command: ", e1);
             }
         }
     }

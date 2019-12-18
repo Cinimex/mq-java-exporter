@@ -55,6 +55,8 @@ Supports [IBM MQ](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/co
 
 Was tested on MQ ver.9.0.x.x and MQ ver. 9.1.x.x.
 
+**Note:** The Publish/Subscribe Mode "[PSMODE](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.1.0/com.ibm.mq.con.doc/q017110_.htm)" Queue Manager attribute in IBM MQ should have value "enabled".
+
 #### Dependencies
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 List of dependencies:
@@ -73,7 +75,7 @@ qmgrConnectionParams:
 # Queue manager name.
   qmgrName: QM
 # Queue manager host.
-  qmgrHost: hostname
+  qmgrHost: localhost
 # Queue manager connection port.
   qmgrPort: 1414
 # Queue manager connection channel.
@@ -128,20 +130,29 @@ PCFParameters:
 # only one PCF command will be sent. But response will contain metrics for all 10.000 queues and that will lead to performance problems.
   usePCFWildcards: true
 # Interval in seconds between sending PCF commands.
-  scrapeInterval: 10
+  scrapeInterval: 300
+
+# Further block contains info about monitoring objects. It supports "*" wildcard at the end of the name.
+# Firstly, objects from "include" section are retrieved.
+# Then objects from "exclude" section are retrieved.
+# Finally, objects that are in the first group but not in the second are added to the monitoring list.
 
 # Monitored queues.
 queues:
-  - QUEUE1
-  - QUEUE2
+  include:
+    - '*'
+  exclude:
+    - SYSTEM.*
 
 # Monitored listeners.
 listeners:
-  - LISTENER01
- 
+  include:
+  exclude:
+    - SYSTEM.*
+
 # Monitored channels.
 channels:
- - MANAGEMENT.CHANNEL
+  include:
 ```
 #### Build
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>

@@ -164,7 +164,7 @@ public class PCFDataParser {
      * @param pcfMessage - input PCF message with statistic data
      * @return - HashMap, where Integer identifier is corellated with header from PCFElement.
      */
-    public static Map<Integer, Double> getParsedData(PCFMessage pcfMessage) {
+    public static synchronized Map<Integer, Double> getParsedData(PCFMessage pcfMessage) {
         Enumeration<PCFParameter> params = pcfMessage.getParameters();
         HashMap<Integer, Double> data = new HashMap<>();
         while (params.hasMoreElements()) {

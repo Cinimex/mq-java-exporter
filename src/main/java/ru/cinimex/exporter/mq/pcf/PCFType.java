@@ -24,7 +24,7 @@ public class PCFType {
         this.monitorName = monitorName;
         this.monitorDesc = monitorDesc;
         this.topicString = topicString;
-        if(topicString == null){
+        if (topicString == null) {
             logger.warn("Topic string is empty: ", this.toString());
         }
     }
