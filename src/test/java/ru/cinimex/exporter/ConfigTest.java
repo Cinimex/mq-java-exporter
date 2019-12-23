@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import ru.cinimex.exporter.mq.MQSecurityProperties;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,15 +22,29 @@ public class ConfigTest {
 
     @Test
     void testValidConfigFile() {
-        List<String> queues = new ArrayList<>();
-        queues.add("QUEUE1");
-        queues.add("QUEUE2");
+        Map<String, List<String>> queues = new HashMap<>();
+        List<String> include = new ArrayList<>();
+        List<String> exclude = new ArrayList<>();
 
-        List<String> listeners = new ArrayList<>();
-        listeners.add("LISTENER01");
+        include.add("*");
+        exclude.add("SYSTEM.*");
 
-        List<String> channels = new ArrayList<>();
-        channels.add("MANAGEMENT.CHANNEL");
+        queues.put("include", include);
+        queues.put("exclude", exclude);
+
+        Map<String, List<String>> listeners = new HashMap<>();
+        include = null;
+        exclude = new ArrayList<>();
+
+        exclude.add("SYSTEM.*");
+
+        listeners.put("include", include);
+        listeners.put("exclude", exclude);
+
+        Map<String, List<String>> channels = new HashMap<>();
+        include = null;
+
+        channels.put("include", include);
 
         Assertions.assertAll(
 
@@ -56,9 +72,9 @@ public class ConfigTest {
 
                 //Asserts for monitored objects
 
-                () -> assertEquals(config.getQueues(), queues),
-                () -> assertEquals(config.getListeners(), listeners),
-                () -> assertEquals(config.getChannels(), channels)
+                () -> assertEquals(queues, config.getQueues()),
+                () -> assertEquals(listeners, config.getListeners()),
+                () -> assertEquals(channels, config.getChannels())
         );
 
     }

@@ -58,13 +58,17 @@ PCFParameters:
 
 # Monitored queues.
 queues:
-  - QUEUE1
-  - QUEUE2
+  include:
+    - '*'
+  exclude:
+    - SYSTEM.*
 
 # Monitored listeners.
 listeners:
-  - LISTENER01
- 
+  include:
+  exclude:
+    - SYSTEM.*
+
 # Monitored channels.
 channels:
- - MANAGEMENT.CHANNEL
+  include:

@@ -109,6 +109,24 @@ public class MQObject {
         return pcfCmd;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MQObject mqObject = (MQObject) o;
+
+        if (!name.equals(mqObject.name)) return false;
+        return type == mqObject.type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + type.hashCode();
+        return result;
+    }
+
     /**
      * This enum represents all supported MQObject types.
      */

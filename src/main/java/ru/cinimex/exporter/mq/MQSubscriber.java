@@ -1,9 +1,9 @@
 package ru.cinimex.exporter.mq;
 
-public abstract class MQSubscriber extends Thread {
+public interface MQSubscriber {
 
     /**
      * Stops subscriber.
      */
-    public abstract void stopProcessing();
+    void stopProcessing();
 }

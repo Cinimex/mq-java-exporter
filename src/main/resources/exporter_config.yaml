@@ -1,42 +1,42 @@
 # MQ connection information -------------------------------
 qmgrConnectionParams:
-# Queue manager name.
+  # Queue manager name.
   qmgrName: QM
-# Queue manager host.
-  qmgrHost: hostname
-# Queue manager connection port.
+  # Queue manager host.
+  qmgrHost: localhost
+  # Queue manager connection port.
   qmgrPort: 1414
-# Queue manager connection channel.
+  # Queue manager connection channel.
   qmgrChannel: SYSTEM.DEF.SVRCONN
-# Username, which will be used for connection (optional).
-# User must have permission to subscribe to the topic $SYS/MQ/INFO/QMGR/QM/Monitor/ and all subtopics.
-# User also must have permission to inquire  channels, queues and listeners listed below in Monitoring objects section! 
-  user: mqm
-# Password, which will be used for connection (optional).
-  password: mqm
-# Use MQCSP for connection?
+  # Username, which will be used for connection (optional).
+  # User must have permission to subscribe to the topic $SYS/MQ/INFO/QMGR/QM/Monitor/ and all subtopics.
+  # User also must have permission to inquire  channels, queues and listeners listed below in Monitoring objects section!
+  user: admin
+  # Password, which will be used for connection (optional).
+  password: passw0rd
+  # Use MQCSP for connection?
   mqscp: false
-# How long to wait until metrics are published by queue manager (milliseconds).
-# Value must be at least 10000 (periodicity with which metrics are published by MQ).
+  # How long to wait until metrics are published by queue manager (milliseconds).
+  # Value must be at least 10000 (periodicity with which metrics are published by MQ).
   connTimeout: 12000
-# Use TLS connection to queue manager? If useTLS equals "false" than all connection parameters below will be ignored.
+  # Use TLS connection to queue manager? If useTLS equals "false" than all connection parameters below will be ignored.
   useTLS: true
-# Path to keystore file
+  # Path to keystore file
   keystorePath: /opt/mq_exporter/keystores/keystore.jks
-# Keystore password
+  # Keystore password
   keystorePassword: testpass2
-# Path to truststore file
+  # Path to truststore file
   truststorePath: /opt/mq_exporter/keystores/truststore.jks
-# Truststore password
+  # Truststore password
   truststorePassword: testpass2
-# SSL protocol
+  # SSL protocol
   sslProtocol: TLSv1.2
-# CipherSuite
+  # CipherSuite
   cipherSuite: TLS_RSA_WITH_AES_256_CBC_SHA256
 
 # Prometheus connection information -------------------------------
 prometheusEndpointParams:
-# URL and port which will be used to expose metrics for Prometheus.
+  # URL and port which will be used to expose metrics for Prometheus.
   url: /metrics
   port: 8080
 
@@ -47,28 +47,36 @@ prometheusEndpointParams:
 # these metrics may be useful for you. (More info about additional metrics is located 
 # under "MQ PCF API specific statistics" section.   
 PCFParameters:
-# Collect additional metrics? If false, all settings in this section below are ignored. 
-# If yes, additional metrics will be collected for all queues, channels and listeners listed below. 
+  # Collect additional metrics? If false, all settings in this section below are ignored.
+  # If yes, additional metrics will be collected for all queues, channels and listeners listed below.
   sendPCFCommands: true
-# If usePCFWildcards equals "true", then all monitored objects will be grouped by object type: QUEUE, CHANNEL and LISTENER. Only one PCF command will be sent for each object type.
-# If usePCFWildcards equals "false", then PCF command will be send for each object.
-# Each PCF command uses a separate connection, so sending a large number of PCF commands will create a large number of connections to MQ queue manager.
-# For example, for 100 monitoring queues will be opened 100 connections to MQ queue manager, if usePCFwildcard equals "false".
-# On the other hand, for usePCFwildcard equals "true", if there are 10.000 queues in the queue manager and just a few queues is need to be monitored,
-# only one PCF command will be sent. But response will contain metrics for all 10.000 queues and that will lead to performance problems.
+  # If usePCFWildcards equals "true", then all monitored objects will be grouped by object type: QUEUE, CHANNEL and LISTENER. Only one PCF command will be sent for each object type.
+  # If usePCFWildcards equals "false", then PCF command will be send for each object.
+  # Each PCF command uses a separate connection, so sending a large number of PCF commands will create a large number of connections to MQ queue manager.
+  # For example, for 100 monitoring queues will be opened 100 connections to MQ queue manager, if usePCFwildcard equals "false".
+  # On the other hand, for usePCFwildcard equals "true", if there are 10.000 queues in the queue manager and just a few queues is need to be monitored,
+  # only one PCF command will be sent. But response will contain metrics for all 10.000 queues and that will lead to performance problems.
   usePCFWildcards: true
-# Interval in seconds between sending PCF commands.
-  scrapeInterval: 10
+  # Interval in seconds between sending PCF commands.
+  scrapeInterval: 300
 
+# Further block contains info about monitoring objects. It supports "*" wildcard at the end of the name.
+# Firstly, objects from "include" section are retrieved.
+# Then objects from "exclude" section are retrieved.
+# Objects that are in the first group but not in the second are added to the monitoring list
 # Monitored queues.
 queues:
-  - QUEUE1
-  - QUEUE2
+  include:
+    - '*'
+  exclude:
+    - SYSTEM.*
 
 # Monitored listeners.
 listeners:
-  - LISTENER01
- 
+  include:
+  exclude:
+    - SYSTEM.*
+
 # Monitored channels.
 channels:
- - MANAGEMENT.CHANNEL
+  include:
