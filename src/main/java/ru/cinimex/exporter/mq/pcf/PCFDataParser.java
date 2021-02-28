@@ -1,14 +1,21 @@
 package ru.cinimex.exporter.mq.pcf;
 
-import com.ibm.mq.MQException;
 import com.ibm.mq.MQMessage;
 import com.ibm.mq.constants.MQConstants;
-import com.ibm.mq.pcf.*;
+import com.ibm.mq.headers.MQDataException;
+import com.ibm.mq.headers.pcf.MQCFGR;
+import com.ibm.mq.headers.pcf.MQCFIN;
+import com.ibm.mq.headers.pcf.MQCFIN64;
+import com.ibm.mq.headers.pcf.PCFMessage;
+import com.ibm.mq.headers.pcf.PCFParameter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
-import java.util.*;
 
 /**
  * Class PCFDataParser contains only static methods and was created to simplify work with PCF messages.
@@ -29,9 +36,10 @@ public class PCFDataParser {
         Enumeration<PCFParameter> params = pcfMessage.getParameters();
         ArrayList<PCFClass> classes = new ArrayList<>();
         while (params.hasMoreElements()) {
-            com.ibm.mq.pcf.PCFParameter param = params.nextElement();
+            PCFParameter param = params.nextElement();
             if (param.getParameter() == MQConstants.MQGACF_MONITOR_CLASS) {
-                Enumeration<com.ibm.mq.pcf.PCFParameter> groupParams = ((MQCFGR) param).getParameters();
+                Enumeration<PCFParameter> groupParams = ((MQCFGR) param)
+                    .getParameters();
                 int monitorId = -1;
                 int monitorFlag = -1;
                 String monitorName = null;
@@ -78,7 +86,8 @@ public class PCFDataParser {
         while (params.hasMoreElements()) {
             PCFParameter param = params.nextElement();
             if (param.getParameter() == MQConstants.MQGACF_MONITOR_TYPE) {
-                Enumeration<PCFParameter> groupParams = ((MQCFGR) param).getParameters();
+                Enumeration<PCFParameter> groupParams = ((MQCFGR) param)
+                    .getParameters();
                 String monitorName = null;
                 String monitorDesc = null;
                 String topicString = null;
@@ -121,7 +130,8 @@ public class PCFDataParser {
             String topicString = null;
             switch (param.getParameter()) {
                 case MQConstants.MQGACF_MONITOR_ELEMENT:
-                    Enumeration<com.ibm.mq.pcf.PCFParameter> groupParams = ((MQCFGR) param).getParameters();
+                    Enumeration<PCFParameter> groupParams = ((MQCFGR) param)
+                        .getParameters();
                     int rowId = -1;
                     int rowDatatype = -1;
                     String rowDesc = null;
@@ -188,14 +198,16 @@ public class PCFDataParser {
                     switch (param.getType()) {
                         case (MQConstants.MQCFT_INTEGER):
                             MQCFIN statistic = (MQCFIN) param;
-                            data.put(statistic.getParameter(), Double.valueOf(statistic.getIntValue()));
+                            data.put(statistic.getParameter(), (double) statistic.getIntValue());
                             break;
                         case (MQConstants.MQCFT_INTEGER64):
                             MQCFIN64 statistic64 = (MQCFIN64) param;
-                            data.put(statistic64.getParameter(), Double.valueOf(statistic64.getLongValue()));
+                            data.put(statistic64.getParameter(), (double) statistic64.getLongValue());
                             break;
                         default:
-                            logger.warn("Unknown parameter type was found while parsing PCF monitoring data! Will be ignored. {} = {}", param.getParameterName(), param.getStringValue());
+                            logger.warn(
+                                "Unknown parameter type was found while parsing PCF monitoring data! Will be ignored. {} = {}",
+                                param.getParameterName(), param.getStringValue());
                             break;
                     }
             }
@@ -227,7 +239,7 @@ public class PCFDataParser {
     public static PCFMessage convertToPCF(MQMessage message) {
         try {
             return new PCFMessage(message);
-        } catch (MQException | IOException e) {
+        } catch (IOException | MQDataException e) {
             logger.error("Unable to convert MQMessage to PCFMessage: ", e);
         }
         return null;

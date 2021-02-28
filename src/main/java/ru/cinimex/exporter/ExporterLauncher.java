@@ -5,8 +5,9 @@ import com.ibm.mq.MQGetMessageOptions;
 import com.ibm.mq.MQMessage;
 import com.ibm.mq.MQTopic;
 import com.ibm.mq.constants.MQConstants;
-import com.ibm.mq.pcf.PCFMessage;
-import com.ibm.mq.pcf.PCFMessageAgent;
+import com.ibm.mq.headers.MQDataException;
+import com.ibm.mq.headers.pcf.PCFMessage;
+import com.ibm.mq.headers.pcf.PCFMessageAgent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.mq.MQConnection;
@@ -37,7 +38,7 @@ public class ExporterLauncher {
     private static MQSubscriberManager manager;
     private static HTTPServer server;
 
-    public static void main(String[] args) throws MQException, IOException {
+    public static void main(String[] args) throws MQException, IOException, MQDataException {
         if (args.length == 0) {
             logger.error("It seems like you forgot to specify path to the config file.");
             System.exit(1);
@@ -102,8 +103,7 @@ public class ExporterLauncher {
                 }
             }
 
-        } catch (MQException |
-            IOException e) {
+        } catch (MQException | IOException | MQDataException e) {
             logger.error("Failed!", e);
         } finally {
             try {
@@ -121,7 +121,7 @@ public class ExporterLauncher {
         return elements;
     }
 
-    private static List<MQObject> getMonitoringObjects(Config config) throws MQException, IOException {
+    private static List<MQObject> getMonitoringObjects(Config config) throws IOException, MQDataException {
         List<MQObject> objects = new ArrayList<>();
 
         for (MQObject.MQType type : MQObject.MQType.values()) {
@@ -143,7 +143,8 @@ public class ExporterLauncher {
         return objects;
     }
 
-    private static List<MQObject> inquireMQObjectsByPatterns(List<String> rules, MQObject.MQType type, int getValueParam) throws MQException, IOException {
+    private static List<MQObject> inquireMQObjectsByPatterns(List<String> rules, MQObject.MQType type, int getValueParam)
+        throws IOException, MQDataException {
 
         List<MQObject> objects = new ArrayList<>();
         if (rules != null && !rules.isEmpty()) {
