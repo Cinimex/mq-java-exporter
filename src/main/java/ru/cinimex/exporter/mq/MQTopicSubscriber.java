@@ -2,7 +2,7 @@ package ru.cinimex.exporter.mq;
 
 import com.ibm.mq.MQException;
 import com.ibm.mq.MQTopic;
-import com.ibm.mq.pcf.PCFMessage;
+import com.ibm.mq.headers.pcf.PCFMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.mq.pcf.PCFDataParser;
