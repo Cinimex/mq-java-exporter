@@ -71,7 +71,8 @@ public class ExporterLauncher {
      * @return - array, filled with metrics headers.
      */
     private static ArrayList<PCFElement> getAllPublishedMetrics(Config config) {
-        MQTopic topic = null;
+        MQTopic topic;
+        List<MQTopic> topics = new ArrayList<>();
         ArrayList<PCFElement> elements = new ArrayList<>();
         MQGetMessageOptions gmo = new MQGetMessageOptions();
         gmo.options = GMO;
@@ -79,34 +80,42 @@ public class ExporterLauncher {
         try {
             String qmgrName = config.getQmgrName();
             topic = MQConnection.createTopic(String.format(TOPIC_STRING, qmgrName));
+            topics.add(topic);
             MQMessage msg = getEmptyMessage();
             topic.get(msg, gmo);
             PCFMessage pcfResponse = new PCFMessage(msg);
             List<PCFClass> classes = PCFDataParser.getPCFClasses(pcfResponse);
             for (PCFClass pcfClass : classes) {
                 topic = MQConnection.createTopic(pcfClass.getTopicString());
+                topics.add(topic);
                 msg = getEmptyMessage();
                 topic.get(msg, gmo);
                 pcfResponse = new PCFMessage(msg);
                 List<PCFType> types = PCFDataParser.getPCFTypes(pcfResponse);
                 for (PCFType type : types) {
                     topic = MQConnection.createTopic(type.getTopicString());
+                    topics.add(topic);
                     msg = getEmptyMessage();
                     topic.get(msg, gmo);
                     pcfResponse = new PCFMessage(msg);
                     elements.addAll(PCFDataParser.getPCFElements(pcfResponse));
                 }
             }
+
         } catch (MQException |
-                IOException e) {
+            IOException e) {
             logger.error("Failed!", e);
         } finally {
             try {
-                if (topic != null && topic.isOpen()) {
-                    topic.close();
+                logger.trace("Closing {} topics.", topics.size());
+                for (MQTopic openedTopic : topics) {
+                    if (openedTopic != null && openedTopic.isOpen()) {
+                        openedTopic.close();
+                        logger.trace("Topic {} successfully closed.", openedTopic.getName());
+                    }
                 }
             } catch (MQException e) {
-                logger.error("Error occurred during disconnecting from topic {}. Error: ", topic.toString(), e);
+                logger.error("Error occurred during disconnecting from topic {}. Error: ", "UNKNOWN", e);
             }
         }
         return elements;
