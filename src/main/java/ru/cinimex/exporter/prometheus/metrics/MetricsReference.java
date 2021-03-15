@@ -1,6 +1,7 @@
 package ru.cinimex.exporter.prometheus.metrics;
 
-import com.ibm.mq.constants.MQConstants;
+import static com.ibm.mq.constants.MQConstants.*;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.mq.MQObject;
@@ -11,11 +12,11 @@ import java.util.Map;
 
 public class MetricsReference {
     private static final Logger logger = LogManager.getLogger(MetricsReference.class);
-    private static HashMap<String, Metric> queueManagerMetricsReference = getQueueManagerMetricsReference();
-    private static EnumMap<MQObject.MQType, AdditionalMetric> mqObjectAdditionalMetricsReference = getMqObjectAdditionalMetricsReference();
-    private static HashMap<String, Metric> mqObjectMetricsReference = getMqObjectMetricsReference();
-    private static HashMap<Integer, Double> channelStatus = getChannelStatuses();
-    private static HashMap<Integer, Double> listenerStatus = getListenerStatuses();
+    private static final HashMap<String, Metric> queueManagerMetricsReference = getQueueManagerMetricsReference();
+    private static final EnumMap<MQObject.MQType, AdditionalMetric> mqObjectAdditionalMetricsReference = getMqObjectAdditionalMetricsReference();
+    private static final HashMap<String, Metric> mqObjectMetricsReference = getMqObjectMetricsReference();
+    private static final HashMap<Integer, Double> channelStatus = getChannelStatuses();
+    private static final HashMap<Integer, Double> listenerStatus = getListenerStatuses();
 
     private MetricsReference() {
     }
@@ -185,17 +186,17 @@ public class MetricsReference {
      */
     private static HashMap<Integer, Double> getChannelStatuses() {
         HashMap<Integer, Double> statuses = new HashMap<>();
-        statuses.put(MQConstants.MQCHS_RUNNING, 100d);
-        statuses.put(MQConstants.MQCHS_REQUESTING, 90d);
-        statuses.put(MQConstants.MQCHS_PAUSED, 80d);
-        statuses.put(MQConstants.MQCHS_BINDING, 70d);
-        statuses.put(MQConstants.MQCHS_STARTING, 60d);
-        statuses.put(MQConstants.MQCHS_INITIALIZING, 50d);
-        statuses.put(MQConstants.MQCHS_SWITCHING, 40d);
-        statuses.put(MQConstants.MQCHS_STOPPING, 30d);
-        statuses.put(MQConstants.MQCHS_RETRYING, 20d);
-        statuses.put(MQConstants.MQCHS_STOPPED, 10d);
-        statuses.put(MQConstants.MQCHS_INACTIVE, 0d);
+        statuses.put(MQCHS_RUNNING, 100d);
+        statuses.put(MQCHS_REQUESTING, 90d);
+        statuses.put(MQCHS_PAUSED, 80d);
+        statuses.put(MQCHS_BINDING, 70d);
+        statuses.put(MQCHS_STARTING, 60d);
+        statuses.put(MQCHS_INITIALIZING, 50d);
+        statuses.put(MQCHS_SWITCHING, 40d);
+        statuses.put(MQCHS_STOPPING, 30d);
+        statuses.put(MQCHS_RETRYING, 20d);
+        statuses.put(MQCHS_STOPPED, 10d);
+        statuses.put(MQCHS_INACTIVE, 0d);
         return statuses;
     }
 
@@ -206,10 +207,10 @@ public class MetricsReference {
      */
     private static HashMap<Integer, Double> getListenerStatuses() {
         HashMap<Integer, Double> statuses = new HashMap<>();
-        statuses.put(MQConstants.MQSVC_STATUS_RUNNING, 100d);
-        statuses.put(MQConstants.MQSVC_STATUS_STARTING, 75d);
-        statuses.put(MQConstants.MQSVC_STATUS_STOPPING, 50d);
-        statuses.put(MQConstants.MQSVC_STATUS_STOPPED, 0d);
+        statuses.put(MQSVC_STATUS_RUNNING, 100d);
+        statuses.put(MQSVC_STATUS_STARTING, 75d);
+        statuses.put(MQSVC_STATUS_STOPPING, 50d);
+        statuses.put(MQSVC_STATUS_STOPPED, 0d);
         return statuses;
     }
 
@@ -228,7 +229,7 @@ public class MetricsReference {
         Metric metric = ref.get(description);
         if (metric == null) {
             metricName = generateMetricName(description, requiresObject, datatype);
-            Metric.Type type = datatype == MQConstants.MQIAMO_MONITOR_DELTA ? Metric.Type.SIMPLE_COUNTER : Metric.Type.SIMPLE_GAUGE;
+            Metric.Type type = datatype == MQIAMO_MONITOR_DELTA ? Metric.Type.SIMPLE_COUNTER : Metric.Type.SIMPLE_GAUGE;
             ref.put(description, new Metric(metricName, type));
         } else {
             metricName = metric.name;
@@ -254,32 +255,32 @@ public class MetricsReference {
         }
         if (!metricName.startsWith("mq_")) metricName = "mq_" + metricName;
         switch (dataType) {
-            case (MQConstants.MQIAMO_MONITOR_HUNDREDTHS):
+            case (MQIAMO_MONITOR_HUNDREDTHS):
                 metricName = metricName.concat("_hundredths");
                 break;
-            case (MQConstants.MQIAMO_MONITOR_KB):
+            case (MQIAMO_MONITOR_KB):
                 metricName = metricName.concat("_kilobytes");
                 break;
-            case (MQConstants.MQIAMO_MONITOR_MB):
+            case (MQIAMO_MONITOR_MB):
                 metricName = metricName.concat("_megabytes");
                 break;
-            case (MQConstants.MQIAMO_MONITOR_GB):
+            case (MQIAMO_MONITOR_GB):
                 metricName = metricName.concat("_gigabytes");
                 break;
-            case (MQConstants.MQIAMO_MONITOR_MICROSEC):
+            case (MQIAMO_MONITOR_MICROSEC):
                 metricName = metricName.concat("_microseconds");
                 break;
-            case (MQConstants.MQIAMO_MONITOR_UNIT):
+            case (MQIAMO_MONITOR_UNIT):
                 metricName = metricName.concat("_total");
                 break;
-            case (MQConstants.MQIAMO_MONITOR_PERCENT):
+            case (MQIAMO_MONITOR_PERCENT):
                 metricName = metricName.concat("_percentage");
                 break;
-            case (MQConstants.MQIAMO_MONITOR_DELTA):
+            case (MQIAMO_MONITOR_DELTA):
                 metricName = metricName.concat("_delta");
                 break;
             default:
-                logger.warn("Unknown metric type: {}", MQConstants.lookup(dataType, "MQIAMO_"));
+                logger.warn("Unknown metric type: {}", lookup(dataType, "MQIAMO_"));
         }
         logger.warn("Unknown metric name! Generated new name '{}' from description '{}'", metricName, description);
         return metricName;

@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ConfigTest {
+class ConfigTest {
     private Config config;
 
     @BeforeEach
@@ -56,7 +57,7 @@ public class ConfigTest {
                 () -> assertEquals("SYSTEM.DEF.SVRCONN", config.getQmgrChannel()),
                 () -> assertEquals("mqm", config.getUser()),
                 () -> assertEquals("mqmpass", config.getPassword()),
-                () -> assertEquals(true, config.useMqscp()),
+                () -> assertTrue(config.useMqscp()),
                 () -> assertEquals(12000, config.getConnTimeout()),
 
                 //Asserts for prometheus endpoint params
@@ -66,9 +67,10 @@ public class ConfigTest {
 
                 //Asserts for PCFParameters
 
-                () -> assertEquals(true, config.sendPCFCommands()),
-                () -> assertEquals(true, config.usePCFWildcards()),
+                () -> assertTrue(config.sendPCFCommands()),
                 () -> assertEquals(10, config.getScrapeInterval()),
+
+                () -> assertEquals(30 , config.getUpdateInterval()),
 
                 //Asserts for monitored objects
 
@@ -83,7 +85,7 @@ public class ConfigTest {
     void getMqSecurityProperties() {
         MQSecurityProperties props = config.getMqSecurityProperties();
         Assertions.assertAll(
-                () -> assertEquals(true, props.isUseTLS()),
+                () -> assertTrue(props.isUseTLS()),
                 () -> assertEquals("src/test/resources/keystores/keystore.jks", props.getKeystorePath()),
                 () -> assertEquals("testpass2", props.getKeystorePassword()),
                 () -> assertEquals("src/test/resources/keystores/truststore.jks", props.getTruststorePath()),

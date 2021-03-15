@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import ru.cinimex.exporter.mq.pcf.model.PCFElement;
+import ru.cinimex.exporter.mq.pcf.model.PCFElementRow;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

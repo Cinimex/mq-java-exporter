@@ -1,15 +1,22 @@
 package ru.cinimex.exporter.prometheus.metrics;
 
+import static ru.cinimex.exporter.prometheus.metrics.MetricManagerUtils.getConversionFunction;
+import static ru.cinimex.exporter.prometheus.metrics.MetricManagerUtils.getMetricsUsedToUpdate;
+import static ru.cinimex.exporter.prometheus.metrics.MetricManagerUtils.getUpdatedMetricNames;
+import static ru.cinimex.exporter.prometheus.metrics.MetricsReference.getAdditionalMqObjectMetricsReference;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.mq.MQObject;
-import ru.cinimex.exporter.mq.pcf.PCFElement;
-import ru.cinimex.exporter.mq.pcf.PCFElementRow;
-
-import java.util.*;
-
-import static ru.cinimex.exporter.prometheus.metrics.MetricManagerUtils.*;
-import static ru.cinimex.exporter.prometheus.metrics.MetricsReference.getAdditionalMqObjectMetricsReference;
+import ru.cinimex.exporter.mq.MQObject.MQType;
+import ru.cinimex.exporter.mq.pcf.model.PCFElement;
+import ru.cinimex.exporter.mq.pcf.model.PCFElementRow;
 
 /**
  * Class is used to manage work of all metrics.
@@ -22,10 +29,9 @@ public class MetricsManager {
      * Creates all required metrics
      *
      * @param elements - Array, which contains all PCFElements, retrieved from queue manager.
-     * @param types    - Array, which contains all MQObject types, which should be monitored via direct PCFCommands.
      */
-    public static void initMetrics(List<PCFElement> elements, List<MQObject.MQType> types) {
-        logger.debug("Preparing to initialize metrics. {} metrics will be received from MQ topics and {} metrics will be received via direct PCF commands.", elements.size(), types.size());
+    public static void initMetrics(List<PCFElement> elements) {
+        logger.debug("Preparing to initialize metrics. {} metrics will be received from MQ topics and {} metrics will be received via direct PCF commands.", elements.size(), MQType.values().length);
         String logString = " created! Name: {}, description: {}, labels: {}.";
         metrics = new HashMap<>();
         for (PCFElement element : elements) {
@@ -40,7 +46,7 @@ public class MetricsManager {
                     case SIMPLE_GAUGE:
                         metric = new SimpleGauge(metricName, row.getRowDesc(), labels.toArray(new String[0]));
                         metrics.put(metricName, metric);
-                        logger.trace("New " + "gauge" + logString, metricName, row.getRowDesc(), labels);
+                        logger.trace("New gauge" + logString, metricName, row.getRowDesc(), labels);
                         break;
                     case SIMPLE_COUNTER:
                         metric = new SimpleCounter(metricName, row.getRowDesc(), labels.toArray(new String[0]));
@@ -64,7 +70,7 @@ public class MetricsManager {
                 }
             }
         }
-        for (MQObject.MQType type : types) {
+        for (MQObject.MQType type : MQObject.MQType.values()) {
             String metricName = MetricsReference.getMetricName(type);
             metrics.put(metricName, new SimpleGauge(metricName, MetricsReference.getMetricHelp(type), Labels.QMGR_NAME.name(), Labels.MQ_OBJECT_NAME.name()));
             logger.trace("New gauge created! Name: {}, description: {}, labels: {}.", metricName, MetricsReference.getMetricHelp(type), Labels.MQ_OBJECT_NAME.name());
@@ -91,6 +97,15 @@ public class MetricsManager {
      */
     public static void updateMetric(String metricName, Double value, String... labels) {
         metrics.get(metricName).update(value, labels);
+    }
+
+    /**
+     * Removes all metrics with specific labels
+     *
+     * @param labels     - metric labels
+     */
+    public static void removeMetrics(String... labels) {
+        metrics.values().forEach( metricInterface -> metricInterface.remove(labels));
     }
 
     /**

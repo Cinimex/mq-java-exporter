@@ -137,6 +137,9 @@ PCFParameters:
 # Then objects from "exclude" section are retrieved.
 # Finally, objects that are in the first group but not in the second are added to the monitoring list.
 
+#Interval in seconds between updating objects (in case some objects were removed or created).
+updateInterval: 30
+
 # Monitored queues.
 queues:
   include:

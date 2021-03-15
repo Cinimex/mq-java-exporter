@@ -19,4 +19,11 @@ public interface MetricInterface {
      */
     void notifyWasScraped();
 
+
+    /**
+     * Removes metric with specified labels when it was considered deprecated.
+     * @param labels - labels, which define deprecated metric.
+     */
+    void remove(String ... labels);
+
 }

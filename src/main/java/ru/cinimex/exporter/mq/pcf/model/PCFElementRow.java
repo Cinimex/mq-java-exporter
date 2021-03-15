@@ -1,16 +1,16 @@
-package ru.cinimex.exporter.mq.pcf;
+package ru.cinimex.exporter.mq.pcf.model;
 
 import com.ibm.mq.constants.MQConstants;
 
 /**
- * This class represents part of the PCF message, which could be received from
- * $SYS/MQ/INFO/QMGR/{QMGR_NAME}/Monitor/{CLASS}/{TYPE} MQ topic.
- * MQ publishes multiple metrics to each topic. This class contains info only about one metric.
+ * This class represents part of the PCF message, which could be received from $SYS/MQ/INFO/QMGR/{QMGR_NAME}/Monitor/{CLASS}/{TYPE}
+ * MQ topic. MQ publishes multiple metrics to each topic. This class contains info only about one metric.
  */
 public class PCFElementRow {
-    private int rowId;
-    private int rowDatatype;
-    private String rowDesc;
+
+    private final int rowId;
+    private final int rowDatatype;
+    private final String rowDesc;
 
     /**
      * Constructor creates PCFElement object, which contains all required information about exact metric.

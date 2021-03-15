@@ -1,10 +1,11 @@
 package ru.cinimex.exporter.mq;
 
+import static com.ibm.mq.constants.MQConstants.*;
+
 import com.ibm.mq.MQException;
 import com.ibm.mq.MQGetMessageOptions;
 import com.ibm.mq.MQMessage;
 import com.ibm.mq.MQQueue;
-import com.ibm.mq.constants.MQConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.mq.pcf.PCFDataParser;
@@ -16,9 +17,9 @@ import java.util.List;
  */
 public class MQMetricQueue extends Thread implements MQSubscriber {
     private static final Logger logger = LogManager.getLogger(MQMetricQueue.class);
-    private List<MQTopicSubscriber> subscribers;
-    private MQQueue queue;
-    private boolean isRunning;
+    private final List<MQTopicSubscriber> subscribers;
+    private final MQQueue queue;
+    private volatile boolean isRunning;
 
     /**
      * MQMetricQueue constructor.
@@ -34,7 +35,7 @@ public class MQMetricQueue extends Thread implements MQSubscriber {
     @Override
     public void run() {
         MQGetMessageOptions gmo = new MQGetMessageOptions();
-        gmo.options = MQConstants.MQGMO_WAIT | MQConstants.MQGMO_COMPLETE_MSG | MQConstants.MQGMO_FAIL_IF_QUIESCING;
+        gmo.options = MQGMO_WAIT | MQGMO_COMPLETE_MSG | MQGMO_FAIL_IF_QUIESCING;
         gmo.waitInterval = 16000;
         isRunning = true;
         while (isRunning) {
@@ -50,7 +51,7 @@ public class MQMetricQueue extends Thread implements MQSubscriber {
                     logger.warn("Subscriber for topic {} wasn't found", name);
                 }
             } catch (MQException e1) {
-                if (e1.getReason() == MQConstants.MQRC_CONNECTION_BROKEN) {
+                if (e1.getReason() == MQRC_CONNECTION_BROKEN) {
                     logger.error("Connection with queue manager was broken: ", e1);
                     System.exit(1);
                 }

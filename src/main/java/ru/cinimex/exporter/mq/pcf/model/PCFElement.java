@@ -1,4 +1,4 @@
-package ru.cinimex.exporter.mq.pcf;
+package ru.cinimex.exporter.mq.pcf.model;
 
 import java.util.List;
 
@@ -7,10 +7,11 @@ import java.util.List;
  * $SYS/MQ/INFO/QMGR/{QMGR_NAME}/Monitor/{CLASS}/{TYPE} MQ topic.
  */
 public class PCFElement {
+
     private final List<PCFElementRow> rows;
+    private final boolean mqObjectRequired;
     private String sourceTopicString;
     private String topicString;
-    private boolean mqObjectRequired;
 
     /**
      * Constructor creates PCFElement object, which contains all required information about exact PCF element.

@@ -29,11 +29,11 @@ public class Config {
     private int connTimeout;
     private int endpPort;
     private String endpURL;
+    private int updateInterval;
     private Map<String, List<String>> queues;
     private Map<String, List<String>> channels;
     private Map<String, List<String>> listeners;
     private boolean sendPCFCommands;
-    private boolean usePCFWildcards;
     private int scrapeInterval;
     private MQSecurityProperties mqSecurityProperties;
 
@@ -59,13 +59,13 @@ public class Config {
         this.password = (String) qmgrConnectionParams.get("password");
         this.mqscp = (boolean) qmgrConnectionParams.get("mqscp");
         this.connTimeout = (Integer) qmgrConnectionParams.get("connTimeout");
+        this.updateInterval = (Integer) config.get("updateInterval");
         this.queues = (Map<String, List<String>>) config.get("queues");
         this.listeners = (Map<String, List<String>>) config.get("listeners");
         this.channels = (Map<String, List<String>>) config.get("channels");
         this.endpPort = (Integer) prometheusEndpointParams.get("port");
         this.endpURL = (String) (prometheusEndpointParams.get("url"));
         this.sendPCFCommands = (boolean) pcfParameters.get("sendPCFCommands");
-        this.usePCFWildcards = (boolean) pcfParameters.get("usePCFWildcards");
         this.scrapeInterval = (Integer) pcfParameters.get("scrapeInterval");
         boolean useTLS = (boolean) qmgrConnectionParams.get("useTLS");
         if (useTLS) {
@@ -95,10 +95,6 @@ public class Config {
 
     public boolean sendPCFCommands() {
         return sendPCFCommands;
-    }
-
-    public boolean usePCFWildcards() {
-        return usePCFWildcards;
     }
 
     public Map<String, List<String>> getChannels() {
@@ -144,6 +140,8 @@ public class Config {
     public String getEndpURL() {
         return endpURL;
     }
+
+    public int getUpdateInterval() { return updateInterval; }
 
     public Map<String, List<String>> getQueues() {
         return queues;

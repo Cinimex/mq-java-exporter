@@ -7,7 +7,7 @@ import ru.cinimex.exporter.prometheus.Registry;
  * Represents Prometheus basic metric. Counter, which can only increase or reset to 0.
  */
 public class SimpleCounter implements MetricInterface {
-    private Counter counter;
+    private final Counter counter;
 
     /**
      * Counter constructor.
@@ -40,5 +40,10 @@ public class SimpleCounter implements MetricInterface {
     @Override
     public void notifyWasScraped() {
         //There is no need to do any work after counter was scraped.
+    }
+
+    @Override
+    public void remove(String... labels) {
+        counter.remove(labels);
     }
 }

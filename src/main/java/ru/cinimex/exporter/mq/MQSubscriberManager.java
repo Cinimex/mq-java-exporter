@@ -1,27 +1,29 @@
 package ru.cinimex.exporter.mq;
 
 import com.ibm.mq.MQException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import ru.cinimex.exporter.Config;
-import ru.cinimex.exporter.mq.pcf.PCFElement;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import ru.cinimex.exporter.Config;
+import ru.cinimex.exporter.mq.MQObject.MQType;
+import ru.cinimex.exporter.mq.pcf.model.PCFElement;
 
 /**
  * Class is used to manage work of all subscribers.
  */
 public class MQSubscriberManager {
+
     private static final Logger logger = LogManager.getLogger(MQSubscriberManager.class);
-    private String queueManagerName;
-    private ArrayList<MQTopicSubscriber> subscribers;
-    private ArrayList<MQPCFSubscriber> pcfSubscribers;
+    private final Config config;
+    private MQObjectUpdater mqObjectUpdater;
+    private final List<MQTopicSubscriber> subscribers = new CopyOnWriteArrayList();
+    private final Map<MQType, MQPCFSubscriber> pcfSubscribers = new HashMap<>();
     private ScheduledExecutorService executor;
     private int timeout;
     private MQMetricQueue queue;
@@ -32,36 +34,32 @@ public class MQSubscriberManager {
      * @param config - object containing different properties
      */
     public MQSubscriberManager(Config config) {
-        queueManagerName = config.getQmgrName();
+       this.config = config;
     }
 
     /**
      * Creates pool with subscribers and starts them.
      *
      * @param elements        - elements, received via MQ monitoring topics.
-     * @param objects         - objects, retrieved from configuration file.
      * @param sendPCFCommands - this flag indicates, if we should send additional PCF commands (To get queues max depth, channels and listeners statuses).
-     * @param usePCFWildcards - this flag indicates, if we should use wildcards (uses only 1 connection per MQObject type, but longer response processing).
      * @param interval        - interval in seconds, at which additional PCF commands are sent.
      * @param timeout         - timeout for MQGET operation (milliseconds).
      */
-    public void runSubscribers(List<PCFElement> elements, List<MQObject> objects, boolean sendPCFCommands, boolean usePCFWildcards, int interval, int timeout) {
+    public void runSubscribers(List<PCFElement> elements, boolean sendPCFCommands, int interval, int timeout) {
         logger.info("Launching subscribers...");
-        subscribers = new ArrayList<>();
-        pcfSubscribers = new ArrayList<>();
         this.timeout = timeout;
-        addTopicSubscribers(elements, objects, timeout);
-        if (sendPCFCommands) {
-            if (usePCFWildcards) {
-                EnumMap<MQObject.MQType, ArrayList<MQObject>> groups = groupMQObjects(objects);
-                addPCFSubscribers(groups, interval);
-            } else {
-                addPCFSubscribers(objects, interval);
-            }
+
+        //One thread per MQ object type (queue, listener, etc) and one for object updates.
+        executor = Executors.newScheduledThreadPool(MQType.values().length + 1);
+
+        addStaticTopicSubscribers(elements);
+
+        if (config.sendPCFCommands()) {
+            addPCFSubscribers();
         }
-        for (MQPCFSubscriber subscriber : pcfSubscribers) {
-            subscriber.start();
-        }
+
+        mqObjectUpdater = new MQObjectUpdater(config, subscribers, pcfSubscribers, elements);
+        executor.scheduleAtFixedRate(mqObjectUpdater, 0, config.getUpdateInterval(), TimeUnit.SECONDS);
         try {
             this.queue = new MQMetricQueue(subscribers);
         } catch (MQException e) {
@@ -78,61 +76,11 @@ public class MQSubscriberManager {
 
     }
 
-    /**
-     * Stops all running subscribers in managed mode. All connections will be closed, all threads will be finished.
-     *
-     * @throws InterruptedException
-     */
-    public void stopSubscribers() throws InterruptedException {
-        if (queue != null) {
-            queue.stopProcessing();
-        }
-        if (executor != null) {
-            executor.shutdown();
-        }
-
-        for (MQTopicSubscriber subscriber : subscribers) {
-            subscriber.stopProcessing();
-        }
-
-        for (MQPCFSubscriber subscriber : pcfSubscribers) {
-            subscriber.stopProcessing();
-        }
-        for (MQPCFSubscriber subscriber : pcfSubscribers) {
-            subscriber.join(timeout);
-        }
-    }
-
-    /**
-     * Add topic subscribers for each MQ object being monitored.
-     *
-     * @param elements - list with PCFElements, received from MQ.
-     * @param objects  - list with monitored MQ objects.
-     * @param timeout  - timeout for MQGET operation (milliseconds).
-     */
-    private void addTopicSubscribers(List<PCFElement> elements, List<MQObject> objects, int timeout) {
+    private void addStaticTopicSubscribers(List<PCFElement> elements) {
         for (PCFElement element : elements) {
-            if (element.requiresMQObject()) {
-                for (MQObject object : objects) {
-                    addTopicSubscriber(object, element);
-                }
-            } else {
+            if (!element.requiresMQObject()) {
                 addTopicSubscriber(element);
             }
-        }
-    }
-
-    /**
-     * Adds topic subscriber for specific MQ object
-     *
-     * @param object  - monitored MQ object.
-     * @param element - PCFElement, received from MQ.
-     */
-    private void addTopicSubscriber(MQObject object, PCFElement element) {
-        if (object.getType().equals(MQObject.MQType.QUEUE)) {
-            PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
-            objElement.formatTopicString(object.getName());
-            subscribers.add(new MQTopicSubscriber(objElement, queueManagerName, object.getName()));
         }
     }
 
@@ -142,62 +90,48 @@ public class MQSubscriberManager {
      * @param element - PCFElement, received from MQ.
      */
     private void addTopicSubscriber(PCFElement element) {
-        subscribers.add(new MQTopicSubscriber(element, queueManagerName));
+        subscribers.add(new MQTopicSubscriber(element, config.getQmgrName()));
     }
 
     /**
-     * Adds PCF subscribers
+     * Stops all running subscribers in managed mode. All connections will be closed, all threads will be finished.
      *
-     * @param objects  - grouped map with objects, which require PCF subscribers
-     * @param interval - interval between sending PCF commands.
+     * @throws InterruptedException
      */
-    private void addPCFSubscribers(Map<MQObject.MQType, ArrayList<MQObject>> objects, int interval) {
-        int corePoolSize = MQObject.MQType.values().length;
-        executor = Executors.newScheduledThreadPool(corePoolSize);
-        for (Map.Entry<MQObject.MQType, ArrayList<MQObject>> entry : objects.entrySet()) {
-            if (!entry.getValue().isEmpty()) {
-                MQPCFSubscriber subscriber = new MQPCFSubscriber(queueManagerName, entry.getValue());
-                pcfSubscribers.add(subscriber);
-                logger.debug("Starting subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {}.", entry.getKey().name());
-                executor.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
-                logger.debug("Subscriber for sending direct PCF commands for objects with type {} successfully started.", entry.getKey().name());
+    public void stopSubscribers() throws InterruptedException {
+        if (queue != null) {
+            queue.stopProcessing();
+        }
+
+        if (executor != null) {
+            executor.shutdown();
+            if(!executor.awaitTermination(60, TimeUnit.SECONDS)){
+                logger.warn("Some threads were terminating too long. Will be terminated forcibly.");
             }
         }
-    }
 
-    /**
-     * Adds PCF subscribers
-     *
-     * @param objects  - list with objects, which require PCF subscribers
-     * @param interval - interval between sending PCF commands.
-     */
-    private void addPCFSubscribers(List<MQObject> objects, int interval) {
-        int corePoolSize = objects.size();
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(corePoolSize);
-        for (MQObject object : objects) {
-            MQPCFSubscriber subscriber = new MQPCFSubscriber(object);
-            pcfSubscribers.add(subscriber);
-            logger.debug("Starting subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {}.", object.getType().name(), object.getName());
-            scheduledExecutorService.scheduleAtFixedRate(subscriber, 0, interval, TimeUnit.SECONDS);
-            logger.debug("Subscriber for sending direct PCF commands to retrieve statistics about object with type {} and name {} successfully started.", object.getType().name(), object.getName());
+        for (MQTopicSubscriber subscriber : subscribers) {
+            subscriber.stopProcessing();
+        }
+
+        for (MQPCFSubscriber subscriber : pcfSubscribers.values()) {
+            subscriber.stopProcessing();
+        }
+
+        for (MQPCFSubscriber subscriber : pcfSubscribers.values()) {
+            subscriber.join(timeout);
         }
     }
 
     /**
-     * Method groups elements by type.
-     *
-     * @param objects - list with unsorted MQ objects.
-     * @return - grouped map with objects.
+     * Adds 1 PCF subscriber for each type of MQ objects (queue, channel, listener).
      */
-    private EnumMap<MQObject.MQType, ArrayList<MQObject>> groupMQObjects(List<MQObject> objects) {
-        EnumMap<MQObject.MQType, ArrayList<MQObject>> groupedObjects = new EnumMap<>(MQObject.MQType.class);
-        for (MQObject.MQType type : MQObject.MQType.values()) {
-            groupedObjects.put(type, new ArrayList<>());
+    private void addPCFSubscribers() {
+        for (MQType type : MQObject.MQType.values()) {
+            MQPCFSubscriber subscriber = new MQPCFSubscriber(config.getQmgrName());
+            pcfSubscribers.put(type, subscriber);
+            executor.scheduleAtFixedRate(subscriber, 0, config.getScrapeInterval(), TimeUnit.SECONDS);
         }
-        for (MQObject object : objects) {
-            groupedObjects.get(object.getType()).add(object);
-            logger.debug("{} {} was added for additional monitoring.", object.getType().name(), object.getName());
-        }
-        return groupedObjects;
     }
+
 }

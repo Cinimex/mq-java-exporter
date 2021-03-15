@@ -1,11 +1,12 @@
 package ru.cinimex.exporter.mq;
 
+import static com.ibm.mq.constants.MQConstants.*;
+
 import com.ibm.mq.MQException;
 import com.ibm.mq.MQQueue;
 import com.ibm.mq.MQQueueManager;
 import com.ibm.mq.MQTopic;
 import com.ibm.mq.constants.CMQC;
-import com.ibm.mq.constants.MQConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.Config;
@@ -42,19 +43,19 @@ public class MQConnection {
      */
     public static Map<String, Object> createMQConnectionParams(Config config) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(MQConstants.TRANSPORT_PROPERTY, config.getQmgrHost() == null ? MQConstants.TRANSPORT_MQSERIES_BINDINGS : MQConstants.TRANSPORT_MQSERIES_CLIENT);
-        if (config.getQmgrHost() != null) properties.put(MQConstants.HOST_NAME_PROPERTY, config.getQmgrHost());
-        if (config.getQmgrPort() != 0) properties.put(MQConstants.PORT_PROPERTY, config.getQmgrPort());
-        if (config.getQmgrChannel() != null) properties.put(MQConstants.CHANNEL_PROPERTY, config.getQmgrChannel());
+        properties.put(TRANSPORT_PROPERTY, config.getQmgrHost() == null ? TRANSPORT_MQSERIES_BINDINGS : TRANSPORT_MQSERIES_CLIENT);
+        if (config.getQmgrHost() != null) properties.put(HOST_NAME_PROPERTY, config.getQmgrHost());
+        if (config.getQmgrPort() != 0) properties.put(PORT_PROPERTY, config.getQmgrPort());
+        if (config.getQmgrChannel() != null) properties.put(CHANNEL_PROPERTY, config.getQmgrChannel());
         if (config.getUser() != null || config.getPassword() != null) {
-            properties.put(MQConstants.USE_MQCSP_AUTHENTICATION_PROPERTY, config.useMqscp());
-            if (config.getUser() != null) properties.put(MQConstants.USER_ID_PROPERTY, config.getUser());
-            if (config.getPassword() != null) properties.put(MQConstants.PASSWORD_PROPERTY, config.getPassword());
+            properties.put(USE_MQCSP_AUTHENTICATION_PROPERTY, config.useMqscp());
+            if (config.getUser() != null) properties.put(USER_ID_PROPERTY, config.getUser());
+            if (config.getPassword() != null) properties.put(PASSWORD_PROPERTY, config.getPassword());
         }
         MQSecurityProperties mqSecurityProperties = config.getMqSecurityProperties();
         if (mqSecurityProperties != null && mqSecurityProperties.isUseTLS()) {
-            properties.put(MQConstants.SSL_CIPHER_SUITE_PROPERTY, mqSecurityProperties.getCipherSuite());
-            properties.put(MQConstants.SSL_SOCKET_FACTORY_PROPERTY, getSslSocketFactory(mqSecurityProperties));
+            properties.put(SSL_CIPHER_SUITE_PROPERTY, mqSecurityProperties.getCipherSuite());
+            properties.put(SSL_SOCKET_FACTORY_PROPERTY, getSslSocketFactory(mqSecurityProperties));
             System.setProperty("com.ibm.mq.cfg.useIBMCipherMappings", "false");
         }
         return properties;
@@ -79,6 +80,7 @@ public class MQConnection {
             sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
         } catch (KeyStoreException | UnrecoverableKeyException | NoSuchAlgorithmException | KeyManagementException e1) {
             logger.error("Failed!", e1);
+            System.exit(1);
         }
         return sslContext.getSocketFactory();
     }
@@ -141,7 +143,7 @@ public class MQConnection {
         try {
             return queueManager.accessTopic(getQueue(), topic, "", CMQC.MQSO_CREATE);
         } catch (MQException e) {
-            if (e.getReason() == MQConstants.MQRC_HANDLE_NOT_AVAILABLE) {
+            if (e.getReason() == MQRC_HANDLE_NOT_AVAILABLE) {
                 logger.error("The maximum number of open handles allowed for the current task has already been reached. Please, increase the MaxHandles queue manager attribute or reduce the number of queues to monitor: ", e);
                 System.exit(1);
             }
@@ -163,7 +165,7 @@ public class MQConnection {
     }
 
     private static void createDynamicQueue() throws MQException {
-        dynamicQueue = queueManager.accessQueue("SYSTEM.NDURABLE.MODEL.QUEUE", CMQC.MQOO_INPUT_AS_Q_DEF | CMQC.MQOO_FAIL_IF_QUIESCING, null, "MQEXPORTER.*", null);
+        dynamicQueue = queueManager.accessQueue("SYSTEM.DURABLE.MODEL.QUEUE", CMQC.MQOO_INPUT_AS_Q_DEF | CMQC.MQOO_FAIL_IF_QUIESCING, null, "MQEXPORTER.*", null);
     }
 
     /**

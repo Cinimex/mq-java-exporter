@@ -1,13 +1,13 @@
 package ru.cinimex.exporter.mq;
 
 public class MQSecurityProperties {
-    private boolean useTLS;
-    private String keystorePath;
-    private String keystorePassword;
-    private String truststorePath;
-    private String truststorePassword;
-    private String sslProtocol;
-    private String cipherSuite;
+    private final boolean useTLS;
+    private final String keystorePath;
+    private final String keystorePassword;
+    private final String truststorePath;
+    private final String truststorePassword;
+    private final String sslProtocol;
+    private final String cipherSuite;
 
     public MQSecurityProperties(boolean useTLS, String keystorePath, String keystorePassword, String truststorePath, String truststorePassword, String sslProtocol, String cipherSuite) {
         this.useTLS = useTLS;
