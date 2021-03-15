@@ -165,7 +165,7 @@ public class MQConnection {
     }
 
     private static void createDynamicQueue() throws MQException {
-        dynamicQueue = queueManager.accessQueue("SYSTEM.DURABLE.MODEL.QUEUE", CMQC.MQOO_INPUT_AS_Q_DEF | CMQC.MQOO_FAIL_IF_QUIESCING, null, "MQEXPORTER.*", null);
+        dynamicQueue = queueManager.accessQueue("SYSTEM.NDURABLE.MODEL.QUEUE", CMQC.MQOO_INPUT_AS_Q_DEF | CMQC.MQOO_FAIL_IF_QUIESCING, null, "MQEXPORTER.*", null);
     }
 
     /**
