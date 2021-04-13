@@ -1,19 +1,16 @@
-package ru.cinimex.exporter.mq.pcf;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+package ru.cinimex.exporter.mq.pcf.model;
 
 /**
- * This class represents PCFMessage parameter, which could be received from
- * $SYS/MQ/INFO/QMGR/{QMGR_NAME}/Monitor/METADATA/CLASSES MQ topic.
+ * This class represents PCFMessage parameter, which could be received from $SYS/MQ/INFO/QMGR/{QMGR_NAME}/Monitor/METADATA/CLASSES
+ * MQ topic.
  */
 public class PCFClass {
-    private static final Logger logger = LogManager.getLogger(PCFClass.class);
-    private int monitorId;
-    private int monitorFlag;
-    private String monitorName;
-    private String monitorDesc;
-    private String topicString;
+
+    private final int monitorId;
+    private final int monitorFlag;
+    private final String monitorName;
+    private final String monitorDesc;
+    private final String topicString;
 
     /**
      * Constructor creates PCFClass object, which contains all required information about exact PCF class.
@@ -24,14 +21,11 @@ public class PCFClass {
      * @param monitorDesc - short description (For example, for CPU it is "Platform central processing units")
      * @param topicString - MQ topic, where  detailed information is published (each class has it's own topic)
      */
-    protected PCFClass(int monitorId, int monitorFlag, String monitorName, String monitorDesc, String topicString) {
+    public PCFClass(int monitorId, int monitorFlag, String monitorName, String monitorDesc, String topicString) {
         this.monitorId = monitorId;
         this.monitorFlag = monitorFlag;
         this.monitorName = monitorName;
         this.monitorDesc = monitorDesc;
-        if (topicString == null) {
-            logger.warn("Topic string is empty: ", this.toString());
-        }
         this.topicString = topicString;
     }
 

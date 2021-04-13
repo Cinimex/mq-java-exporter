@@ -3,6 +3,7 @@ package ru.cinimex.exporter.mq.pcf;
 import com.ibm.mq.constants.MQConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.cinimex.exporter.mq.pcf.model.PCFElementRow;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

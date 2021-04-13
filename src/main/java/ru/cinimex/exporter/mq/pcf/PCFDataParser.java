@@ -1,7 +1,26 @@
 package ru.cinimex.exporter.mq.pcf;
 
+import static com.ibm.mq.constants.MQConstants.MQCAMO_MONITOR_CLASS;
+import static com.ibm.mq.constants.MQConstants.MQCAMO_MONITOR_DESC;
+import static com.ibm.mq.constants.MQConstants.MQCAMO_MONITOR_TYPE;
+import static com.ibm.mq.constants.MQConstants.MQCA_Q_MGR_NAME;
+import static com.ibm.mq.constants.MQConstants.MQCA_Q_NAME;
+import static com.ibm.mq.constants.MQConstants.MQCA_TOPIC_STRING;
+import static com.ibm.mq.constants.MQConstants.MQCFT_INTEGER;
+import static com.ibm.mq.constants.MQConstants.MQCFT_INTEGER64;
+import static com.ibm.mq.constants.MQConstants.MQGACF_MONITOR_CLASS;
+import static com.ibm.mq.constants.MQConstants.MQGACF_MONITOR_ELEMENT;
+import static com.ibm.mq.constants.MQConstants.MQGACF_MONITOR_TYPE;
+import static com.ibm.mq.constants.MQConstants.MQIACF_OBJECT_TYPE;
+import static com.ibm.mq.constants.MQConstants.MQIAMO64_MONITOR_INTERVAL;
+import static com.ibm.mq.constants.MQConstants.MQIAMO_MONITOR_CLASS;
+import static com.ibm.mq.constants.MQConstants.MQIAMO_MONITOR_DATATYPE;
+import static com.ibm.mq.constants.MQConstants.MQIAMO_MONITOR_ELEMENT;
+import static com.ibm.mq.constants.MQConstants.MQIAMO_MONITOR_FLAGS;
+import static com.ibm.mq.constants.MQConstants.MQIAMO_MONITOR_PERCENT;
+import static com.ibm.mq.constants.MQConstants.MQIAMO_MONITOR_TYPE;
+
 import com.ibm.mq.MQMessage;
-import com.ibm.mq.constants.MQConstants;
 import com.ibm.mq.headers.MQDataException;
 import com.ibm.mq.headers.pcf.MQCFGR;
 import com.ibm.mq.headers.pcf.MQCFIN;
@@ -16,6 +35,10 @@ import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.cinimex.exporter.mq.pcf.model.PCFClass;
+import ru.cinimex.exporter.mq.pcf.model.PCFElement;
+import ru.cinimex.exporter.mq.pcf.model.PCFElementRow;
+import ru.cinimex.exporter.mq.pcf.model.PCFType;
 
 /**
  * Class PCFDataParser contains only static methods and was created to simplify work with PCF messages.
@@ -37,7 +60,7 @@ public class PCFDataParser {
         ArrayList<PCFClass> classes = new ArrayList<>();
         while (params.hasMoreElements()) {
             PCFParameter param = params.nextElement();
-            if (param.getParameter() == MQConstants.MQGACF_MONITOR_CLASS) {
+            if (param.getParameter() == MQGACF_MONITOR_CLASS) {
                 Enumeration<PCFParameter> groupParams = ((MQCFGR) param)
                     .getParameters();
                 int monitorId = -1;
@@ -48,23 +71,25 @@ public class PCFDataParser {
                 while (groupParams.hasMoreElements()) {
                     PCFParameter groupParam = groupParams.nextElement();
                     switch (groupParam.getParameter()) {
-                        case MQConstants.MQIAMO_MONITOR_CLASS:
+                        case MQIAMO_MONITOR_CLASS:
                             monitorId = (Integer) groupParam.getValue();
                             break;
-                        case MQConstants.MQIAMO_MONITOR_FLAGS:
+                        case MQIAMO_MONITOR_FLAGS:
                             monitorFlag = (Integer) groupParam.getValue();
                             break;
-                        case MQConstants.MQCAMO_MONITOR_CLASS:
+                        case MQCAMO_MONITOR_CLASS:
                             monitorName = groupParam.getStringValue();
                             break;
-                        case MQConstants.MQCAMO_MONITOR_DESC:
+                        case MQCAMO_MONITOR_DESC:
                             monitorDesc = groupParam.getStringValue();
                             break;
-                        case MQConstants.MQCA_TOPIC_STRING:
+                        case MQCA_TOPIC_STRING:
                             topicString = groupParam.getStringValue();
                             break;
                         default:
-                            logger.warn("Unknown parameter type was found while parsing PCFClass! Will be ignored. {} = {}", groupParam.getParameterName(), groupParam.getStringValue());
+                            logger.debug(
+                                "Unknown parameter type was found while parsing PCFClass! Will be ignored. {} = {}",
+                                groupParam.getParameterName(), groupParam.getStringValue());
                             break;
                     }
                 }
@@ -85,7 +110,7 @@ public class PCFDataParser {
         ArrayList<PCFType> types = new ArrayList<>();
         while (params.hasMoreElements()) {
             PCFParameter param = params.nextElement();
-            if (param.getParameter() == MQConstants.MQGACF_MONITOR_TYPE) {
+            if (param.getParameter() == MQGACF_MONITOR_TYPE) {
                 Enumeration<PCFParameter> groupParams = ((MQCFGR) param)
                     .getParameters();
                 String monitorName = null;
@@ -94,13 +119,13 @@ public class PCFDataParser {
                 while (groupParams.hasMoreElements()) {
                     PCFParameter groupParam = groupParams.nextElement();
                     switch (groupParam.getParameter()) {
-                        case MQConstants.MQCAMO_MONITOR_TYPE:
+                        case MQCAMO_MONITOR_TYPE:
                             monitorName = groupParam.getStringValue();
                             break;
-                        case MQConstants.MQCAMO_MONITOR_DESC:
+                        case MQCAMO_MONITOR_DESC:
                             monitorDesc = groupParam.getStringValue();
                             break;
-                        case MQConstants.MQCA_TOPIC_STRING:
+                        case MQCA_TOPIC_STRING:
                             topicString = groupParam.getStringValue();
                             break;
                         default:
@@ -129,7 +154,7 @@ public class PCFDataParser {
             PCFParameter param = params.nextElement();
             String topicString = null;
             switch (param.getParameter()) {
-                case MQConstants.MQGACF_MONITOR_ELEMENT:
+                case MQGACF_MONITOR_ELEMENT:
                     Enumeration<PCFParameter> groupParams = ((MQCFGR) param)
                         .getParameters();
                     int rowId = -1;
@@ -138,24 +163,26 @@ public class PCFDataParser {
                     while (groupParams.hasMoreElements()) {
                         PCFParameter groupParam = groupParams.nextElement();
                         switch (groupParam.getParameter()) {
-                            case MQConstants.MQIAMO_MONITOR_ELEMENT:
+                            case MQIAMO_MONITOR_ELEMENT:
                                 rowId = (Integer) groupParam.getValue();
                                 break;
-                            case MQConstants.MQIAMO_MONITOR_DATATYPE:
+                            case MQIAMO_MONITOR_DATATYPE:
                                 rowDatatype = (Integer) groupParam.getValue();
                                 break;
-                            case MQConstants.MQCAMO_MONITOR_DESC:
+                            case MQCAMO_MONITOR_DESC:
                                 rowDesc = groupParam.getStringValue();
                                 break;
                             default:
-                                logger.warn("Unknown parameter type was found while parsing PCFElement! Will be ignored. {} = {}", groupParam.getParameterName(), groupParam.getStringValue());
+                                logger.debug(
+                                    "Unknown parameter type was found while parsing PCFElement! Will be ignored. {} = {}",
+                                    groupParam.getParameterName(), groupParam.getStringValue());
                                 break;
                         }
 
                     }
                     rows.add(new PCFElementRow(rowId, rowDatatype, rowDesc));
                     break;
-                case MQConstants.MQCA_TOPIC_STRING:
+                case MQCA_TOPIC_STRING:
                     topicString = param.getStringValue();
                     break;
                 default:
@@ -180,32 +207,32 @@ public class PCFDataParser {
         while (params.hasMoreElements()) {
             PCFParameter param = params.nextElement();
             switch (param.getParameter()) {
-                case MQConstants.MQCA_Q_MGR_NAME:
+                case MQCA_Q_MGR_NAME:
                     break;
-                case MQConstants.MQIAMO_MONITOR_CLASS:
+                case MQIAMO_MONITOR_CLASS:
                     break;
-                case MQConstants.MQIAMO_MONITOR_TYPE:
+                case MQIAMO_MONITOR_TYPE:
                     // Should perhaps check that it's as expected
                     break;
-                case MQConstants.MQIAMO64_MONITOR_INTERVAL:
+                case MQIAMO64_MONITOR_INTERVAL:
                     // Monitor interval, i.e. time since last publish, is in milliseconds
                     break;
-                case MQConstants.MQIACF_OBJECT_TYPE:
+                case MQIACF_OBJECT_TYPE:
                     break;
-                case MQConstants.MQCA_Q_NAME:
+                case MQCA_Q_NAME:
                     break;
                 default:
                     switch (param.getType()) {
-                        case (MQConstants.MQCFT_INTEGER):
+                        case (MQCFT_INTEGER):
                             MQCFIN statistic = (MQCFIN) param;
                             data.put(statistic.getParameter(), (double) statistic.getIntValue());
                             break;
-                        case (MQConstants.MQCFT_INTEGER64):
+                        case (MQCFT_INTEGER64):
                             MQCFIN64 statistic64 = (MQCFIN64) param;
                             data.put(statistic64.getParameter(), (double) statistic64.getLongValue());
                             break;
                         default:
-                            logger.warn(
+                            logger.debug(
                                 "Unknown parameter type was found while parsing PCF monitoring data! Will be ignored. {} = {}",
                                 param.getParameterName(), param.getStringValue());
                             break;
@@ -223,7 +250,7 @@ public class PCFDataParser {
      * @return - parsed value. (Returns input value, if there is no additional processing required).
      */
     public static double getExactValue(double value, int dataType) {
-        if (dataType == MQConstants.MQIAMO_MONITOR_PERCENT) {
+        if (dataType == MQIAMO_MONITOR_PERCENT) {
             return value / 100.0;
         } else {
             return value;

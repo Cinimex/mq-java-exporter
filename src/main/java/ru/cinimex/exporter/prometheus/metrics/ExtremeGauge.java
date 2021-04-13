@@ -4,12 +4,13 @@ import io.prometheus.client.Gauge;
 import ru.cinimex.exporter.prometheus.Registry;
 
 /**
- * Represents custom Prometheus metric. Counter, which can increase and decrease. Used to store max or min value
- * between Prometheus scrapes.
+ * Represents custom Prometheus metric. Counter, which can increase and decrease. Used to store max or min value between
+ * Prometheus scrapes.
  */
 public class ExtremeGauge implements MetricInterface {
-    private Gauge gauge;
-    private boolean storeMax;
+
+    private final Gauge gauge;
+    private final boolean storeMax;
     private volatile boolean wasScraped = true;
 
     /**
@@ -51,5 +52,10 @@ public class ExtremeGauge implements MetricInterface {
     @Override
     public void notifyWasScraped() {
         wasScraped = true;
+    }
+
+    @Override
+    public void remove(String... labels) {
+        gauge.remove(labels);
     }
 }

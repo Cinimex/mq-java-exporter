@@ -56,6 +56,8 @@ PCFParameters:
 # Interval in seconds between sending PCF commands.
   scrapeInterval: 10
 
+updateInterval: 30
+
 # Monitored queues.
 queues:
   include:

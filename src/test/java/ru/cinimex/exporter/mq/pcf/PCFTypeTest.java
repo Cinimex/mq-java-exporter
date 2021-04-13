@@ -2,6 +2,7 @@ package ru.cinimex.exporter.mq.pcf;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.cinimex.exporter.mq.pcf.model.PCFType;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

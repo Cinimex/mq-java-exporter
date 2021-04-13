@@ -1,7 +1,7 @@
 package ru.cinimex.exporter.mq;
 
 import com.ibm.mq.constants.MQConstants;
-import com.ibm.mq.pcf.PCFMessage;
+import com.ibm.mq.headers.pcf.PCFMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

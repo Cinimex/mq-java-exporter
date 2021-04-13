@@ -7,8 +7,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.cinimex.exporter.mq.MQObject;
-import ru.cinimex.exporter.mq.pcf.PCFElement;
-import ru.cinimex.exporter.mq.pcf.PCFElementRow;
+import ru.cinimex.exporter.mq.pcf.model.PCFElement;
+import ru.cinimex.exporter.mq.pcf.model.PCFElementRow;
 import ru.cinimex.exporter.prometheus.Registry;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ class MetricsManagerTest {
     void initMetricsWithoutObjects() {
         elements = new ArrayList<>();
         elements.add(new PCFElement("TEST.TOPIC", rows));
-        MetricsManager.initMetrics(elements, types);
+        MetricsManager.initMetrics(elements);
         Enumeration<Collector.MetricFamilySamples> initializedMetrics = Registry.getRegistry().metricFamilySamples();
         int metricsNum = 0;
         while (initializedMetrics.hasMoreElements()) {
@@ -74,7 +74,7 @@ class MetricsManagerTest {
     void initMetricsWithObjects() {
         elements = new ArrayList<>();
         elements.add(new PCFElement("TEST.TOPIC.%s", rows));
-        MetricsManager.initMetrics(elements, types);
+        MetricsManager.initMetrics(elements);
         Enumeration<Collector.MetricFamilySamples> initializedMetrics = Registry.getRegistry().metricFamilySamples();
         int metricsNum = 0;
         while (initializedMetrics.hasMoreElements()) {
@@ -93,7 +93,7 @@ class MetricsManagerTest {
         String result = "Metric wasn't updated!";
         elements = new ArrayList<>();
         elements.add(new PCFElement("TEST.TOPIC.%s", rows));
-        MetricsManager.initMetrics(elements, types);
+        MetricsManager.initMetrics(elements);
         MetricsManager.updateMetric("mq_object_durable_subscriber_high_water_mark_hundredths", value, "TEST1", "TEST2");
         Enumeration<Collector.MetricFamilySamples> initializedMetrics = Registry.getRegistry().metricFamilySamples();
         while (initializedMetrics.hasMoreElements()) {
@@ -114,7 +114,7 @@ class MetricsManagerTest {
         String result = "Metric wasn't updated!";
         elements = new ArrayList<>();
         elements.add(new PCFElement("TEST.TOPIC", rows));
-        MetricsManager.initMetrics(elements, types);
+        MetricsManager.initMetrics(elements);
         MetricsManager.updateMetric(metricName, 100d, labels);
         MetricsManager.updateMetric(metricName, 50d, labels);
         MetricsManager.updateMetric(metricName, 99d, labels);
