@@ -6,28 +6,29 @@ import com.ibm.mq.MQException;
 import com.ibm.mq.MQGetMessageOptions;
 import com.ibm.mq.MQMessage;
 import com.ibm.mq.MQQueue;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.mq.pcf.PCFDataParser;
 
-import java.util.List;
+import ru.cinimex.exporter.mq.subscriber.MQTopicSubscriber;
 
 /**
  * Class represents all activities about reading and processing messages from single queue.
  */
-public class MQMetricQueue extends Thread implements MQSubscriber {
+public class MQMetricQueue extends Thread {
     private static final Logger logger = LogManager.getLogger(MQMetricQueue.class);
-    private final List<MQTopicSubscriber> subscribers;
+    private final Map<String, MQTopicSubscriber> subscribers;
     private final MQQueue queue;
     private volatile boolean isRunning;
 
     /**
      * MQMetricQueue constructor.
      *
-     * @param subscribers - subscribers list. Each message, received from queue, contains custom metrics. They are passed to related subscriber, who knows how to handle them.
+     * @param subscribers - subscribers map. Each message, received from queue, contains custom metrics. They are passed to related subscriber, who knows how to handle them.
      * @throws MQException - MQ exception, which contains mqrc error code. More info <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/mq/MQException.html">here</a>.
      */
-    public MQMetricQueue(List<MQTopicSubscriber> subscribers) throws MQException {
+    public MQMetricQueue(Map<String, MQTopicSubscriber> subscribers) throws MQException {
         this.subscribers = subscribers;
         this.queue = MQConnection.getQueue();
     }
@@ -43,7 +44,7 @@ public class MQMetricQueue extends Thread implements MQSubscriber {
             try {
                 queue.get(msg, gmo);
                 String name = msg.getStringProperty("mqps.Top");
-                MQTopicSubscriber sub = subscribers.stream().filter(subscriber -> name.equals(subscriber.getTopicName())).findFirst().orElse(null);
+                MQTopicSubscriber sub = subscribers.get(name);
                 if (sub != null) {
                     sub.update(PCFDataParser.convertToPCF(msg));
                     logger.debug("Message from {} was successfully processed.", name);
@@ -62,7 +63,6 @@ public class MQMetricQueue extends Thread implements MQSubscriber {
 
     }
 
-    @Override
     public void stopProcessing() {
         isRunning = false;
     }

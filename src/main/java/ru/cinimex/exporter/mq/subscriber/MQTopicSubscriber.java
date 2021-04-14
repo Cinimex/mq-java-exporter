@@ -1,4 +1,4 @@
-package ru.cinimex.exporter.mq;
+package ru.cinimex.exporter.mq.subscriber;
 
 import com.ibm.mq.MQException;
 import com.ibm.mq.MQTopic;
@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.cinimex.exporter.mq.MQConnection;
 import ru.cinimex.exporter.mq.pcf.PCFDataParser;
 import ru.cinimex.exporter.mq.pcf.model.PCFElement;
 import ru.cinimex.exporter.prometheus.metrics.MetricsManager;
@@ -16,7 +17,7 @@ import ru.cinimex.exporter.prometheus.metrics.MetricsReference;
 /**
  * MQTopicSubscriber is used to process metrics from specific topic.
  */
-public class MQTopicSubscriber implements MQSubscriber {
+public class MQTopicSubscriber {
 
     private static final Logger logger = LogManager.getLogger(MQTopicSubscriber.class);
     private final PCFElement element;

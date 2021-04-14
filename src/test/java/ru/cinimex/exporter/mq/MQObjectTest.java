@@ -1,11 +1,14 @@
 package ru.cinimex.exporter.mq;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import com.ibm.mq.constants.MQConstants;
 import com.ibm.mq.headers.pcf.PCFMessage;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import ru.cinimex.exporter.util.Pair;
 
 class MQObjectTest {
     private MQObject queue;
@@ -35,9 +38,23 @@ class MQObjectTest {
 
     @Test
     void getPCFHeader() {
-        assertEquals(MQConstants.MQIA_MAX_Q_DEPTH, queue.getPCFHeader());
-        assertEquals(MQConstants.MQIACH_CHANNEL_STATUS, channel.getPCFHeader());
-        assertEquals(MQConstants.MQIACH_LISTENER_STATUS, listener.getPCFHeader());
+        List<Pair<Integer, String>> mappings = queue.getPcfHeadersToMetricMappings();
+        assertNotNull(mappings);
+        assertEquals(3, mappings.size());
+        assertEquals(MQConstants.MQIA_MAX_Q_DEPTH, mappings.get(0).getFirst());
+        assertEquals(MQConstants.MQIA_INHIBIT_PUT, mappings.get(1).getFirst());
+        assertEquals(MQConstants.MQIA_INHIBIT_GET, mappings.get(2).getFirst());
+
+        mappings = channel.getPcfHeadersToMetricMappings();
+        assertNotNull(mappings);
+        assertEquals(1, mappings.size());
+        assertEquals(MQConstants.MQIACH_CHANNEL_STATUS, mappings.get(0).getFirst());
+
+        mappings = listener.getPcfHeadersToMetricMappings();
+        assertNotNull(mappings);
+        assertEquals(1, mappings.size());
+        assertEquals(MQConstants.MQIACH_LISTENER_STATUS, mappings.get(0).getFirst());
+
     }
 
     @Test

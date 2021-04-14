@@ -1,5 +1,7 @@
 package ru.cinimex.exporter.mq;
 
+import static com.ibm.mq.constants.CMQC.MQIA_INHIBIT_GET;
+import static com.ibm.mq.constants.CMQC.MQIA_INHIBIT_PUT;
 import static com.ibm.mq.constants.MQConstants.MQCACH_CHANNEL_NAME;
 import static com.ibm.mq.constants.MQConstants.MQCACH_LISTENER_NAME;
 import static com.ibm.mq.constants.MQConstants.MQCA_Q_NAME;
@@ -13,8 +15,11 @@ import static com.ibm.mq.constants.MQConstants.MQIA_Q_TYPE;
 import static com.ibm.mq.constants.MQConstants.MQQT_LOCAL;
 
 import com.ibm.mq.headers.pcf.PCFMessage;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.cinimex.exporter.util.Pair;
 
 /**
  * Class represents MQObject (Queue, channel or listener). It stores object type and all PCFParameters, required for
@@ -25,9 +30,8 @@ public class MQObject {
     private static final Logger logger = LogManager.getLogger(MQObject.class);
     private final String name;
     private final MQType type;
+    private final List<Pair<Integer, String>> pcfHeadersToMetricMappings;
     private final PCFMessage pcfCmd;
-    private final int pcfHeader;
-
     /**
      * MQObject constructor.
      *
@@ -37,6 +41,7 @@ public class MQObject {
     public MQObject(String name, MQType type) {
         this.name = name;
         this.type = type;
+        this.pcfHeadersToMetricMappings = new ArrayList<>();
 
 /*
  * PCF commands are used to retrieve some specific statistics from queue manager.
@@ -47,21 +52,25 @@ public class MQObject {
                 pcfCmd.addParameter(MQCA_Q_NAME,
                     name); //PCF command would try to retrieve statistics about queue with specific name
                 pcfCmd.addParameter(MQIA_Q_TYPE, MQQT_LOCAL); // and specific type
-                pcfHeader = MQIA_MAX_Q_DEPTH; //the only statistics we want to know about queue is it's max depth.
+                pcfHeadersToMetricMappings.add(new Pair<>(MQIA_MAX_Q_DEPTH, "mqobject_queue_queue_max_depth_messages"));
+                pcfHeadersToMetricMappings.add(new Pair<>(MQIA_INHIBIT_PUT, "mqobject_queue_queue_put_inhibited_untyped"));
+                pcfHeadersToMetricMappings.add(new Pair<>(MQIA_INHIBIT_GET, "mqobject_queue_queue_get_inhibited_untyped"));
                 break;
             case LISTENER:
                 pcfCmd = new PCFMessage(
                     MQCMD_INQUIRE_LISTENER_STATUS); //if object type is listener, exporter would inquire it.
                 pcfCmd.addParameter(MQCACH_LISTENER_NAME,
                     name);//PCF command would try to retrieve statistics about listener with specific name
-                pcfHeader = MQIACH_LISTENER_STATUS;//the only statistics we want to know about listener is it's status.
+                pcfHeadersToMetricMappings
+                    .add(new Pair<>(MQIACH_LISTENER_STATUS, "mqobject_listener_listener_status_untyped")); //the only statistics we want to know about listener is it's status.
                 break;
             case CHANNEL:
                 pcfCmd = new PCFMessage(
                     MQCMD_INQUIRE_CHANNEL_STATUS); //if object type is channel, exporter would inquire it.
                 pcfCmd.addParameter(MQCACH_CHANNEL_NAME,
                     name); //PCF command would try to retrieve statistics about channel with specific name
-                pcfHeader = MQIACH_CHANNEL_STATUS;//the only statistics we want to know about channel is it's status.
+                pcfHeadersToMetricMappings
+                    .add(new Pair<>(MQIACH_CHANNEL_STATUS, "mqobject_channel_channel_status_untyped")); //the only statistics we want to know about channel is it's status.
                 break;
             default:
                 logger.error("Unknown type for MQObject: {}", type.name());
@@ -103,12 +112,12 @@ public class MQObject {
     }
 
     /**
-     * Getter for PCFHeader.
+     * Getter for PCFHeaders mappings.
      *
-     * @return - MQConstant integer code.
+     * @return - list with mapping headers to metrics.
      */
-    public int getPCFHeader() {
-        return pcfHeader;
+    public List<Pair<Integer, String>> getPcfHeadersToMetricMappings() {
+        return pcfHeadersToMetricMappings;
     }
 
     /**

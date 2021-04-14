@@ -7,6 +7,7 @@ import com.ibm.mq.MQQueue;
 import com.ibm.mq.MQQueueManager;
 import com.ibm.mq.MQTopic;
 import com.ibm.mq.constants.CMQC;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.Config;
@@ -28,8 +29,10 @@ import java.util.Map;
  */
 public class MQConnection {
     private static final Logger logger = LogManager.getLogger(MQConnection.class);
-    private static MQQueueManager queueManager;
+    private static MQQueueManager topicQueueManager;
+    private static MQQueueManager[] queueManagers = new MQQueueManager[4];
     private static MQQueue dynamicQueue;
+    private static AtomicInteger connectionIndex = new AtomicInteger(0);
 
     private MQConnection() {
 
@@ -103,9 +106,12 @@ public class MQConnection {
      * @param connectionProperties - prepared structure with all parameters transformed into queue manager's format. See {@link #createMQConnectionParams(Config config)} for more info.
      */
     public static void establish(String qmNqme, Map<String, Object> connectionProperties) throws MQException {
-        if (queueManager == null || !queueManager.isConnected()) {
-            queueManager = new MQQueueManager(qmNqme, new Hashtable<>(connectionProperties));
+        for(int i = 0; i < queueManagers.length; i++) {
+            if (queueManagers[i] == null || !queueManagers[i].isConnected()) {
+                queueManagers[i] = new MQQueueManager(qmNqme, new Hashtable<>(connectionProperties));
+            }
         }
+        topicQueueManager = new MQQueueManager(qmNqme, new Hashtable<>(connectionProperties));
     }
 
     /**
@@ -113,9 +119,13 @@ public class MQConnection {
      */
     public static void close() {
         try {
-            if (queueManager != null && queueManager.isConnected()) {
-                queueManager.disconnect();
+            for (MQQueueManager queueManager : queueManagers) {
+                if (queueManager != null && queueManager.isConnected()) {
+                    queueManager.disconnect();
+                }
             }
+
+            topicQueueManager.disconnect();
         } catch (MQException e) {
             logger.error("Failed!", e);
         }
@@ -129,7 +139,7 @@ public class MQConnection {
      * @throws MQException - MQ exception, which contains mqrc error code. More info <a href="https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.javadoc.doc/WMQJMSClasses/com/ibm/mq/MQException.html">here</a>.
      */
     public static MQTopic createTopic(String topic) throws MQException {
-        return queueManager.accessTopic(topic, "", CMQC.MQTOPIC_OPEN_AS_SUBSCRIPTION, CMQC.MQSO_CREATE | CMQC.MQSO_NON_DURABLE | CMQC.MQSO_MANAGED);
+        return topicQueueManager.accessTopic(topic, "", CMQC.MQTOPIC_OPEN_AS_SUBSCRIPTION, CMQC.MQSO_CREATE | CMQC.MQSO_NON_DURABLE | CMQC.MQSO_MANAGED);
     }
 
     /**
@@ -141,7 +151,7 @@ public class MQConnection {
      */
     public static MQTopic createSpecificTopic(String topic) throws MQException {
         try {
-            return queueManager.accessTopic(getQueue(), topic, "", CMQC.MQSO_CREATE);
+            return topicQueueManager.accessTopic(getQueue(), topic, "", CMQC.MQSO_CREATE);
         } catch (MQException e) {
             if (e.getReason() == MQRC_HANDLE_NOT_AVAILABLE) {
                 logger.error("The maximum number of open handles allowed for the current task has already been reached. Please, increase the MaxHandles queue manager attribute or reduce the number of queues to monitor: ", e);
@@ -165,7 +175,7 @@ public class MQConnection {
     }
 
     private static void createDynamicQueue() throws MQException {
-        dynamicQueue = queueManager.accessQueue("SYSTEM.NDURABLE.MODEL.QUEUE", CMQC.MQOO_INPUT_AS_Q_DEF | CMQC.MQOO_FAIL_IF_QUIESCING, null, "MQEXPORTER.*", null);
+        dynamicQueue = topicQueueManager.accessQueue("SYSTEM.NDURABLE.MODEL.QUEUE", CMQC.MQOO_INPUT_AS_Q_DEF | CMQC.MQOO_FAIL_IF_QUIESCING, null, "MQEXPORTER.*", null);
     }
 
     /**
@@ -173,8 +183,12 @@ public class MQConnection {
      *
      * @return - MQQueueManager object.
      */
-    public static MQQueueManager getQueueManager() {
-        return queueManager;
+    public static MQQueueManager getQueueManager(boolean isTopicConnection) {
+        if(isTopicConnection){
+            return topicQueueManager;
+        }
+
+        return queueManagers[connectionIndex.getAndIncrement()];
     }
 
 }

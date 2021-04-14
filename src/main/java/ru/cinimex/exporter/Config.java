@@ -32,6 +32,7 @@ public class Config {
     private int updateInterval;
     private Map<String, List<String>> queues;
     private Map<String, List<String>> channels;
+    private boolean monitorAutoDefinedClusterChannels;
     private Map<String, List<String>> listeners;
     private boolean sendPCFCommands;
     private int scrapeInterval;
@@ -63,6 +64,7 @@ public class Config {
         this.queues = (Map<String, List<String>>) config.get("queues");
         this.listeners = (Map<String, List<String>>) config.get("listeners");
         this.channels = (Map<String, List<String>>) config.get("channels");
+        this.monitorAutoDefinedClusterChannels = (boolean) config.get("monitorAutoDefinedClusterChannels");
         this.endpPort = (Integer) prometheusEndpointParams.get("port");
         this.endpURL = (String) (prometheusEndpointParams.get("url"));
         this.sendPCFCommands = (boolean) pcfParameters.get("sendPCFCommands");
@@ -95,6 +97,10 @@ public class Config {
 
     public boolean sendPCFCommands() {
         return sendPCFCommands;
+    }
+
+    public boolean monitorAutoDefinedClusterChannels() {
+        return monitorAutoDefinedClusterChannels;
     }
 
     public Map<String, List<String>> getChannels() {
