@@ -17,6 +17,7 @@ import ru.cinimex.exporter.mq.MQObject;
 import ru.cinimex.exporter.mq.MQObject.MQType;
 import ru.cinimex.exporter.mq.pcf.model.PCFElement;
 import ru.cinimex.exporter.mq.pcf.model.PCFElementRow;
+import ru.cinimex.exporter.prometheus.metrics.MetricsReference.AdditionalMetric;
 
 /**
  * Class is used to manage work of all metrics.
@@ -66,14 +67,20 @@ public class MetricsManager {
                     default:
                         logger.error(
                                 "Error during metrics initialization: Unknown metric type! Make sure it is one " + "of: {}",
-                                MetricsReference.Metric.Type.values());
+                                Arrays.toString(MetricsReference.Metric.Type.values()));
                 }
             }
         }
+
         for (MQObject.MQType type : MQObject.MQType.values()) {
-            String metricName = MetricsReference.getMetricName(type);
-            metrics.put(metricName, new SimpleGauge(metricName, MetricsReference.getMetricHelp(type), Labels.QMGR_NAME.name(), Labels.MQ_OBJECT_NAME.name()));
-            logger.trace("New gauge created! Name: {}, description: {}, labels: {}.", metricName, MetricsReference.getMetricHelp(type), Labels.MQ_OBJECT_NAME.name());
+            List<AdditionalMetric> additionalMetrics = MetricsReference.getMetricsForType(type);
+            for (AdditionalMetric metric : additionalMetrics) {
+                metrics.put(metric.name,
+                    new SimpleGauge(metric.name, metric.help, Labels.QMGR_NAME.name(),
+                        Labels.MQ_OBJECT_NAME.name()));
+                logger.trace("New gauge created! Name: {}, description: {}, labels: {}.", metric.name,
+                    metric.help, Labels.MQ_OBJECT_NAME.name());
+            }
         }
         initAdditionalMetrics();
 

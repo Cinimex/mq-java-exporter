@@ -36,7 +36,7 @@ public class ExporterLauncher {
     private static MQSubscriberManager manager;
     private static HTTPServer server;
 
-    public static void main(String[] args) throws MQException {
+    public static void main(String[] args) throws MQException, MQDataException {
         if (args.length == 0) {
             logger.error("It seems like you forgot to specify path to the config file.");
             System.exit(1);
@@ -49,8 +49,7 @@ public class ExporterLauncher {
         MetricsManager.initMetrics(elements);
 
         manager = new MQSubscriberManager(config);
-        manager.runSubscribers(elements, config.sendPCFCommands(),
-            config.getScrapeInterval(), config.getConnTimeout());
+        manager.runSubscribers(elements);
         try {
             server = new HTTPServer(new InetSocketAddress("0.0.0.0", config.getEndpPort()), config.getEndpURL(), Registry.getRegistry(), false);
         } catch (IOException e) {
@@ -123,6 +122,7 @@ public class ExporterLauncher {
                     manager.stopSubscribers();
                 } catch (InterruptedException e) {
                     logger.error("Error occurred during stopping subscribers: ", e);
+                    Thread.currentThread().interrupt();
                 }
             }
 

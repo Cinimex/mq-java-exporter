@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import ru.cinimex.exporter.Config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MQSecurityPropertiesTest {
     private static MQSecurityProperties properties;
@@ -46,6 +47,6 @@ class MQSecurityPropertiesTest {
 
     @Test
     void isUseTLS() {
-        assertEquals(true, properties.isUseTLS());
+        assertTrue(properties.isUseTLS());
     }
 }

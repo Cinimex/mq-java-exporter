@@ -179,9 +179,9 @@ mq_exporter.jar should be located in the same folder.
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 It is recommended way of running the exporter. **Note**: all commands
  should be executed via MQ CLI. More info can be found [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q083460_.htm).
- 
+
  Define queue manager service with the following command: 
- 
+
  ```mq
   DEFINE SERVICE(MQEXPORTER) CONTROL(QMGR) SERVTYPE(SERVER) +
   STARTCMD('/opt/mqm/java/jre64/jre/bin/java')              +
@@ -193,15 +193,15 @@ It is recommended way of running the exporter. **Note**: all commands
  ```
  More information about this command can be found
  [here](https://www.ibm.com/support/knowledgecenter/en/SSFKSJ_9.0.0/com.ibm.mq.ref.adm.doc/q085740_.htm).
-  
+
  To start exporter, execute the following command:
- 
+
  ```mq
   START SERVICE(MQEXPORTER)
  ```
- 
+
  To stop exporter, execute the following command:
- 
+
   ```mq
    STOP SERVICE(MQEXPORTER)
   ```
@@ -363,7 +363,7 @@ This section provides a description of domains and subdomains and reflects their
 </tr>
 </tbody>
 </table>
-    
+
 #### Units
 <sub><sup> [Back to TOC.](#table-of-contents) </sup></sub><br/>
 This section provides a description of metric units.<br/>
@@ -1421,6 +1421,16 @@ This section provides a description of metrics of queues, channels and listeners
 <td>Shows queue fill percentage.</td>
 </tr>
 <tr>
+<td>mqobject_queue_queue_get_inhibited_untyped</td>
+<td>gauge</td>
+<td>Returns 0 if get is allowed and 1 otherwise.</td>
+</tr>
+<tr>
+<td>mqobject_queue_queue_put_inhibited_untyped</td>
+<td>gauge</td>
+<td>Returns 0 if put is allowed and 1 otherwise.</td>
+</tr>
+<tr>
 <td>mqobject_channel_channel_status_untyped</td>
 <td>gauge</td>
 <td>Shows current channel status. Mapping of channel statuses to prometheus metric values can be found <a href="#channel-status-mapping">here</a>.</td>
@@ -1531,8 +1541,8 @@ Pull requests are always welcome.
 The following are known issues and may affect your use of exporter.
 
 1. Metric mq_ram_ram_total_estimate_megabytes may contain negative
-  values.
-  [#62](https://github.com/Cinimex-Informatica/mq-java-exporter/issues/62)
+    values.
+    [#62](https://github.com/Cinimex-Informatica/mq-java-exporter/issues/62)
   
    This problem is related to this IBM
    [APAR](https://www-01.ibm.com/support/docview.wss?uid=swg1IT24336).

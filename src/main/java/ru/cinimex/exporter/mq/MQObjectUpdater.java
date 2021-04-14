@@ -5,6 +5,7 @@ import static com.ibm.mq.constants.CMQCFC.MQCACH_CHANNEL_NAMES;
 import static com.ibm.mq.constants.CMQCFC.MQCACH_LISTENER_NAME;
 
 import com.ibm.mq.MQException;
+import com.ibm.mq.MQQueueManager;
 import com.ibm.mq.headers.MQDataException;
 import com.ibm.mq.headers.pcf.PCFMessage;
 import com.ibm.mq.headers.pcf.PCFMessageAgent;
@@ -12,8 +13,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +25,8 @@ import ru.cinimex.exporter.Config;
 import ru.cinimex.exporter.mq.MQObject.MQType;
 import ru.cinimex.exporter.mq.pcf.PCFCommand;
 import ru.cinimex.exporter.mq.pcf.model.PCFElement;
+import ru.cinimex.exporter.mq.subscriber.PCFSubscriber;
+import ru.cinimex.exporter.mq.subscriber.MQTopicSubscriber;
 import ru.cinimex.exporter.prometheus.metrics.MetricsManager;
 
 /**
@@ -33,17 +38,19 @@ public class MQObjectUpdater implements Runnable {
 
   private final Config config;
   private final List<PCFElement> pcfElements;
-  private final List<MQTopicSubscriber> mqTopicSubscribers;
-  private final Map<MQType, MQPCFSubscriber> mqpcfSubscribers;
+  private final Map<String, MQTopicSubscriber> mqTopicSubscribers;
+  private final Map<MQType, PCFSubscriber> mqpcfSubscribers;
+  private final MQQueueManager queueManager;
   private Set<MQObject> mqObjects;
 
   public MQObjectUpdater(final Config config,
-      List<MQTopicSubscriber> topicSubscribers, Map<MQType, MQPCFSubscriber> mqpcfSubscribers,
+      Map<String, MQTopicSubscriber> topicSubscribers, Map<MQType, PCFSubscriber> mqpcfSubscribers,
       List<PCFElement> pcfElements) {
     this.config = config;
     this.pcfElements = pcfElements;
     this.mqTopicSubscribers = topicSubscribers;
     this.mqpcfSubscribers = mqpcfSubscribers;
+    this.queueManager = MQConnection.getQueueManager(false);
   }
 
   @Override
@@ -51,6 +58,7 @@ public class MQObjectUpdater implements Runnable {
     logger.debug("Sending command to update monitoring objects.");
     Set<MQObject> monitoringObjects;
     try {
+
       //Get all objects from MQ
       monitoringObjects = getMonitoringObjects(config);
       Set<MQObject> objectsToRemove = new HashSet<>();
@@ -75,17 +83,16 @@ public class MQObjectUpdater implements Runnable {
 
       }
 
-      List<MQTopicSubscriber> removeSubscribers = new ArrayList<>();
       for (MQObject mqObject : objectsToRemove) {
-        for (MQTopicSubscriber subscriber : mqTopicSubscribers) {
-          if (subscriber.relatedToObject(mqObject.getName())) {
-            subscriber.stopProcessing();
-            removeSubscribers.add(subscriber);
+        Iterator<Entry<String, MQTopicSubscriber>> iterator = mqTopicSubscribers.entrySet().iterator();
+        while (iterator.hasNext()){
+          Entry<String, MQTopicSubscriber> subscriber = iterator.next();
+          if (subscriber.getValue().relatedToObject(mqObject.getName())) {
+            subscriber.getValue().stopProcessing();
+            iterator.remove();
           }
         }
       }
-
-      mqTopicSubscribers.removeAll(removeSubscribers);
 
       for (MQObject mqObject : objectsToCreate) {
         for (PCFElement element : pcfElements) {
@@ -131,7 +138,7 @@ public class MQObjectUpdater implements Runnable {
     if (object.getType().equals(MQObject.MQType.QUEUE)) {
       PCFElement objElement = new PCFElement(element.getTopicString(), element.getRows());
       objElement.formatTopicString(object.getName());
-      mqTopicSubscribers.add(new MQTopicSubscriber(objElement, config.getQmgrName(), object.getName()));
+      mqTopicSubscribers.put(objElement.getTopicString(), new MQTopicSubscriber(objElement, config.getQmgrName(), object.getName()));
     }
   }
 
@@ -153,7 +160,7 @@ public class MQObjectUpdater implements Runnable {
     return groupedObjects;
   }
 
-  private static Set<MQObject> getMonitoringObjects(Config config) throws IOException, MQDataException {
+  private Set<MQObject> getMonitoringObjects(Config config) throws IOException, MQDataException {
     Set<MQObject> objects = new HashSet<>();
 
     for (MQObject.MQType type : MQObject.MQType.values()) {
@@ -161,33 +168,33 @@ public class MQObjectUpdater implements Runnable {
         case QUEUE:
           objects
               .addAll(inquireMQObjectsByPatterns(config.getQueues().get("include"), type, MQCACF_Q_NAMES));
-          objects.removeAll(
-              inquireMQObjectsByPatterns(config.getQueues().get("exclude"), type, MQCACF_Q_NAMES));
+          inquireMQObjectsByPatterns(config.getQueues().get("exclude"), type, MQCACF_Q_NAMES).forEach(
+              objects::remove);
           break;
         case CHANNEL:
           objects.addAll(
               inquireMQObjectsByPatterns(config.getChannels().get("include"), type, MQCACH_CHANNEL_NAMES));
-          objects.removeAll(
-              inquireMQObjectsByPatterns(config.getChannels().get("exclude"), type, MQCACH_CHANNEL_NAMES));
+          inquireMQObjectsByPatterns(config.getChannels().get("exclude"), type, MQCACH_CHANNEL_NAMES).forEach(
+              objects::remove);
           break;
         case LISTENER:
           objects.addAll(
               inquireMQObjectsByPatterns(config.getListeners().get("include"), type, MQCACH_LISTENER_NAME));
-          objects.removeAll(
-              inquireMQObjectsByPatterns(config.getListeners().get("exclude"), type, MQCACH_LISTENER_NAME));
+          inquireMQObjectsByPatterns(config.getListeners().get("exclude"), type, MQCACH_LISTENER_NAME).forEach(
+              objects::remove);
           break;
       }
     }
     return objects;
   }
 
-  private static List<MQObject> inquireMQObjectsByPatterns(List<String> rules, MQObject.MQType type, int getValueParam)
+  private List<MQObject> inquireMQObjectsByPatterns(List<String> rules, MQObject.MQType type, int getValueParam)
       throws IOException, MQDataException {
 
     List<MQObject> objects = new ArrayList<>();
     if (rules != null && !rules.isEmpty()) {
       PCFMessageAgent agent = new PCFMessageAgent();
-      agent.connect(MQConnection.getQueueManager());
+      agent.connect(queueManager);
       for (String rule : rules) {
         PCFMessage pcfCommand = PCFCommand.preparePCFCommand(type, rule);
         PCFMessage[] pcfResponse = agent.send(pcfCommand);

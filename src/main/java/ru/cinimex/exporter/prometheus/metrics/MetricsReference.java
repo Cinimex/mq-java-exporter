@@ -2,6 +2,9 @@ package ru.cinimex.exporter.prometheus.metrics;
 
 import static com.ibm.mq.constants.MQConstants.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.cinimex.exporter.mq.MQObject;
@@ -13,7 +16,7 @@ import java.util.Map;
 public class MetricsReference {
     private static final Logger logger = LogManager.getLogger(MetricsReference.class);
     private static final HashMap<String, Metric> queueManagerMetricsReference = getQueueManagerMetricsReference();
-    private static final EnumMap<MQObject.MQType, AdditionalMetric> mqObjectAdditionalMetricsReference = getMqObjectAdditionalMetricsReference();
+    private static final EnumMap<MQObject.MQType, List<AdditionalMetric>> mqObjectAdditionalMetricsReference = getMqObjectAdditionalMetricsReference();
     private static final HashMap<String, Metric> mqObjectMetricsReference = getMqObjectMetricsReference();
     private static final HashMap<Integer, Double> channelStatus = getChannelStatuses();
     private static final HashMap<Integer, Double> listenerStatus = getListenerStatuses();
@@ -123,11 +126,15 @@ public class MetricsReference {
      *
      * @return - initialized map.
      */
-    private static EnumMap<MQObject.MQType, AdditionalMetric> getMqObjectAdditionalMetricsReference() {
-        EnumMap<MQObject.MQType, AdditionalMetric> metrics = new EnumMap<>(MQObject.MQType.class);
-        metrics.put(MQObject.MQType.QUEUE, new AdditionalMetric("mqobject_queue_queue_max_depth_messages", "The maximum number of messages that are allowed on the queue"));
-        metrics.put(MQObject.MQType.CHANNEL, new AdditionalMetric("mqobject_channel_channel_status_untyped", "The status of the channel"));
-        metrics.put(MQObject.MQType.LISTENER, new AdditionalMetric("mqobject_listener_listener_status_untyped", "The status of the listener"));
+    private static EnumMap<MQObject.MQType, List<AdditionalMetric>> getMqObjectAdditionalMetricsReference() {
+        EnumMap<MQObject.MQType, List<AdditionalMetric>> metrics = new EnumMap<>(MQObject.MQType.class);
+        List<AdditionalMetric> queueMetrics = new ArrayList<>(3);
+        queueMetrics.add(new AdditionalMetric("mqobject_queue_queue_max_depth_messages", "The maximum number of messages that are allowed on the queue"));
+        queueMetrics.add(new AdditionalMetric("mqobject_queue_queue_get_inhibited_untyped", "0 if get is allowed and 1 otherwise"));
+        queueMetrics.add(new AdditionalMetric("mqobject_queue_queue_put_inhibited_untyped", "0 if put is allowed and 1 otherwise"));
+        metrics.put(MQObject.MQType.QUEUE, queueMetrics);
+        metrics.put(MQObject.MQType.CHANNEL, Collections.singletonList(new AdditionalMetric("mqobject_channel_channel_status_untyped", "The status of the channel")));
+        metrics.put(MQObject.MQType.LISTENER, Collections.singletonList(new AdditionalMetric("mqobject_listener_listener_status_untyped", "The status of the listener")));
         return metrics;
     }
 
@@ -237,12 +244,8 @@ public class MetricsReference {
         return metricName;
     }
 
-    public static String getMetricName(MQObject.MQType type) {
-        return mqObjectAdditionalMetricsReference.get(type).name;
-    }
-
-    public static String getMetricHelp(MQObject.MQType type) {
-        return mqObjectAdditionalMetricsReference.get(type).help;
+    public static List<AdditionalMetric> getMetricsForType(MQObject.MQType type) {
+        return mqObjectAdditionalMetricsReference.get(type);
     }
 
     private static String generateMetricName(String description, boolean requiresObject, int dataType) {
